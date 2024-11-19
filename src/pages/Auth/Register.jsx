@@ -5,9 +5,11 @@ import {jwtDecode} from "jwt-decode";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import eyeIcon from '../../assets/images/eye.svg';
 import eyeSlashIcon from '../../assets/images/eyeSlash.svg';
-const clientId = "862905097670-678pkbir60a8v0jk4v75ua6nsu4j3k40.apps.googleusercontent.com";
-
+import { register } from '../../services/api/AuthApi';
+const clientId = "671407638676-nc6tsp0nscas88kneq1jt9q3itl2l6h8.apps.googleusercontent.com";
 const Register = () => {
+    const [fullName, setFullName] = useState('')
+    const [gender, setGender] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -29,28 +31,49 @@ const Register = () => {
             return;
         }
         const newUser = {
+            fullName,
+            gender,
             email,
             password,
-            confirmPassword,
         };
-        console.log(newUser);
-        alert(`Email sending to ${email}, confirm to create account. `)
-        setRegisteredIn(true)
+        try{
+            const data = await register(newUser);
+
+            alert(`response from sever ${data} `)
+            setRegisteredIn(true)
+        }catch(error){
+            console.error("Register error: ", error);
+            
+        }finally{
+            setLoading(false)
+        }
     };
 
-    const handleRegisterSuccess = async (response) => {
+    const handleRegisterViaGoogle = async (response) => {
         console.log('Register successful:', response);
         const decoded = jwtDecode(response.credential);
         console.log('Decoded JWT:', decoded);
-        const { email } = decoded;
+        const { email, name, picture } = decoded;
 
         const userData = {
-            email,
+            fullname: decoded.ame ,
+            email: decoded.email,
+            gender: '',
             password: 'Password01@',
-            confirmPassword: 'Password01@'
+            imageUrl: decoded.picture,
         };
-        console.log("user data: ", userData);
-        setRegisteredIn(true);
+        try{
+            const data = await register(userData);
+
+            alert(`response from sever ${data} `)
+            setRegisteredIn(true)
+        }catch(error){
+            console.error("Register error: ", error);
+            
+        }finally{
+            setLoading(false)
+        }
+   
     };
 
     if(regiteredIn){
@@ -77,6 +100,28 @@ const Register = () => {
                 <h2>Register</h2>
                 {errorMessage && <div className="error-message">{errorMessage}</div>}
                 <form onSubmit={handleSubmit} className="registration-form">
+                    <div className="form-group">
+                        <label>Fullname:</label>
+                        <input
+                            type="text"
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Gender:</label>
+                        <select
+                            value={gender}
+                            onChange={(e) => setGender(e.target.value)}
+                            required
+                        >
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
                     <div className="form-group">
                         <label>Email:</label>
                         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required/>
@@ -127,7 +172,7 @@ const Register = () => {
                         <div className="register-container">
                             <h2>Login with Google</h2>
                             <GoogleLogin
-                                onSuccess={handleRegisterSuccess}
+                                onSuccess={handleRegisterViaGoogle}
                                 onError={handleRegisterFailure}
                                 scope="profile email"
                             />
