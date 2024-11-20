@@ -1,73 +1,105 @@
-import React, { useState, useEffect } from 'react';
-import '../../styles/Narbar.css';
-import DefaultAvatar from '../../assets/images/DefaultAvatar.png'
-import Profile from "../profile/Profile";
-export default function Navbar() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState(null);
-    const [isDropdownOpen,setIsDropdownOpen]=useState(false);
-    const [isProfileOpen,setIsProfileOpen]=useState(false);;
-    useEffect(() => {
-        // Check if 'user' data exists in localStorage
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            const parsedUser = JSON.parse(storedUser);
-            setUser(parsedUser);
-            setIsLoggedIn(true);
-        }
-    }, []);
-
-    function toggleMenu() {
-        setIsOpen(!isOpen);
-    }
-    const onLogout = () => {
-        localStorage.clear();
-        setUser(null);
-        window.location.href = '/';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import User from '../../pages/profile/User';
+import Search from '../search/Search'
+const Navbar = () => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isLogin, setIsLogin] = useState(false);
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
     };
-    const toggleDropdown=()=>{
-        setIsDropdownOpen(!isDropdownOpen);
-    }
-    const openProfile=()=>{
-        setIsProfileOpen(true);
-        setIsDropdownOpen(false);
-    }
-    return (
-        <nav className="navbar">
-            <span href="/" className="navbar-logo" onClick={toggleMenu}>MyWebsite</span>
-            <div className={`navbar-links ${isOpen ? 'open' : ''}`}>
-                {isLoggedIn ? (
-                    <div className="navbar-avatar-container">
-                        <img
-                            src={user?.picture || DefaultAvatar}
-                            alt={user?.name || "User"}
-                            className="navbar-avatar"
-                            onClick={toggleDropdown}
-                        />
-                        {isDropdownOpen && (
-                            <div className="dropdown-menu">
-                                <span onClick={openProfile}>Profile</span>
-                                <span onClick={onLogout}>Logout</span>
-                            </div>
-                        )}
-                    </div>
-                ) : (
-                    <>
-                        <a href="/login">Login</a>
-                        <a href="/register">Register</a>
-                    </>
-                )}
-            </div>
-            <button className="navbar-toggle" onClick={toggleMenu}>
-                <span className="navbar-toggle-icon"></span>
-                <span className="navbar-toggle-icon"></span>
-                <span className="navbar-toggle-icon"></span>
-            </button>
 
-            {isProfileOpen && (
-                <Profile user={user} onClose={() => setIsProfileOpen(false)} />
+    return (
+        <div className="navbar w-full z-20 bg-white dark:bg-gray-900 ">
+            <div className="flex items-center justify-between w-[90%] mx-auto px-4 py-3">
+                <a href="" className=" text-primary font-semibold tracking-widest text-2xl uppercase sm:text-3xl">
+                    DevSHOP
+                </a>
+                <button
+                    className="text-gray-500 dark:text-white md:hidden focus:outline-none"
+                    onClick={toggleMenu}
+                >
+                    <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 6h16M4 12h16m-7 6h7"
+                        />
+                    </svg>
+                </button>
+                <ul className="hidden md:flex items-center lg:gap-2">
+                    <li>
+                        <a href="/" className="item-navbar">
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <Link to="/productFilter" className="item-navbar">
+                            Product
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/blog" className="item-navbar">
+                            Contact
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/contact" className="item-navbar">
+                            Contact
+                        </Link>
+                    </li>
+                    <Search/>
+                </ul>
+                <div className="hidden md:block">
+                    <div className="flex items-center">
+                        {!isLogin ?
+                            <>
+                                <User />
+                            </> :
+                            <>
+                                <Link to="/login" className="btn-add">
+                                    Login
+                                </Link>
+                            </>}
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile Dropdown Menu */}
+            {isMenuOpen && (
+                <div className="md:hidden bg-white dark:bg-gray-800 shadow-lg">
+                    <ul className="flex flex-col items-center gap-4 p-4">
+                        <Search />
+                        <li>
+                            <a href="/#" className="inline-block font-semibold text-gray-500 hover:text-black dark:hover:text-white duration-200">
+                                Home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#shop" className="inline-block font-semibold text-gray-500 hover:text-black dark:hover:text-white duration-200">
+                                Product
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#about" className="inline-block font-semibold text-gray-500 hover:text-black dark:hover:text-white duration-200">
+                                About
+                            </a>
+                        </li>
+                        {!isLogin ?
+                            <>
+                                <User />
+                            </> :
+                            <>
+                                <Link to="/login" className="btn-add">
+                                    Login
+                                </Link>
+                            </>}
+                    </ul>
+                </div>
             )}
-        </nav>
+        </div>
     );
-}
+};
+
+export default Navbar;
