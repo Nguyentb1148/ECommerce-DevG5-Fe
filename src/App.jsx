@@ -6,6 +6,8 @@ import PageNotFound from "./pages/PageNotFound";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Home from './pages/Home/Home';
+import FilterProduct from './pages/products/FilterProduct';
+import ProductDetail from './pages/products/ProductDetail';
 
 function App() {
   React.useEffect(() => {
@@ -24,6 +26,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="*" element={<PageNotFound />} />
+        <Route path="/productFilter" element={<FilterProduct />} />
+        <Route path="/productDetail" element={<ProductDetail />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
       </Routes>
