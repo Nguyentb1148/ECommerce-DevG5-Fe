@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/PageNotFound.css'; // Optional: If you want to add custom styles
 
 function PageNotFound() {
     return (
