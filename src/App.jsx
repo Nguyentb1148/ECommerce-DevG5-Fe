@@ -6,6 +6,9 @@ import PageNotFound from "./pages/PageNotFound";
 import Login from "./pages/Auth/Login";
 import Profile from "./components/profile/Profile";
 import Register from "./pages/Auth/Register";
+import ForgotPassword from './pages/Forgerpassword/Forgotpassword';
+import ResetPassword from './pages/Forgerpassword/ResetPassword';
+
 
 function App() {
   return (
@@ -19,6 +22,8 @@ function App() {
           <Route path='/login' element={<Login/>}/>
           <Route path='/register' element={<Register/>}/>
           <Route path='/profile' element={<Profile/>}/>
+          <Route path='/Forgotpassword' element={<ForgotPassword/>}/>
+          <Route path="/reset-password" element={<ResetPassword />} /> {/* Adjusted to match query param handling */}
         </Routes>
       </BrowserRouter>
   );

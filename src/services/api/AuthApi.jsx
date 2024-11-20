@@ -26,4 +26,28 @@ const register = async (userData) => {
         throw error;
     }
 };
-export  {login,register};
+
+const forgotpassword = async (email) => {
+    try {
+        console.log("Forgot password email: ", email);
+        const response = await authApi.post('/user/forgot-password', { email }); // Wrap email in an object
+        return response; // Return the full response, not just response.data
+    } catch (error) {
+        console.error('Error in forgot password API:', error);
+        throw error;
+    }
+};
+
+const resetpassword = async (token, password) => {
+    try {
+        console.log("Reset password with token:", token, "and password:", password);
+        const response = await authApi.post('/user/reset-password', { token, newPassword: password }); // Send token and newPassword
+        return response.data;
+    } catch (error) {
+        console.error('Error in reset password API:', error);
+        throw error;
+    }
+};
+
+
+export  {login,register, forgotpassword, resetpassword};

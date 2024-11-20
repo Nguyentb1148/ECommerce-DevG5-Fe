@@ -6,7 +6,7 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import '../../styles/Login.css';
 import eyeIcon from '../../assets/images/eye.svg';
 import eyeSlashIcon from '../../assets/images/eyeSlash.svg';
-const clientId = "862905097670-678pkbir60a8v0jk4v75ua6nsu4j3k40.apps.googleusercontent.com";
+const clientId = "671407638676-nc6tsp0nscas88kneq1jt9q3itl2l6h8.apps.googleusercontent.com";
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -33,11 +33,11 @@ const Login = () => {
             const data = await login(credentials); // Call the AuthApi function
             console.log("Login successful:", data);
 
-// Decode the accessToken
+        // Decode the accessToken
             const decoded = jwtDecode(data.token.accessToken);
             console.log("Decoded JWT:", decoded);
 
-// Save the decoded token in localStorage
+        // Save the decoded token in localStorage
             localStorage.setItem("user", JSON.stringify(decoded));
             setLoggedIn(true);
         } catch (error) {
@@ -54,21 +54,23 @@ const Login = () => {
     const handleLoginSuccess = async (response) => {
         const decoded = jwtDecode(response.credential);
         console.log(decoded)
-        const { email,name,picture } = decoded;
-        alert(`${email}`)
-        localStorage.setItem('user',JSON.stringify( {email,name,picture}))
-        setLoggedIn(true)
-
-        // try {
-        //     const responseLogin = await loginViaGg(email);
-        //     if (responseLogin && responseLogin.accessToken) {
-        //         setLoggedIn(true);
-        //     } else {
-        //         setErrorMessage('Failed to log in via Google.');
-        //     }
-        // } catch (error) {
-        //     setErrorMessage('An error occurred during login via Google.');
-        // }
+        const { email } = decoded;
+        const userData = {
+            email: email,
+            password: 'Password01@',
+        };
+        try {
+            const data = await login(userData); // Call the AuthApi function
+            if (data) {
+                const decoded = jwtDecode(data.token.accessToken);
+                localStorage.setItem("user", JSON.stringify(decoded));
+                setLoggedIn(true);                
+            } else {
+                setErrorMessage('Failed to log in via Google.');
+            }
+        } catch (error) {
+            setErrorMessage('An error occurred during login via Google.');
+        }
     };
 
     const handleLoginFailure = (response) => {
@@ -129,9 +131,12 @@ const Login = () => {
                 <div className="register-link">
                     <p>Don't have an account? <Link to="/register">Register</Link></p>
                 </div>
+                <div className="register-link">
+                    <p> <Link to="/forgotpassword">forgot password ?</Link></p>
+                </div>
 
                 <div className="google-login-container">
-                    <h2>Login with Google</h2>
+                    <h2>Login with Google</h2>  
                     <GoogleOAuthProvider clientId={clientId}>
                         <GoogleLogin
                             onSuccess={handleLoginSuccess}
