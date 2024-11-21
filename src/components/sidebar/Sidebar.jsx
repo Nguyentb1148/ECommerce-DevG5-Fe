@@ -46,7 +46,7 @@ const Sidebar = () => {
 
     return (
         <div>
-            <div className="fixed grid place-items-center right-0 top-60 text-white bg-gray-900 dark:bg-gray-800 px-4 py-2 rounded-lg">
+            <div className="fixed grid place-items-center right-0 top-60 z-20 text-white bg-gray-900 dark:bg-gray-800 px-3 md:px-4 py-2 rounded-lg">
                 <div className="border-b-2 border-gray item-sidebar">
                     <button onClick={btnToTop}>
                         <BiArrowToTop className="text-3xl " />

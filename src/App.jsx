@@ -6,6 +6,8 @@ import PageNotFound from "./pages/PageNotFound";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Home from './pages/Home/Home';
+import FilterProduct from './pages/products/FilterProduct';
+import ProductDetail from './pages/products/ProductDetail';
 import AdminPage from "./pages/admin/AdminPage.jsx";
 import CreateCategory from "./components/admin/Category/CreateCategory.jsx";
 import Authentication from "./pages/Auth/Authentication.jsx";
@@ -31,12 +33,16 @@ function App() {
             <Route path="*" element={<PageNotFound />} />
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
+             <Route path="/productFilter" element={<FilterProduct />} />
+            <Route path="/productDetail" element={<ProductDetail />} />
             <Route path='/authentication' element={<Authentication />} />
+              
             <Route path="/admin" element={<AdminPage />}>
                 <Route path="create-category" element={<CreateCategory />} />
                 <Route path="categories" element={<CategoryPage />} />
                 <Route path="edit-category/:id" element={<EditCategory />} />
             </Route>
+
         </Routes>
     </BrowserRouter>
   );
