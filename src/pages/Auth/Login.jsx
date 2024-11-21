@@ -3,20 +3,12 @@ import {login} from '../../services/Api/AuthApi';
 import {Link, useNavigate} from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import '../../styles/Login.css';
 import eyeIcon from '../../assets/images/eye.svg';
 import eyeSlashIcon from '../../assets/images/eyeSlash.svg';
 const clientId = "671407638676-nc6tsp0nscas88kneq1jt9q3itl2l6h8.apps.googleusercontent.com";
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    // const [rememberMe, setRememberMe] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [loggedIn, setLoggedIn] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [passwordInputType, setPasswordInputType] = useState('password'); // New state
+
 
     const navigate = useNavigate();
     const handleSubmit = async (e) => {
