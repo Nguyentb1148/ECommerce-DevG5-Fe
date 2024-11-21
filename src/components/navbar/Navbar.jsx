@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import User from '../../pages/profile/User';
-import Search from '../search/Search'
+import Search from '../search/Search';
+
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
+
+    // Check if the user is logged in when the component mounts
+    useEffect(() => {
+        // Check localStorage for user data (or token, etc.)
+        const userData = localStorage.getItem('user'); // Replace with the actual key you're using for the user data
+        if (userData) {
+            setIsLogin(true);  // User is logged in
+        } else {
+            setIsLogin(false); // User is not logged in
+        }
+    }, []); // Empty dependency array means this runs only once after the first render
+
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
@@ -49,19 +62,17 @@ const Navbar = () => {
                             Contact
                         </Link>
                     </li>
-                    <Search/>
+                    <Search />
                 </ul>
                 <div className="hidden md:block">
                     <div className="flex items-center">
-                        {!isLogin ?
-                            <>
-                                <User />
-                            </> :
-                            <>
-                                <Link to="/login" className="btn-add">
-                                    Login
-                                </Link>
-                            </>}
+                        {isLogin ? (
+                            <User />
+                        ) : (
+                            <Link to="/login" className="btn-add">
+                                Login
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>
@@ -86,15 +97,13 @@ const Navbar = () => {
                                 About
                             </a>
                         </li>
-                        {!isLogin ?
-                            <>
-                                <User />
-                            </> :
-                            <>
-                                <Link to="/login" className="btn-add">
-                                    Login
-                                </Link>
-                            </>}
+                        {isLogin ? (
+                            <User />
+                        ) : (
+                            <Link to="/login" className="btn-add">
+                                Login
+                            </Link>
+                        )}
                     </ul>
                 </div>
             )}
