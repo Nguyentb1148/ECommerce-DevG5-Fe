@@ -6,7 +6,10 @@ import { RiLockPasswordFill } from "react-icons/ri";
 
 const User = () => {
     const [dropdown, setDropdown] = useState(true);
-
+    const logout = () => {
+        localStorage.clear();
+        window.location.href = '/';
+    };
     return (
         <div>
             <div className="avatar relative">
@@ -27,7 +30,7 @@ const User = () => {
                             <RiLockPasswordFill className="mr-2" />
                             <Link to="/">Password</Link>
                         </li>
-                        <li className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300">
+                        <li onClick={()=>{logout()}} className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300">
                             <MdLogout className="h-6 w-6 mr-2" />
                             Logout
                         </li>
