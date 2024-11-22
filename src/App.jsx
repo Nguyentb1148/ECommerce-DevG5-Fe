@@ -13,6 +13,11 @@ import CreateCategory from "./components/admin/Category/CreateCategory.jsx";
 import Authentication from "./pages/Auth/Authentication.jsx";
 import CategoryPage from "./components/admin/Category/CategoryPage.jsx";
 import EditCategory from "./components/admin/Category/EditCategory.jsx";
+import ForgotPassword from "./pages/Forgerpassword/FotgotPassword.jsx";
+import ResetPassword from "./pages/Forgerpassword/ResetPassword.jsx";
+import HomePageSeller from "./pages/seller/HomePageSeller.jsx";
+import ProductSeller from "./pages/seller/ProductSeller.jsx";
+import ProductDetailSeller from "./pages/seller/ProductDetailSeller.jsx";
 
 function App() {
   React.useEffect(() => {
@@ -36,13 +41,17 @@ function App() {
              <Route path="/productFilter" element={<FilterProduct />} />
             <Route path="/productDetail" element={<ProductDetail />} />
             <Route path='/authentication' element={<Authentication />} />
-              
+            <Route path='/forgot-password' element={<ForgotPassword />} />
+            <Route path='/reset-password' element={<ResetPassword />} />
             <Route path="/admin" element={<AdminPage />}>
                 <Route path="create-category" element={<CreateCategory />} />
                 <Route path="categories" element={<CategoryPage />} />
                 <Route path="edit-category/:id" element={<EditCategory />} />
             </Route>
-
+            <Route path='/seller' element={<HomePageSeller />}>
+                <Route path='products' element={<ProductSeller />} />
+                <Route path='productDetail/:productId' element={<ProductDetailSeller />} />
+            </Route>
         </Routes>
     </BrowserRouter>
   );

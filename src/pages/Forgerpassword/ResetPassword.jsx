@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import '../../styles/ResetPassword.css';
 import { resetPassword } from '../../services/Api/AuthApi';
 
 const ResetPassword = () => {
@@ -42,14 +41,68 @@ const ResetPassword = () => {
         }
     };
 
+    // Inline styles
+    const styles = {
+        container: {
+            width: '100%',
+            maxWidth: '400px',
+            margin: '50px auto',
+            padding: '20px',
+            border: '1px solid #ccc',
+            borderRadius: '8px',
+            backgroundColor: '#f9f9f9',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            textAlign: 'center',
+            fontFamily: "'Arial', sans-serif",
+        },
+        formGroup: {
+            marginBottom: '15px',
+        },
+        label: {
+            display: 'block',
+            marginBottom: '5px',
+            fontWeight: 'bold',
+            fontSize: '14px',
+        },
+        input: {
+            width: '100%',
+            padding: '10px',
+            fontSize: '14px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+        },
+        button: {
+            width: '100%',
+            padding: '10px',
+            fontSize: '16px',
+            backgroundColor: '#007BFF',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease',
+        },
+        buttonDisabled: {
+            backgroundColor: '#a9a9a9',
+        },
+        successMessage: {
+            color: 'green',
+            marginBottom: '10px',
+        },
+        errorMessage: {
+            color: 'red',
+            marginBottom: '10px',
+        },
+    };
+
     return (
-        <div className="reset-password-container">
+        <div style={styles.container}>
             <h2>Reset Your Password</h2>
-            {errorMessage && <div className="error-message">{errorMessage}</div>}
-            {successMessage && <div className="success-message">{successMessage}</div>}
+            {errorMessage && <div style={styles.errorMessage}>{errorMessage}</div>}
+            {successMessage && <div style={styles.successMessage}>{successMessage}</div>}
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="password">New Password:</label>
+                <div style={styles.formGroup}>
+                    <label htmlFor="password" style={styles.label}>New Password:</label>
                     <input
                         type="password"
                         id="password"
@@ -57,10 +110,11 @@ const ResetPassword = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         disabled={loading}
+                        style={styles.input}
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="confirmPassword">Confirm Password:</label>
+                <div style={styles.formGroup}>
+                    <label htmlFor="confirmPassword" style={styles.label}>Confirm Password:</label>
                     <input
                         type="password"
                         id="confirmPassword"
@@ -68,9 +122,14 @@ const ResetPassword = () => {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                         disabled={loading}
+                        style={styles.input}
                     />
                 </div>
-                <button type="submit" disabled={loading}>
+                <button
+                    type="submit"
+                    disabled={loading}
+                    style={{ ...styles.button, ...(loading && styles.buttonDisabled) }}
+                >
                     {loading ? 'Resetting...' : 'Reset Password'}
                 </button>
             </form>
