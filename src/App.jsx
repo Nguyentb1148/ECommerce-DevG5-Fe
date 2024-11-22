@@ -7,9 +7,11 @@ import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import ForgotPassword from './pages/Forgerpassword/Forgotpassword';
 import ResetPassword from './pages/Forgerpassword/ResetPassword';
-
+import ProfilePage from './pages/profile/Profile';
+import User from './pages/profile/User';
 import Home from './pages/Home/Home';
 import Navbar from './components/navbar/Navbar';
+import ChangePassword from './pages/profile/ChangePassword';
 
 function App() {
   React.useEffect(() => {
@@ -36,6 +38,13 @@ function App() {
           {/* <Route path='/profile' element={<Profile/>}/> */}
           <Route path='/Forgotpassword' element={<ForgotPassword/>}/>
           <Route path="/reset-password" element={<ResetPassword />} /> {/* Adjusted to match query param handling */}
+          <Route path="/user" element={<User />}>
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="change-password" element={<ChangePassword />} />
+          </Route>
+
+          
+
         </Routes>
       </BrowserRouter>
   );
