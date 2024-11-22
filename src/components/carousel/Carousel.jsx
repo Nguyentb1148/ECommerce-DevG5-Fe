@@ -26,17 +26,17 @@ const CarouselData = [
     },
 ]
 const Carousel = () => {
-
     var settings = {
         dots: true,
         infinite: true,
+        arrows: false,
         speed: 800,
         slidesToShow: 1,
         slidesToScroll: 1,
     };
     return (
         <div className="w-[90%] mx-auto mt-[79px]">
-            <div className="carousel-bg-color overflow-hidden rounded-3xl min-h-[550px] sm:min-h-[650px] flex justify-center items-center">
+            <div className="bg-gray-300/80 dark:bg-gray-800 dark:text-whiteoverflow-hidden rounded-3xl min-h-[550px] sm:min-h-[650px] flex justify-center items-center">
                 <div className="w-full pb-8 sm:pb-0">
                     <Slider {...settings}>
                         {CarouselData.map((data) => (
@@ -70,7 +70,7 @@ const Carousel = () => {
                                             data-aos-duration="500"
                                             data-aos-once="true"
                                         >
-                                            <button>Shop now</button>
+                                            <button className="btn-add">Shop now</button>
                                         </div>
                                     </div>
                                     <div className="order-1 sm:order-2">

@@ -301,26 +301,25 @@ const ProductsData = [
 ];
 
 const ListProduct = () => {
-  const itemsPerPage = 8; // Số lượng sản phẩm tải mỗi lần
+  const itemsPerPage = 8; 
   const [products, setProducts] = useState(ProductsData.slice(0, itemsPerPage));
   const [hasMore, setHasMore] = useState(true);
 
   const fetchMoreProducts = () => {
     const currentLength = products.length;
     if (currentLength >= ProductsData.length) {
-      setHasMore(false); // Không còn sản phẩm để tải
+      setHasMore(false); 
       return;
     }
 
-    // Thêm khoảng delay
     setTimeout(() => {
       const nextProducts = ProductsData.slice(currentLength, currentLength + itemsPerPage);
       setProducts((prevProducts) => [...prevProducts, ...nextProducts]);
-    }, 2000); // Delay 1 giây
+    }, 1500); 
   };
 
   return (
-    <div className="w-[90%] mx-auto ">
+    <div className="w-[90%] mx-auto max-md:w-full">
       <InfiniteScroll
         dataLength={products.length}
         next={fetchMoreProducts}
@@ -338,23 +337,23 @@ const ListProduct = () => {
           </div>
         }
         endMessage={
-            <></>
+          <></>
         }
         style={{ overflow: 'unset' }}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 place-items-center">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 place-items-center">
           {products.map((data) => (
             <div
               data-aos="fade-up"
-              className="px-12 py-3 rounded-3xl grid place-items-center border-2 border-[#0000001a] dark:border-[#ffffff40]"
+              className="px-4 md:px-12 xl:px-14 py-3 rounded-3xl grid place-items-center border-2 border-[#00000040] dark:border-[#ffffff40]"
               key={data.id}
             >
-              <Link to="/product">
+              <Link to="/productDetail">
                 <div className="relative">
                   <img
                     src={data.img}
                     alt={data.title}
-                    className="h-[130px] w-[130px] object-cover rounded-md bg-transparent"
+                    className="h-[110px] w-[110px] md:h-[130px] md:w-[130px] object-cover rounded-md bg-transparent"
                   />
                 </div>
               </Link>

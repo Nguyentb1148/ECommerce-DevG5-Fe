@@ -9,21 +9,21 @@ const BlogData = [
         subtitle: "minima facere deserunt vero illo beatae deleniti eius dolores consequuntur, eligendi corporis maiores molestiae laudantium. Porro?",
         published: "Jan 20, 2024 by Satya",
         image: Image1,
-        aosDelay: "0"
+        aosDelay: "300"
     },
     {
         title: "How to choose perfect gadget",
         subtitle: "minima facere deserunt vero illo beatae deleniti eius dolores consequuntur, eligendi corporis maiores molestiae laudantium. Porro?",
         published: "Jan 20, 2024 by Satya",
         image: Image2,
-        aosDelay: "200"
+        aosDelay: "400"
     },
     {
         title: "How to choose perfect gadget",
         subtitle: "minima facere deserunt vero illo beatae deleniti eius dolores consequuntur, eligendi corporis maiores molestiae laudantium. Porro?",
         published: "Jan 20, 2024 by Satya",
         image: Image3,
-        aosDelay: "400"
+        aosDelay: "500"
     }
 ]
 

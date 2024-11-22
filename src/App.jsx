@@ -12,6 +12,15 @@ import User from './pages/profile/User';
 import Home from './pages/Home/Home';
 import Navbar from './components/navbar/Navbar';
 import ChangePassword from './pages/profile/ChangePassword';
+import FilterProduct from './pages/products/FilterProduct';
+import ProductDetail from './pages/products/ProductDetail';
+import Authentication from "./pages/Auth/Authentication.jsx";
+import Admin from './pages/admin/home/Admin.jsx';
+import DashboardAdmin from './pages/admin/dashboard/DashboardAdmin.jsx';
+import CategoryManage from './pages/admin/category/CategoryManage.jsx';
+import UserManage from './pages/admin/user/UserManage.jsx';
+
+
 
 function App() {
   React.useEffect(() => {
@@ -26,27 +35,32 @@ function App() {
     AOS.refresh()
   }, [])
   return (
-      <BrowserRouter>
-        <div style={{marginBottom: '50px'}}>
-          <Navbar/>
-        </div>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="*" element={<PageNotFound />} />
-          <Route path='/login' element={<Login/>}/>
-          <Route path='/register' element={<Register/>}/>
-          {/* <Route path='/profile' element={<Profile/>}/> */}
-          <Route path='/Forgotpassword' element={<ForgotPassword/>}/>
+
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="*" element={<PageNotFound />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path="/productFilter" element={<FilterProduct />} />
+        <Route path="/productDetail" element={<ProductDetail />} />
+        <Route path='/authentication' element={<Authentication />} />
+         <Route path='/Forgotpassword' element={<ForgotPassword/>}/>
           <Route path="/reset-password" element={<ResetPassword />} /> {/* Adjusted to match query param handling */}
           <Route path="/user" element={<User />}>
             <Route path="profile" element={<ProfilePage />} />
             <Route path="change-password" element={<ChangePassword />} />
           </Route>
 
-          
+        <Route path="/admin" element={<Admin />}>
+          <Route path="" element={<DashboardAdmin />} />
+          <Route path="category" element={<CategoryManage />} />
+          <Route path="user" element={<UserManage />} />
+        </Route>
 
-        </Routes>
-      </BrowserRouter>
+      </Routes>
+    </BrowserRouter>
+
   );
 }
 

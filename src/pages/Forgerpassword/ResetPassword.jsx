@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+
 import { resetpassword } from '../../services/Api/AuthApi';
 import { FcCheckmark } from "react-icons/fc";  // Import the green checkmark icon
+
 
 const ResetPassword = () => {
     const [password, setPassword] = useState('');
@@ -9,8 +11,10 @@ const ResetPassword = () => {
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+
     const [passwordMatch, setPasswordMatch] = useState(null); // State to track password match
     const [showSuccess, setShowSuccess] = useState(false); // Track if success is shown
+
     const [searchParams] = useSearchParams(); // Use searchParams to get query params
     const token = searchParams.get('token'); // Extract token from query string
     const navigate = useNavigate();
@@ -26,16 +30,19 @@ const ResetPassword = () => {
         setLoading(true);
         setErrorMessage('');
         setSuccessMessage('');
+
         setShowSuccess(false); // Reset success message visibility
 
         if (password !== confirmPassword) {
             setErrorMessage("Passwords do not match.");
             setPasswordMatch(false); // Passwords don't match
+
             setLoading(false);
             return;
         }
 
         try {
+
             const response = await resetpassword(token, password); // Call the fixed API function
             setSuccessMessage('Password reset successfully!');
             setPasswordMatch(true); // Passwords match, show success
@@ -44,6 +51,7 @@ const ResetPassword = () => {
         } catch (error) {
             setErrorMessage(error.response?.data?.message || "An error occurred while resetting the password.");
             setPasswordMatch(false); // In case of error
+
         } finally {
             setLoading(false);
         }
@@ -130,8 +138,42 @@ const ResetPassword = () => {
                     </button>
                 </div>
             </div>
+=======
+        <div className="reset-password-container">
+            <h2>Reset Your Password</h2>
+            {errorMessage && <div className="error-message">{errorMessage}</div>}
+            {successMessage && <div className="success-message">{successMessage}</div>}
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="password">New Password:</label>
+                    <input
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        disabled={loading}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="confirmPassword">Confirm Password:</label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        disabled={loading}
+                    />
+                </div>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Resetting...' : 'Reset Password'}
+                </button>
+            </form>
+
         </div>
     );
 };
 
 export default ResetPassword;
+

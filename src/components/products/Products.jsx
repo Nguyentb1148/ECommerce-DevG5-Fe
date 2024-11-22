@@ -174,7 +174,7 @@ const Products = () => {
                         <div
                             data-aos="fade-up"
                             data-aos-delay="200"
-                            className="px-16 py-5 rounded-3xl grid place-items-center border-2 border-[#0000001a] dark:border-[#ffffff40]"
+                            className="px-16 py-5 rounded-3xl grid place-items-center border-2 border-[#00000040] dark:border-[#ffffff40]"
                             key={data.id}>
                             <Link to="/product">
                                 <div className="relative">
