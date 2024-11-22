@@ -345,7 +345,7 @@ const ListProduct = () => {
           {products.map((data) => (
             <div
               data-aos="fade-up"
-              className="px-4 md:px-12 xl:px-14 py-3 rounded-3xl grid place-items-center border-2 border-[#0000001a] dark:border-[#ffffff40]"
+              className="px-4 md:px-12 xl:px-14 py-3 rounded-3xl grid place-items-center border-2 border-[#00000040] dark:border-[#ffffff40]"
               key={data.id}
             >
               <Link to="/productDetail">
