@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import DataTable from 'react-data-table-component'
 import AddCategory from '../../../components/category/AddCategory';
 import EditCategory from '../../../components/category/EditCategory';
+import Image from "../../../assets/robot-assistant.png"
 const CategoryManage = () => {
   // Open Modal
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
@@ -39,6 +40,19 @@ const CategoryManage = () => {
       center: true,
     },
     {
+      name: "Image",
+      selector: (row) => row.image, 
+      cell: (row) => (
+        <img
+          src={row.image} 
+          alt={row.name} 
+          className="w-10 h-10 object-cover rounded-md" 
+        />
+      ),
+      sortable: false, 
+      center: true,
+    },
+    {
       name: 'Action',
       center: true,
       cell: (row) => (
@@ -62,84 +76,10 @@ const CategoryManage = () => {
   const data = [
     {
       id: 1,
-      name: "phuoc",
-      email: "phuoc@gmail.com",
-      age: "21"
+      name: "phone",
+      image: Image,
     },
-    {
-      id: 2,
-      name: "huy",
-      email: "huy@gmail.com",
-      age: "22"
-    },
-    {
-      id: 3,
-      name: "phong",
-      email: "phong@gmail.com",
-      age: "23"
-    }, {
-      id: 4,
-      name: "cuong",
-      email: "cuong@gmail.com",
-      age: "24"
-    },
-    {
-      id: 5,
-      name: "vinh",
-      email: "vinh@gmail.com",
-      age: "25"
-    },
-    {
-      id: 6,
-      name: "dat",
-      email: "dat@gmail.com",
-      age: "26"
-    }, {
-      id: 7,
-      name: "phong",
-      email: "phong@gmail.com",
-      age: "23"
-    }, {
-      id: 8,
-      name: "cuong",
-      email: "cuong@gmail.com",
-      age: "24"
-    },
-    {
-      id: 9,
-      name: "vinh",
-      email: "vinh@gmail.com",
-      age: "25"
-    },
-    {
-      id: 10,
-      name: "dat",
-      email: "dat@gmail.com",
-      age: "26"
-    },
-    {
-      id: 11,
-      name: "phong",
-      email: "phong@gmail.com",
-      age: "23"
-    }, {
-      id: 12,
-      name: "cuong",
-      email: "cuong@gmail.com",
-      age: "24"
-    },
-    {
-      id: 13,
-      name: "vinh",
-      email: "vinh@gmail.com",
-      age: "25"
-    },
-    {
-      id: 14,
-      name: "dat",
-      email: "dat@gmail.com",
-      age: "26"
-    }
+
   ]
   // Button delete
   const handleDelete = (row) => {
