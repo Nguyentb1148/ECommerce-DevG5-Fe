@@ -73,22 +73,22 @@ const ProfilePage = () => {
           <h2 className="text-2xl font-semibold mb-6">Dashboard</h2>
           <ul>
             <li className="mb-4">
-              <button onClick={() => handleNavigation("/profile")} className="hover:text-gray-300">
+              <button onClick={() => handleNavigation("/user/profile")} className="hover:text-gray-300">
                 Profile
               </button>
             </li>
             <li className="mb-4">
-              <button onClick={() => handleNavigation("/change-password")} className="hover:text-gray-300">
+              <button onClick={() => handleNavigation("/user/change-password")} className="hover:text-gray-300">
                 Change Password
               </button>
             </li>
             <li className="mb-4">
-              <button onClick={() => handleNavigation("/product-history")} className="hover:text-gray-300">
+              <button onClick={() => handleNavigation("/user/product-history")} className="hover:text-gray-300">
                 Product History
               </button>
             </li>
             <li className="mb-4">
-              <button onClick={() => handleNavigation("/voucher")} className="hover:text-gray-300">
+              <button onClick={() => handleNavigation("/user/voucher")} className="hover:text-gray-300">
                 Voucher
               </button>
             </li>

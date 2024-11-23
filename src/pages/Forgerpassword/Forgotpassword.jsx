@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { forgotpassword } from '../../services/Api/AuthApi';
-import { FcCheckmark } from 'react-icons/fc';  // Import the checkmark icon
+import { FcCheckmark } from 'react-icons/fc';
+import {forgotPassword} from "../../services/api/AuthApi.jsx";  // Import the checkmark icon
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -20,7 +20,7 @@ const ForgotPassword = () => {
         setShowSuccess(false);  // Hide success message when starting a new request
 
         try {
-            const response = await forgotpassword(email);
+            const response = await forgotPassword(email);
             console.log("Response data: ", response);
             setMessage(response.message); // Adjusted to match correct property
             setShowSuccess(true);  // Show success if the response is positive
