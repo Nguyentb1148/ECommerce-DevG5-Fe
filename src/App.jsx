@@ -5,7 +5,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import PageNotFound from "./pages/PageNotFound";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import ForgotPassword from './pages/Forgerpassword/Forgotpassword';
+import ResetPassword from './pages/Forgerpassword/ResetPassword';
+import ProfilePage from './pages/profile/Profile';
+import User from './pages/profile/User';
 import Home from './pages/Home/Home';
+import Navbar from './components/navbar/Navbar';
+import ChangePassword from './pages/profile/ChangePassword';
 import FilterProduct from './pages/products/FilterProduct';
 import ProductDetail from './pages/products/ProductDetail';
 import Authentication from "./pages/Auth/Authentication.jsx";
@@ -29,6 +35,7 @@ function App() {
     AOS.refresh()
   }, [])
   return (
+
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -38,6 +45,12 @@ function App() {
         <Route path="/productFilter" element={<FilterProduct />} />
         <Route path="/productDetail" element={<ProductDetail />} />
         <Route path='/authentication' element={<Authentication />} />
+         <Route path='/Forgotpassword' element={<ForgotPassword/>}/>
+          <Route path="/reset-password" element={<ResetPassword />} /> {/* Adjusted to match query param handling */}
+          <Route path="/user" element={<User />}>
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="change-password" element={<ChangePassword />} />
+          </Route>
 
         <Route path="/admin" element={<Admin />}>
           <Route path="" element={<DashboardAdmin />} />
@@ -47,6 +60,7 @@ function App() {
 
       </Routes>
     </BrowserRouter>
+
   );
 }
 

@@ -26,6 +26,7 @@ const register = async (userData) => {
     }
 };
 
+
 const forgotPassword = async (email) => {
     try {
         console.log("Forgot password email: ", email);
@@ -37,6 +38,7 @@ const forgotPassword = async (email) => {
     }
 };
 
+
 const resetPassword = async (token, password) => {
     try {
         console.log("Reset password with token:", token, "and password:", password);
@@ -47,6 +49,7 @@ const resetPassword = async (token, password) => {
         throw error;
     }
 };
+
 
 
 export  {login,register, forgotPassword, resetPassword};
