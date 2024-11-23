@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { resetpassword } from '../../services/Api/AuthApi';
-import { FcCheckmark } from "react-icons/fc";  // Import the green checkmark icon
+import { FcCheckmark } from "react-icons/fc";
+import {resetPassword} from "../../services/api/AuthApi.jsx";  // Import the green checkmark icon
 
 
 const ResetPassword = () => {
@@ -43,7 +43,7 @@ const ResetPassword = () => {
 
         try {
 
-            const response = await resetpassword(token, password); // Call the fixed API function
+            const response = await resetPassword(token, password); // Call the fixed API function
             setSuccessMessage('Password reset successfully!');
             setPasswordMatch(true); // Passwords match, show success
             setShowSuccess(true); // Show the success indicator
@@ -138,7 +138,6 @@ const ResetPassword = () => {
                     </button>
                 </div>
             </div>
-=======
         <div className="reset-password-container">
             <h2>Reset Your Password</h2>
             {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -171,6 +170,7 @@ const ResetPassword = () => {
                 </button>
             </form>
 
+        </div>
         </div>
     );
 };

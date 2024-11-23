@@ -10,7 +10,6 @@ import ResetPassword from './pages/Forgerpassword/ResetPassword';
 import ProfilePage from './pages/profile/Profile';
 import User from './pages/profile/User';
 import Home from './pages/Home/Home';
-import Navbar from './components/navbar/Navbar';
 import ChangePassword from './pages/profile/ChangePassword';
 import FilterProduct from './pages/products/FilterProduct';
 import ProductDetail from './pages/products/ProductDetail';
@@ -19,6 +18,7 @@ import Admin from './pages/admin/home/Admin.jsx';
 import DashboardAdmin from './pages/admin/dashboard/DashboardAdmin.jsx';
 import CategoryManage from './pages/admin/category/CategoryManage.jsx';
 import UserManage from './pages/admin/user/UserManage.jsx';
+import BrandManage from "./pages/admin/brand/BrandManage.jsx";
 
 
 
@@ -55,6 +55,7 @@ function App() {
         <Route path="/admin" element={<Admin />}>
           <Route path="" element={<DashboardAdmin />} />
           <Route path="category" element={<CategoryManage />} />
+          <Route path="brand" element={<BrandManage />} />
           <Route path="user" element={<UserManage />} />
         </Route>
 
