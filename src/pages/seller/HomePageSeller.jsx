@@ -1,5 +1,6 @@
 import React from "react";
 import {Outlet} from "react-router-dom";
+import NewProductPage from "./NewProductPage.jsx";
 
 export default function HomePageSeller() {
     return (
@@ -9,8 +10,9 @@ export default function HomePageSeller() {
                 <nav>
                     <ul style={styles.navList}>
                         <li style={styles.navItem}><a href="/dashboard" style={styles.navLink}>Dashboard</a></li>
-                        <li style={styles.navItem}><a href="/seller/products" style={styles.navLink}>Products</a></li>
-                        <li style={styles.navItem}><a href="/orders" style={styles.navLink}>Orders</a></li>
+                        <li style={styles.navItem}><a href="/seller/product" style={styles.navLink}>Products</a></li>
+                        <li style={styles.navItem}><a href="/seller/product-detail" style={styles.navLink}>Product details</a></li>
+                        <li style={styles.navItem}><a href="/seller/create-product" style={styles.navLink}>new product</a></li>
                         <li style={styles.navItem}><a href="/analytics" style={styles.navLink}>Analytics</a></li>
                         <li style={styles.navItem}><a href="/settings" style={styles.navLink}>Settings</a></li>
                     </ul>
