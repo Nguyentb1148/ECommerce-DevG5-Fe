@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 
-import { deleteBranch, getBranches } from "../../../services/api/BrandesApi.jsx";
+import { deleteBrand, getBrands} from "../../../services/api/BrandsApi.jsx";
 import AddBrand from "../../../components/brand/AddBrand.jsx";
 import EditBrand from "../../../components/brand/EditBrand.jsx";
 
@@ -35,7 +35,7 @@ const BrandManage = () => {
     useEffect(() => {
         const fetchBranches = async () => {
             try {
-                const data = await getBranches();
+                const data = await getBrands();
                 setBranches(data);
                 console.log("Fetched branches:", data);
             } catch (error) {
@@ -52,7 +52,7 @@ const BrandManage = () => {
         const confirm = window.confirm(`Are you sure you want to delete ${row.name}?`);
         if (confirm) {
             try {
-                await deleteBranch(row._id);
+                await deleteBrand(row._id);
                 setBranches((prevBranches) =>
                     prevBranches.filter((branch) => branch._id !== row._id)
                 );

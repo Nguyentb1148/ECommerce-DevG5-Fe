@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { deleteImage, uploadImage } from "../../configs/Cloudinary.jsx";
-import { updateBranch } from "../../services/api/BrandesApi.jsx";
+import { updateBrand} from "../../services/api/BrandsApi.jsx";
 
 const EditBranch = ({ onClose, branch }) => {
     const [branchName, setBranchName] = useState(branch.name);
@@ -60,7 +60,7 @@ const EditBranch = ({ onClose, branch }) => {
             };
 
             // Step 3: Update branch via API
-            await updateBranch(branch._id, updatedBranch);
+            await updateBrand(branch._id, updatedBranch);
 
             alert('Branch updated successfully!');
             onClose(); // Close the modal after successful update

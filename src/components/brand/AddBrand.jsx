@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { uploadImage } from "../../configs/Cloudinary.jsx";
-import { createBranch } from "../../services/api/BrandesApi.jsx";
+import { createBrand} from "../../services/api/BrandsApi.jsx";
 
 const AddBranch = ({ onClose, navigate }) => {
     const [branchName, setBranchName] = useState("");
@@ -47,7 +47,7 @@ const AddBranch = ({ onClose, navigate }) => {
             };
 
             // Step 3: Send branch data to backend API (Create branch)
-            await createBranch(branchData);
+            await createBrand(branchData);
 
             // On success, reset form and close modal
             setBranchName("");
