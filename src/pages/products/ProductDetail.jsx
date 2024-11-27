@@ -158,7 +158,7 @@ const ProductDetail = () => {
             <h2 className="text-lg sm:text-xl font-semibold mb-4 dark:text-white">Đặc Điểm Nổi Bật</h2>
             <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
               {features.map((feature, index) => (
-                <li key={index}>{feature}</li>
+                <li key={index} dangerouslySetInnerHTML={{ __html: feature }}></li>
               ))}
             </ul>
           </div>
