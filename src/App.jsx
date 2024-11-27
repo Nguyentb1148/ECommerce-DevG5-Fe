@@ -22,8 +22,7 @@ import BrandManage from "./pages/admin/brand/BrandManage.jsx";
 import HomePageSeller from "./pages/seller/HomePageSeller.jsx";
 import ProductDetailSeller from "./pages/seller/ProductDetailSeller.jsx";
 import ProductSeller from "./pages/seller/ProductSeller.jsx";
-import NewProductPage from "./pages/seller/NewProductPage.jsx";
-import Froala from "./pages/seller/Froala.jsx";
+import NewProduct from "./pages/seller/NewProduct.jsx";
 
 
 function App() {
@@ -58,8 +57,8 @@ function App() {
                 <Route path='/seller' element={<HomePageSeller/>}>
                     <Route path='product-detail' element={<ProductDetailSeller/>}/>
                     <Route path='product' element={<ProductSeller/>}/>
-                    <Route path='create-product' element={<NewProductPage/>}/>
-                    <Route path='Froala' element={<Froala/>}/>
+                    <Route path='create-product' element={<NewProduct/>}/>
+
                 </Route>
                 <Route path="/admin" element={<Admin/>}>
                     <Route path="" element={<DashboardAdmin/>}/>

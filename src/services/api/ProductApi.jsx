@@ -3,6 +3,8 @@ import authApi from "../AxiosConfig.jsx";
 // Create a product
 export const createProduct = async (productData) => {
     try {
+        console.log("Product send request: ", productData);
+
         const response = await authApi.post("/products", productData);
         return response.data;
     } catch (error) {

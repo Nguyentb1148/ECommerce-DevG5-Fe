@@ -48,12 +48,12 @@ const API_SECRET = '9YKI8kwjThQ1BGvF99_lYem4Src';
 };
 
 // Function to upload the image to Cloudinary
-export const uploadImage = async (imageFile, folderName, categoryName) => {
+export const uploadImage = async (imageFile, folderName, public_id) => {
     const formData = new FormData();
     formData.append('file', imageFile);
     formData.append('upload_preset', UPLOAD_PRESET);
     formData.append('folder', folderName);           // Specify the folder
-    formData.append('public_id', categoryName);     // Set the public_id to categoryName
+    formData.append('public_id', public_id);     // Set the public_id to categoryName
 
     try {
         const response = await fetch(UPLOAD_URL, {
@@ -70,6 +70,37 @@ export const uploadImage = async (imageFile, folderName, categoryName) => {
         }
     } catch (error) {
         console.error('Error uploading image:', error);
+        throw error;
+    }
+};
+// Function to upload the DOC file to Cloudinary
+export const uploadDoc = async (docFile, folderName, categoryName) => {
+    const formData = new FormData();
+    formData.append('file', docFile);  // Append the DOC file
+    formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('folder', folderName);            // Specify the folder
+    formData.append('public_id', categoryName);      // Set the public_id to categoryName
+    formData.append('resource_type', 'raw');         // Specify that it's a raw file (DOCX)
+
+    // Use the raw upload endpoint for non-image files (like DOCX)
+    const UPLOAD_URL_RAW = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload`;
+
+    try {
+        const response = await fetch(UPLOAD_URL_RAW, {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await response.json();
+        console.log('Cloudinary DOC Upload Response:', data);
+
+        if (response.ok) {
+            return data;  // The Cloudinary response contains the uploaded file URL and other details
+        } else {
+            throw new Error(data.message || 'Upload failed');
+        }
+    } catch (error) {
+        console.error('Error uploading DOC file:', error);
         throw error;
     }
 };

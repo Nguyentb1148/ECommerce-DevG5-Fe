@@ -1,121 +1,9 @@
-import { useState, useEffect } from "react";
-import { getCategories } from "../../services/api/CategoryApi.jsx";
-import { getBrands } from "../../services/api/BrandsApi.jsx";
-import { uploadImage } from "../../configs/Cloudinary.jsx";
-
-const styles = {
-    container: {
-        padding: "20px",
-        fontFamily: "Arial, sans-serif",
-        backgroundColor: "#f4f4f4",
-        display: "flex",
-        flexDirection: "column",
-        gap: "20px",
-        margin: "0 auto",
-    },
-    section: {
-        backgroundColor: "#fff",
-        padding: "20px",
-        borderRadius: "8px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    },
-    header: {
-        textAlign: "center",
-        color: "#333",
-        marginBottom: "20px",
-    },
-    input: {
-        width: "100%",
-        padding: "10px",
-        marginBottom: "10px",
-        borderRadius: "4px",
-        border: "1px solid #ccc",
-    },
-    select: {
-        width: "100%",
-        padding: "10px",
-        marginBottom: "10px",
-        borderRadius: "4px",
-        border: "1px solid #ccc",
-    },
-    editor: {
-        border: "1px solid #ccc",
-        borderRadius: "4px",
-        padding: "10px",
-        minHeight: "200px",
-        backgroundColor: "#fff",
-        marginBottom: "10px",
-    },
-    button: {
-        padding: "12px 20px",
-        backgroundColor: "#007bff",
-        color: "#fff",
-        border: "none",
-        borderRadius: "4px",
-        fontSize: "16px",
-        width: "100%",
-        opacity: 0.6,
-        cursor: "not-allowed",
-    },
-    buttonEnabled: {
-        opacity: 1,
-        cursor: "pointer",
-    },
-    errorText: {
-        color: "red",
-        fontSize: "12px",
-        marginBottom: "10px",
-    },
-    imagePreviewContainer: {
-        display: "flex",
-        flexDirection: "row", // Change to row for horizontal alignment
-        marginTop: "10px",
-    },
-    imagePreview: {
-        display: "flex",
-        alignItems: "center",
-        marginBottom: "10px",
-    },
-    image: {
-        width: "100px",
-        height: "100px",
-        objectFit: "cover",
-        marginRight: "10px",
-    },
-    deleteButton: {
-        backgroundColor: "red",
-        color: "white",
-        border: "none",
-        cursor: "pointer",
-        padding: "5px",
-    },
-    mainImage: {
-        flex: 1,
-        textAlign: "center",
-        padding: "10px",
-        border: "1px solid #ccc",
-        borderRadius: "4px",
-        backgroundColor: "#f4f4f4",
-        maxWidth: "70%", // Add maximum width for proper layout
-    },
-    thumbnails: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "column", // Keep this column direction for thumbnails
-        gap: "10px",
-        maxHeight: "400px",
-        overflowY: "auto",
-        marginLeft: "20px", // Add some spacing between the main image and thumbnails
-    },
-    thumbnail: {
-        width: "80px",
-        height: "80px",
-        objectFit: "cover",
-        cursor: "pointer",
-        borderRadius: "4px",
-        border: "1px solid #ccc",
-    },
-};
+import {useEffect, useState} from "react";
+import {getCategories} from "../../services/api/CategoryApi.jsx";
+import {getBrands} from "../../services/api/BrandsApi.jsx";
+import {useNavigate} from "react-router-dom";
+import {useFroala} from "../../hooks/useFroala.jsx";
+import FroalaEditorComponent from "react-froala-wysiwyg";
 
 const NewProductPage = () => {
     const [productName, setProductName] = useState("");
@@ -127,6 +15,8 @@ const NewProductPage = () => {
     const [isFormValid, setIsFormValid] = useState(false);
     const [images, setImages] = useState([]);
     const [mainImage, setMainImage] = useState(null);
+    const { model, setModel, editorRef, exportToDoc } = useFroala();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -145,9 +35,7 @@ const NewProductPage = () => {
     useEffect(() => {
         const validateForm = () => {
             const newErrors = {};
-            if (!productName.trim()) {
-                newErrors.productName = "Product Name is required.";
-            }
+            if (!productName.trim()) newErrors.productName = "Product Name is required.";
             if (!selectedCategory) newErrors.selectedCategory = "Please select a category.";
             if (!selectedBrand) newErrors.selectedBrand = "Please select a brand.";
             setErrors(newErrors);
@@ -158,10 +46,7 @@ const NewProductPage = () => {
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
-        const newImages = files.map((file) => ({
-            file,
-            name: file.name,
-        }));
+        const newImages = files.map((file) => ({ file, name: file.name }));
         setImages((prevImages) => [...prevImages, ...newImages]);
         setMainImage(URL.createObjectURL(files[0]));
     };
@@ -177,6 +62,7 @@ const NewProductPage = () => {
             productName,
             selectedCategory,
             selectedBrand,
+            description: model,
             images,
         });
 
@@ -184,7 +70,7 @@ const NewProductPage = () => {
             try {
                 const folderName = `product/${productName}`;
                 const uniqueName = image.name;
-                console.log('image folder: ' + folderName + " unique name: " + uniqueName);
+                console.log("image folder: " + folderName + " unique name: " + uniqueName);
                 // const response = await uploadImage(image.file, folderName, uniqueName);
                 // console.log("Cloudinary response: ", response);
             } catch (error) {
@@ -198,101 +84,130 @@ const NewProductPage = () => {
     };
 
     return (
-        <div style={styles.container}>
-            <div style={styles.section}>
-                <h2 style={styles.header}>Product Details</h2>
-
-                <input
-                    type="text"
-                    value={productName}
-                    onChange={(e) => setProductName(e.target.value)}
-                    placeholder="Product Name"
-                    style={styles.input}
-                />
-                {errors.productName && <div style={styles.errorText}>{errors.productName}</div>}
-
-                <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    style={styles.select}
-                >
-                    <option value="">Select Category</option>
-                    {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                            {category.name}
-                        </option>
-                    ))}
-                </select>
-                {errors.selectedCategory && <div style={styles.errorText}>{errors.selectedCategory}</div>}
-
-                <select
-                    value={selectedBrand}
-                    onChange={(e) => setSelectedBrand(e.target.value)}
-                    style={styles.select}
-                >
-                    <option value="">Select Brand</option>
-                    {brands.map((brand) => (
-                        <option key={brand.id} value={brand.id}>
-                            {brand.name}
-                        </option>
-                    ))}
-                </select>
-                {errors.selectedBrand && <div style={styles.errorText}>{errors.selectedBrand}</div>}
-
-                <input
-                    type="file"
-                    onChange={handleImageChange}
-                    style={styles.input}
-                    multiple
-                />
-
-                {/* Image Preview Container with Flexbox */}
-                <div style={styles.imagePreviewContainer}>
-                    <div style={styles.mainImage}>
-                        {mainImage ? (
-                            <img
-                                src={mainImage}
-                                alt="Main"
-                                style={{width: "100%", height: "100%", maxHeight: "400px", maxWidth: "400px"}}
-                            />
-                        ) : (
-                            <p>No image selected</p>
-                        )}
+        <div className="p-8 bg-gray-100">
+            <div className="grid grid-cols-2 gap-8 bg-white rounded-lg shadow-lg p-8">
+                {/* Left Section: Product Info */}
+                <div>
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Product Details</h2>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700">Product Name</label>
+                        <input
+                            type="text"
+                            value={productName}
+                            onChange={(e) => setProductName(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter product name"
+                        />
+                        {errors.productName && <p className="text-red-500 text-sm">{errors.productName}</p>}
                     </div>
-
-                    <div style={styles.thumbnails}>
-                        {images.map((image, index) => (
-                            <div key={index} style={styles.imagePreview}>
-                                <img
-                                    src={URL.createObjectURL(image.file)}
-                                    alt="thumbnail"
-                                    style={styles.thumbnail}
-                                    onClick={() => handleThumbnailClick(image)}
-                                />
-                                <button
-                                    onClick={() => handleImageDelete(index)}
-                                    style={styles.deleteButton}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        ))}
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700">Category</label>
+                        <select
+                            value={selectedCategory}
+                            onChange={(e) => setSelectedCategory(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                            <option value="">Select Category</option>
+                            {categories.map((category, index) => (
+                                <option key={category.id || index} value={category.id}>
+                                    {category.name}
+                                </option>
+                            ))}
+                        </select>
+                        {errors.selectedCategory && <p className="text-red-500 text-sm">{errors.selectedCategory}</p>}
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700">Brand</label>
+                        <select
+                            value={selectedBrand}
+                            onChange={(e) => setSelectedBrand(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                            <option value="">Select Brand</option>
+                            {brands.map((brand, index) => (
+                                <option key={brand.id || index} value={brand.id}>
+                                    {brand.name}
+                                </option>
+                            ))}
+                        </select>
+                        {errors.selectedBrand && <p className="text-red-500 text-sm">{errors.selectedBrand}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Description</label>
+                        <FroalaEditorComponent
+                            tag="textarea"
+                            ref={editorRef}
+                            model={model}
+                            onModelChange={(newModel) => setModel(newModel)}
+                        />
                     </div>
                 </div>
 
-                <button
-                    onClick={handleSave}
-                    style={{
-                        ...styles.button,
-                        ...(isFormValid ? styles.buttonEnabled : {}),
-                    }}
-                    disabled={!isFormValid}
-                >
-                    Save
-                </button>
+                {/* Right Section: Image Management */}
+                <div>
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Product Images</h2>
+                    <div className="mb-4">
+                        <input
+                            type="file"
+                            onChange={handleImageChange}
+                            className="w-full border border-gray-300 rounded-md p-2"
+                            multiple
+                        />
+                    </div>
+                    <div className="flex gap-6">
+                        {/* Main Image */}
+                        <div
+                            className="w-96 h-96 border border-gray-300 rounded-md flex justify-center items-center bg-gray-100">
+                            {mainImage ? (
+                                <img
+                                    src={mainImage}
+                                    alt="Main"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <p className="text-gray-500">No image selected</p>
+                            )}
+                        </div>
+
+                        {/* List of Thumbnails */}
+                        <div className="flex flex-col gap-4 overflow-y-auto max-h-96">
+                            {images.map((image, index) => (
+                                <div key={index} className="relative">
+                                    <img
+                                        src={URL.createObjectURL(image.file)}
+                                        alt="Thumbnail"
+                                        className="w-28 h-28 border border-gray-300 rounded-md cursor-pointer"
+                                        onClick={() => handleThumbnailClick(image)}
+                                    />
+                                    <button
+                                        onClick={() => handleImageDelete(index)}
+                                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleSave}
+                        className={`mt-6 w-full py-2 text-white font-semibold rounded-md ${
+                            isFormValid ? "bg-blue-500 hover:bg-blue-600" : "bg-gray-300 cursor-not-allowed"
+                        }`}
+                        disabled={!isFormValid}
+                    >
+                        Save
+                    </button>
+                    <button
+                        onClick={exportToDoc}
+                        className="mt-4 w-full py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                    >
+                        Export Description to .doc
+                    </button>
+                </div>
             </div>
         </div>
-
     );
 };
 

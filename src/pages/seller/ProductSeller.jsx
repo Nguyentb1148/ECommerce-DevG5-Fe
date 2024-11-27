@@ -1,6 +1,6 @@
-import  { useState, useEffect } from "react";
-import {deleteProduct, getProducts} from "../../services/api/ProductApi.jsx";
-import {useNavigate} from "react-router-dom";
+import { useState, useEffect } from "react";
+import { deleteProduct, getProducts } from "../../services/api/ProductApi.jsx";
+import { useNavigate } from "react-router-dom";
 
 const styles = {
     mainContent: {
@@ -54,6 +54,7 @@ export default function ProductSeller() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate(); // useNavigate hook
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -74,7 +75,6 @@ export default function ProductSeller() {
     const handleEdit = (productId) => {
         navigate(`/seller/productDetail/${productId}`);
     };
-
 
     const handleDelete = async (productId) => {
         try {
@@ -100,10 +100,11 @@ export default function ProductSeller() {
                     <thead>
                     <tr>
                         <th style={styles.th}>Name</th>
-                        <th style={styles.th}>Description</th>
                         <th style={styles.th}>Category</th>
-                        <th style={styles.th}>Price</th>
+                        <th style={styles.th}>Brand</th>
                         <th style={styles.th}>Image</th>
+                        <th style={styles.th}>Price</th>
+                        <th style={styles.th}>Rating</th>
                         <th style={styles.th}>Actions</th>
                     </tr>
                     </thead>
@@ -111,9 +112,8 @@ export default function ProductSeller() {
                     {products.map((product) => (
                         <tr key={product._id}>
                             <td style={styles.td}>{product.name}</td>
-                            <td style={styles.td}>{product.description}</td>
-                            <td style={styles.td}>{product.category?.$oid || "N/A"}</td>
-                            <td style={styles.td}>${product.price.toFixed(2)}</td>
+                            <td style={styles.td}>{product.categoryId.name || "N/A"}</td>
+                            <td style={styles.td}>{product.brandId.name || "N/A"}</td>
                             <td style={styles.td}>
                                 {product.imageUrls && product.imageUrls.length > 0 ? (
                                     <img
@@ -125,6 +125,8 @@ export default function ProductSeller() {
                                     "No Image"
                                 )}
                             </td>
+                            <td style={styles.td}>${product.price}</td>
+                            <td style={styles.td}>{product.rating}</td>
                             <td style={styles.td}>
                                 <button
                                     style={{ ...styles.button, ...styles.buttonEdit }}
