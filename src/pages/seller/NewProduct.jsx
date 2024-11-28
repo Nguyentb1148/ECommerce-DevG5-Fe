@@ -195,13 +195,15 @@ const NewProduct = () => {
                             </div>
                         </div>
                     </div>
-
                     {/* Part 2: Images */}
                     <div className="p-2 bg-white rounded-lg shadow-md flex space-x-4">
-                        <div
-                            className="w-96 h-96 border border-gray-300 rounded-md flex items-center justify-center bg-gray-50">
-                        {mainImage ? (
-                                <img src={mainImage} alt="Main" className="w-full h-full object-cover" />
+                        <div className="w-96 h-96 border border-gray-300 rounded-md flex items-center justify-center bg-gray-50">
+                            {mainImage ? (
+                                <img
+                                    src={mainImage}
+                                    alt="Main"
+                                    className="w-full h-full object-contain" // Fits the image in the container without cropping and maintains aspect ratio
+                                />
                             ) : (
                                 <p className="text-gray-500">No image selected</p>
                             )}
@@ -212,7 +214,7 @@ const NewProduct = () => {
                                     <img
                                         src={URL.createObjectURL(image.file)}
                                         alt="Thumbnail"
-                                        className="w-full h-28 border border-gray-300 rounded-md cursor-pointer"
+                                        className="w-full h-28 border border-gray-300 rounded-md cursor-pointer object-contain" // Ensures the image is contained within the fixed size and maintains its aspect ratio
                                         onClick={() => handleThumbnailClick(image)}
                                     />
                                     <button
@@ -238,6 +240,7 @@ const NewProduct = () => {
                             />
                         </div>
                     </div>
+
 
                     {/* Technology Info Button */}
                     <button
