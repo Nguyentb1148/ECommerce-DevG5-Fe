@@ -20,9 +20,9 @@ const BrandManage = () => {
         } else if (window.innerWidth < 1024) {
             setScrollHeight("440px");
         } else if (window.innerWidth < 1280) {
-            setScrollHeight("460px");
+            setScrollHeight("800px");
         } else {
-            setScrollHeight("650px");
+            setScrollHeight("800px");
         }
     };
 
@@ -82,7 +82,7 @@ const BrandManage = () => {
             cell: (row) => (
                 <div
                     style={{
-                        width: '100px',  // Fixed width
+                        width: '120px',  // Fixed width
                         height: '40px',  // Fixed height
                         overflow: 'hidden',  // Ensure the image doesn't overflow
                         position: 'relative',  // Keep the image contained
@@ -106,38 +106,6 @@ const BrandManage = () => {
             center: true,
         },
 
-        // {
-        //     name: "Created At",
-        //     cell: (row) =>
-        //         row.createdAt
-        //             ? new Intl.DateTimeFormat("en-US", {
-        //                 year: "numeric",
-        //                 month: "short",
-        //                 day: "numeric",
-        //                 hour: "2-digit",
-        //                 minute: "2-digit",
-        //                 second: "2-digit",
-        //             }).format(new Date(row.createdAt))
-        //             : "N/A",
-        //     sortable: true,
-        //     center: true,
-        // },
-        // {
-        //     name: "Updated At",
-        //     cell: (row) =>
-        //         row.updatedAt
-        //             ? new Intl.DateTimeFormat("en-US", {
-        //                 year: "numeric",
-        //                 month: "short",
-        //                 day: "numeric",
-        //                 hour: "2-digit",
-        //                 minute: "2-digit",
-        //                 second: "2-digit",
-        //             }).format(new Date(row.updatedAt))
-        //             : "N/A",
-        //     sortable: true,
-        //     center: true,
-        // },
         {
             name: "Action",
             center: true,
