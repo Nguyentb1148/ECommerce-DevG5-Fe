@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { FaTrash } from "react-icons/fa6";
 
 const TechnologyInfo = ({ onSave }) => {
@@ -6,14 +6,27 @@ const TechnologyInfo = ({ onSave }) => {
     const [newTitle, setNewTitle] = useState('');
     const [inputs, setInputs] = useState({});
 
-    const addSection = () => {
-        if (newTitle.trim() !== '') {
-            setTechInfo([{ title: newTitle, details: [] }, ...techInfo]);
-            setNewTitle('');
+    // Load data from localStorage on component mount
+    useEffect(() => {
+        const savedTechInfo = localStorage.getItem('techInfo');
+        if (savedTechInfo) {
+            setTechInfo(JSON.parse(savedTechInfo));
         }
-    };
+    }, []);
 
-    const addDetail = (sectionIndex) => {
+    // Memoize the technology info to avoid unnecessary re-renders
+    const memoizedTechInfo = useMemo(() => techInfo, [techInfo]);
+
+    const addSection = useCallback(() => {
+        if (newTitle.trim() !== '') {
+            const updatedTechInfo = [{ title: newTitle, details: [] }, ...techInfo];
+            setTechInfo(updatedTechInfo);
+            setNewTitle('');
+            saveToLocalStorage(updatedTechInfo); // Persist data to localStorage
+        }
+    }, [newTitle, techInfo]);
+
+    const addDetail = useCallback((sectionIndex) => {
         const detailName = inputs[`detailName-${sectionIndex}`] || '';
         if (detailName.trim() !== '') {
             const updatedInfo = [...techInfo];
@@ -23,10 +36,11 @@ const TechnologyInfo = ({ onSave }) => {
             ];
             setTechInfo(updatedInfo);
             setInputs((prev) => ({ ...prev, [`detailName-${sectionIndex}`]: '' }));
+            saveToLocalStorage(updatedInfo); // Persist data to localStorage
         }
-    };
+    }, [inputs, techInfo]);
 
-    const addValueToDetail = (sectionIndex, detailIndex) => {
+    const addValueToDetail = useCallback((sectionIndex, detailIndex) => {
         const value = inputs[`value-${sectionIndex}-${detailIndex}`] || '';
         if (value.trim() !== '') {
             const updatedInfo = [...techInfo];
@@ -36,26 +50,31 @@ const TechnologyInfo = ({ onSave }) => {
             ];
             setTechInfo(updatedInfo);
             setInputs((prev) => ({ ...prev, [`value-${sectionIndex}-${detailIndex}`]: '' }));
+            saveToLocalStorage(updatedInfo); // Persist data to localStorage
         }
-    };
+    }, [inputs, techInfo]);
 
-    const deleteSection = (sectionIndex) => {
-        setTechInfo(techInfo.filter((_, idx) => idx !== sectionIndex));
-    };
+    const deleteSection = useCallback((sectionIndex) => {
+        const updatedInfo = techInfo.filter((_, idx) => idx !== sectionIndex);
+        setTechInfo(updatedInfo);
+        saveToLocalStorage(updatedInfo); // Persist data to localStorage
+    }, [techInfo]);
 
-    const deleteDetail = (sectionIndex, detailIndex) => {
+    const deleteDetail = useCallback((sectionIndex, detailIndex) => {
         const updatedInfo = [...techInfo];
         updatedInfo[sectionIndex].details.splice(detailIndex, 1);
         setTechInfo(updatedInfo);
-    };
+        saveToLocalStorage(updatedInfo); // Persist data to localStorage
+    }, [techInfo]);
 
-    const deleteValue = (sectionIndex, detailIndex, valueIndex) => {
+    const deleteValue = useCallback((sectionIndex, detailIndex, valueIndex) => {
         const updatedInfo = [...techInfo];
         updatedInfo[sectionIndex].details[detailIndex].values.splice(valueIndex, 1);
         setTechInfo(updatedInfo);
-    };
+        saveToLocalStorage(updatedInfo); // Persist data to localStorage
+    }, [techInfo]);
 
-    const saveData = () => {
+    const saveData = useCallback(() => {
         const formattedData = techInfo.map((section) => ({
             title: section.title,
             details: section.details.map((detail) => ({
@@ -64,6 +83,12 @@ const TechnologyInfo = ({ onSave }) => {
             })),
         }));
         onSave(formattedData);
+        saveToLocalStorage(techInfo); // Persist data to localStorage
+    }, [techInfo, onSave]);
+
+    // Helper function to save data to localStorage
+    const saveToLocalStorage = (data) => {
+        localStorage.setItem('techInfo', JSON.stringify(data));
     };
 
     return (
@@ -91,7 +116,7 @@ const TechnologyInfo = ({ onSave }) => {
             </div>
 
             <div className="flex flex-col gap-4">
-                {techInfo.map((section, sectionIndex) => (
+                {memoizedTechInfo.map((section, sectionIndex) => (
                     <div key={sectionIndex} className="border rounded-lg p-4 shadow-md">
                         <div className="flex justify-between items-center">
                             <h2 className="text-lg font-semibold">{section.title}</h2>

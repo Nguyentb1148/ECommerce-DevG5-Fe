@@ -80,14 +80,32 @@ const BrandManage = () => {
         {
             name: "Image",
             cell: (row) => (
-                <img
-                    src={row.imageUrl}
-                    alt={row.name}
-                    className="w-12 h-12 object-cover rounded-md"
-                />
+                <div
+                    style={{
+                        width: '100px',  // Fixed width
+                        height: '40px',  // Fixed height
+                        overflow: 'hidden',  // Ensure the image doesn't overflow
+                        position: 'relative',  // Keep the image contained
+                    }}
+                >
+                    <img
+                        src={row.imageUrl}
+                        alt={row.name}
+                        style={{
+                            width: '100%',  // Make the image fill the container
+                            height: '100%',  // Make the image fill the container
+                            objectFit: 'cover',  // Ensures the image is cropped but retains aspect ratio
+                            position: 'absolute',  // Keep the image inside the container
+                            top: 0,
+                            left: 0,
+                        }}
+                        className="rounded-md"
+                    />
+                </div>
             ),
             center: true,
         },
+
         // {
         //     name: "Created At",
         //     cell: (row) =>
