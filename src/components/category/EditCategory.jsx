@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import {deleteImage, uploadImage} from "../../configs/Cloudinary.jsx";
-import {updateCategory} from "../../services/api/CategoryApi.jsx";
+import { deleteImage, uploadImage } from "../../configs/Cloudinary.jsx";
+import { updateCategory } from "../../services/api/CategoryApi.jsx";
 
 const EditCategory = ({ onClose, category }) => {
     const [categoryName, setCategoryName] = useState(category.name);
@@ -69,9 +69,9 @@ const EditCategory = ({ onClose, category }) => {
 
     return (
         <div className="fixed inset-0 z-20 bg-black bg-opacity-30 flex items-center justify-center">
-            <div className="bg-white rounded-lg shadow-md p-6 w-[400px]">
-                <h2 className="text-xl font-bold mb-4">Update Category</h2>
-                <div className="py-4">
+            <div className="bg-gray-800 rounded-lg shadow-md p-6 w-[400px]">
+                <h2 className="text-xl font-bold mb-4 text-white">Update Category</h2>
+                <div className="w-full  bg-gray-700 rounded-2xl border border-gray-600">
                     {previewUrl && (
                         <img
                             src={previewUrl}
@@ -79,15 +79,29 @@ const EditCategory = ({ onClose, category }) => {
                             className="w-full h-40 object-cover rounded-md mb-4"
                         />
                     )}
-                    <input type="file" onChange={handleFileChange} />
+                    <div className="grid gap-2 py-2">
+                        <div className="flex items-center justify-center">
+                            <label>
+                                <input type="file" hidden onChange={handleFileChange} />
+                                <div className="flex w-28 h-9 px-2 flex-col bg-indigo-600 rounded-full shadow text-white text-xs font-semibold leading-4 items-center justify-center cursor-pointer focus:outline-none">
+                                    Choose File
+                                </div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
-                <input
-                    type="text"
-                    value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                    placeholder="Enter category name"
-                    className="w-full border border-gray-300 rounded p-2 mb-4"
-                />
+                {/* Category Name */}
+                <div>
+                    <h3 className="text-lg font-medium py-2 text-white">Name Category:</h3>
+                    <input
+                        type="text"
+                        value={categoryName}
+                        onChange={(e) => setCategoryName(e.target.value)}
+                        placeholder="Enter category name"
+                        className="w-full border border-gray-600 bg-gray-700 text-white rounded p-2 mb-4"
+                    />
+                </div>
+
                 <div className="flex justify-end">
                     <button
                         onClick={onClose}

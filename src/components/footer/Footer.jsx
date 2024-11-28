@@ -39,15 +39,15 @@ const Footer = () => {
           <h3 className="title-footer grid place-items-center">Contact</h3>
           <div className="flex mt-2">
             <IoLocationOutline className="contact-footer" />
-            <span className="text-footer">117 Nguyen Tri Phuong</span>
+            <span className="text-footer">116-118 Mai Thúc Lân</span>
           </div>
           <div className="flex mt-3">
             <MdOutlineEmail className="contact-footer" />
-            <span className="text-footer">phuoc0905886611@gmail.com</span>
+            <span className="text-footer">devshop@gmail.com</span>
           </div>
           <div className="flex mt-3">
             <MdLocalPhone className="contact-footer" />
-            <span className="text-footer">0905886611</span>
+            <span className="text-footer">+84 69696969</span>
           </div>
         </div>
       </div>

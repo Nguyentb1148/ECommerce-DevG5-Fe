@@ -23,6 +23,7 @@ import BrandManage from "./pages/admin/brand/BrandManage.jsx";
 import HomePageSeller from "./pages/seller/HomePageSeller.jsx";
 import ProductSeller from "./pages/seller/ProductSeller.jsx";
 import NewProduct from "./pages/seller/NewProduct.jsx";
+import ShoppingCart from './pages/cart/ShoppingCart.jsx';
 import ProductDetailSeller from "./pages/seller/ProductDetail.jsx";
 
 
@@ -48,6 +49,7 @@ function App() {
                 <Route path='/register' element={<Register/>}/>
                   <Route path="/profile" element={<Profile />} />
                 <Route path="/productFilter" element={<FilterProduct/>}/>
+                <Route path="/shoppingCart" element={<ShoppingCart />}/>
                 <Route path="/productDetail" element={<ProductDetail/>}/>
                 <Route path='/authentication' element={<Authentication/>}/>
                 <Route path='/Forgotpassword' element={<ForgotPassword/>}/>

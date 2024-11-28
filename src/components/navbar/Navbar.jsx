@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import User from '../../pages/profile/User';
 import Search from '../search/Search';
 
-const Navbar = () => {
+const Navbar = ({ backgroundClass }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
 
@@ -25,7 +25,7 @@ const Navbar = () => {
     return (
         <div className="navbar w-full z-20 bg-white dark:bg-gray-900 ">
             <div className="flex items-center justify-between w-[90%] mx-auto px-4 py-3">
-                <a href="" className=" text-primary font-semibold tracking-widest text-2xl uppercase sm:text-3xl">
+                <a href="/" className=" text-primary font-semibold tracking-widest text-2xl uppercase sm:text-3xl">
                     DevSHOP
                 </a>
                 <button
@@ -50,11 +50,6 @@ const Navbar = () => {
                     <li>
                         <Link to="/productFilter" className="item-navbar">
                             Product
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/blog" className="item-navbar">
-                            Contact
                         </Link>
                     </li>
                     <li>
@@ -88,14 +83,14 @@ const Navbar = () => {
                             </a>
                         </li>
                         <li>
-                            <a href="/#shop" className="inline-block font-semibold text-gray-500 hover:text-black dark:hover:text-white duration-200">
+                            <Link to="/productFilter" className="inline-block font-semibold text-gray-500 hover:text-black dark:hover:text-white duration-200">
                                 Product
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a href="/#about" className="inline-block font-semibold text-gray-500 hover:text-black dark:hover:text-white duration-200">
-                                About
-                            </a>
+                            <Link to="/contact" className="inline-block font-semibold text-gray-500 hover:text-black dark:hover:text-white duration-200">
+                            Contact
+                        </Link>
                         </li>
                         {isLogin ? (
                             <User />

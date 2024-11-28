@@ -1,5 +1,27 @@
 import React, { useState, useEffect } from 'react'
-import DataTable from 'react-data-table-component'
+import DataTable, { createTheme } from 'react-data-table-component'
+
+createTheme('dark', {
+  text: {
+    primary: '#e5e7eb',
+    secondary: '#9ca3af',
+  },
+  background: {
+    default: '#1f2937',
+  },
+  context: {
+    background: '#374151',
+    text: '#ffffff',
+  },
+  divider: {
+    default: '#4b5563',
+  },
+  action: {
+    button: '#4f46e5',
+    hover: 'rgba(255, 255, 255, 0.1)',
+    disabled: 'rgba(255, 255, 255, 0.3)',
+  },
+}, 'dark');
 
 const UserManage = () => {
   // Responsive Table
@@ -22,12 +44,7 @@ const UserManage = () => {
   }, []);
   // Fetch data
   const columns = [
-    {
-      name: "Id",
-      selector: row => row.id,
-      sortable: true,
-      center: true,
-    },
+
     {
       name: "Name",
       selector: row => row.name,
@@ -265,10 +282,11 @@ const UserManage = () => {
 
   return (
     <div className="h-screen">
-      <h1 className="grid place-items-center text-4xl py-4">Manage User</h1>
-      <div className="md:w-[650px] lg:w-[850px] xl:w-[90%] mx-auto border border-gray-300 rounded-md shadow-md">
+      <h1 className="grid place-items-center text-4xl py-4 text-white">Manage User</h1>
+      <div className="md:w-[650px] lg:w-[850px] xl:w-[90%] mx-auto rounded-md shadow-md">
         <div className="overflow-hidden">
           <DataTable
+          theme='dark'
             columns={columns}
             data={data}
             fixedHeader

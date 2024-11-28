@@ -52,7 +52,7 @@ const LeadsDashboard = () => {
         show: true,
         style: {
           fontFamily: "Inter, sans-serif",
-          cssClass: "text-xs font-normal fill-gray-500 dark:fill-gray-400",
+          cssClass: "text-xs font-normal fill-gray-400",
         },
       },
       axisBorder: {
@@ -82,12 +82,12 @@ const LeadsDashboard = () => {
   ];
 
   return (
-    <div className="min-[370px]:w-[350px] min-[420px]:w-[390px] md:w-[480px] lg:w-[360px] xl:w-[600px] bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
-      <div className="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
+    <div className="min-[370px]:w-[350px] min-[420px]:w-[390px] md:w-[480px] lg:w-[360px] xl:w-[600px]  rounded-lg shadow bg-gray-800 p-4 md:p-6">
+      <div className="flex justify-between pb-4 mb-4 border-b :border-gray-700">
         <div className="flex items-center">
-          <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center me-3">
+          <div className="w-12 h-12 rounded-lg bg-gray-700 flex items-center justify-center me-3">
             <svg
-              className="w-6 h-6 text-gray-500 dark:text-gray-400"
+              className="w-6 h-6 text-gray-400"
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
               viewBox="0 0 20 19"
@@ -97,16 +97,16 @@ const LeadsDashboard = () => {
             </svg>
           </div>
           <div>
-            <h5 className="leading-none text-2xl font-bold text-gray-900 dark:text-white pb-1">
+            <h5 className="leading-none text-2xl font-bold text-white pb-1">
               3.4k
             </h5>
-            <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
+            <p className="text-sm font-normal text-gray-400">
               Leads generated per week
             </p>
           </div>
         </div>
         <div>
-          <span className="bg-green-100 text-green-800 text-xs font-medium inline-flex items-center px-2.5 py-1 rounded-md dark:bg-green-900 dark:text-green-300">
+          <span className=" text-xs font-medium inline-flex items-center px-2.5 py-1 rounded-md bg-green-900 text-green-300">
             <svg
               className="w-2.5 h-2.5 me-1.5"
               xmlns="http://www.w3.org/2000/svg"

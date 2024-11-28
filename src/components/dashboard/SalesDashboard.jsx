@@ -18,7 +18,7 @@ const SalesDashboard = () => {
         show: true,
         style: {
           fontFamily: "Inter, sans-serif",
-          cssClass: "text-xs font-normal fill-gray-500 dark:fill-gray-400",
+          cssClass: "text-xs font-normal fill-gray-400",
         },
       },
       axisBorder: {
@@ -34,7 +34,7 @@ const SalesDashboard = () => {
         show: true,
         style: {
           fontFamily: "Inter, sans-serif",
-          cssClass: "text-xs font-normal fill-gray-500 dark:fill-gray-400",
+          cssClass: "text-xs font-normal fill-gray-400",
         },
         formatter: function (value) {
           return "$" + value;
@@ -99,17 +99,17 @@ const SalesDashboard = () => {
   ];
 
   return (
-    <div className="min-[370px]:w-[350px] min-[420px]:w-[390px] md:w-[480px] lg:w-[360px] xl:w-[600px] bg-white rounded-lg shadow dark:bg-gray-800">
+    <div className="min-[370px]:w-[350px] min-[420px]:w-[390px] md:w-[480px] lg:w-[360px] xl:w-[600px] rounded-lg shadow bg-gray-800">
       <div className="flex justify-between p-4 md:p-6 pb-0 md:pb-0">
         <div>
-          <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">
+          <h5 className="leading-none text-3xl font-bold text-white pb-2">
             $12,423
           </h5>
-          <p className="text-base font-normal text-gray-500 dark:text-gray-400">
+          <p className="text-base font-normal text-gray-400">
             Sales this week
           </p>
         </div>
-        <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-500 text-center">
+        <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 text-center">
           23%
           <svg
             className="w-3 h-3 ms-1"

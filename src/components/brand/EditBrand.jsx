@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { deleteImage, uploadImage } from "../../configs/Cloudinary.jsx";
-import { updateBrand} from "../../services/api/BrandsApi.jsx";
+import { updateBrand } from "../../services/api/BrandsApi.jsx";
 
 const EditBranch = ({ onClose, branch }) => {
     const [branchName, setBranchName] = useState(branch.name);
@@ -76,38 +76,11 @@ const EditBranch = ({ onClose, branch }) => {
 
     return (
         <div className="fixed inset-0 z-20 bg-black bg-opacity-30 flex items-center justify-center">
-            <div className="bg-white rounded-lg shadow-md p-6 w-[400px]">
-                <h2 className="text-xl font-bold mb-4">Update Branch</h2>
-
-                {/* Branch Name */}
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                        Branch Name
-                    </label>
-                    <input
-                        type="text"
-                        value={branchName}
-                        onChange={(e) => setBranchName(e.target.value)}
-                        placeholder="Enter branch name"
-                        className="w-full border border-gray-300 rounded p-2"
-                    />
-                </div>
-
-                {/* Branch Description */}
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                        Branch Description
-                    </label>
-                    <textarea
-                        value={branchDescription}
-                        onChange={(e) => setBranchDescription(e.target.value)}
-                        placeholder="Enter branch description"
-                        className="w-full border border-gray-300 rounded p-2"
-                    />
-                </div>
+            <div className="bg-gray-800 rounded-lg shadow-md p-6 w-[400px]">
+                <h2 className="text-xl font-bold mb-4 text-white ">Update Branch</h2>
 
                 {/* Image Preview and File Upload */}
-                <div className="py-4">
+                <div className="w-full py-6 bg-gray-700  rounded-2xl border border-gray-600 gap-3 grid border-dashed">
                     {previewUrl && (
                         <img
                             src={previewUrl}
@@ -115,9 +88,42 @@ const EditBranch = ({ onClose, branch }) => {
                             className="w-full h-40 object-cover rounded-md mb-4"
                         />
                     )}
-                    <input type="file" onChange={handleFileChange} />
+                    <div className="grid gap-2">
+                        <h4 className="text-center text-gray-300 text-sm font-medium leading-snug">
+                            Drag and Drop your file here or
+                        </h4>
+                        <div className="flex items-center justify-center">
+                            <label>
+                                <input type="file" hidden onChange={handleFileChange} />
+                                <div className="flex w-28 h-9 px-2 flex-col bg-indigo-600 rounded-full shadow text-white text-xs font-semibold leading-4 items-center justify-center cursor-pointer focus:outline-none">
+                                    Choose File
+                                </div>
+                            </label>
+                        </div>
+                    </div>                </div>
+                {/* Branch Name */}
+                <div className="mb-4">
+                    <h3 className="text-lg font-medium py-2 text-white">Branch Name:</h3>
+                    <input
+                        type="text"
+                        value={branchName}
+                        onChange={(e) => setBranchName(e.target.value)}
+                        placeholder="Enter branch name"
+                        className="w-full border border-gray-600 bg-gray-700 text-white rounded p-2"
+                    />
                 </div>
 
+                {/* Branch Description */}
+                <div className="mb-4">
+                    <h3 className="text-lg font-medium py-2 text-white">Branch Description:</h3>
+
+                    <textarea
+                        value={branchDescription}
+                        onChange={(e) => setBranchDescription(e.target.value)}
+                        placeholder="Enter branch description"
+                        className="w-full border border-gray-600 bg-gray-700 text-white rounded p-2"
+                    />
+                </div>
                 {/* Error Message */}
                 {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
 
