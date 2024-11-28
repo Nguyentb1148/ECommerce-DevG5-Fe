@@ -176,7 +176,7 @@ const Products = () => {
                             data-aos-delay="200"
                             className="px-16 py-5 rounded-3xl grid place-items-center border-2 border-[#00000040] dark:border-[#ffffff40]"
                             key={data.id}>
-                            <Link to="/product">
+                            <Link to="/productDetail">
                                 <div className="relative">
                                     <img src={data.img} alt="" className="h-[180px] w-[180px] object-cover rounded-md bg-transparent" />
                                 </div>

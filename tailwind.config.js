@@ -3,7 +3,8 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/flowbite/**/*.js"
+    "./node_modules/flowbite/**/*.js",
+    "./node_modules/@tiptap/core/dist/index.esm.js"
   ],
   darkMode: "class",
 
@@ -31,5 +32,6 @@ export default {
     require('flowbite/plugin')({
         charts: true,
     }),
+    require('@tailwindcss/typography')
   ],
 }

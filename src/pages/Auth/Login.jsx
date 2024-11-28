@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { login } from '../../services/Api/AuthApi';
 import { Link, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -42,6 +43,8 @@ const Login = () => {
 
       if (decoded.role === 'admin') {
         navigate('/admin');
+      } else if (decoded.role === 'seller') {
+        navigate('/seller');
       } else {
         navigate('/');
       }
@@ -77,6 +80,8 @@ const Login = () => {
         // Check user role and navigate accordingly
         if (decoded.role === 'admin') {
           navigate('/admin');
+        } else if (decoded.role === 'seller') {
+          navigate('/seller');
         } else {
           navigate('/');
         }
@@ -144,7 +149,7 @@ const Login = () => {
             <p>Don't have an account? <Link to="/register">Register</Link></p>
           </div>
           <div className="register-link">
-            <p><Link to="/forgotpassword">Forgot password?</Link></p>
+            <p><Link to="/forgot-password">Forgot password?</Link></p>
           </div>
 
           <div className="google-login-container">

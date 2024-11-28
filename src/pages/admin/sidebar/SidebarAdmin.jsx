@@ -5,6 +5,7 @@ import { PiUserListBold } from "react-icons/pi";
 import { BiCategory } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import Image from "../../../assets/robot-assistant.png"
+import {TbBrandApple} from "react-icons/tb";
 const SidebarAdmin = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeItem, setActiveItem] = useState(""); // Trạng thái lưu mục active
@@ -13,6 +14,7 @@ const SidebarAdmin = () => {
     const menuItems = [
         { name: "Dashboard", icon: <MdOutlineHome size={25} />, path: "" },
         { name: "Category", icon: <BiCategory size={25} />, path: "category" },
+        {name: "Brand", icon:<TbBrandApple size={25} />,path:"brand" },
         { name: "User", icon: <PiUserListBold size={25} />, path: "user" },
         { name: "Logout", icon: <MdLogout size={25} />, path: "logout" },
     ];

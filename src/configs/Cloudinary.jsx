@@ -1,55 +1,47 @@
-import CryptoJS from 'crypto-js';  // Import CryptoJS for signature generation
+import CryptoJS from 'crypto-js';
 
-const CLOUD_NAME = 'dkffhpyc6';  // Your Cloudinary Cloud Name
+const CLOUD_NAME = 'dkffhpyc6';
 const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-const UPLOAD_PRESET = 'Dev5G-Image'; // You need to configure this in Cloudinary's settings
-const API_KEY = '341784271881655'; // Your Cloudinary API Key
-const API_SECRET = '9YKI8kwjThQ1BGvF99_lYem4Src'; // Your Cloudinary API Secret (keep it safe)
+const UPLOAD_PRESET = 'Dev5G-Image';
+const API_KEY = '341784271881655';
+const API_SECRET = '9YKI8kwjThQ1BGvF99_lYem4Src';
 
-// import cloudinary from 'cloudinary';
-//
-// // Change cloud name, API Key, and API Secret below
-//
-// cloudinary.v2.config({
-//     cloud_name: 'dkffhpyc6',
-//     api_key: '341784271881655',
-//     api_secret: '9YKI8kwjThQ1BGvF99_lYem4Src'
-// });
+// Check if the image exists on Cloudinary
+const checkImageExists = async (folderName, publicId) => {
+    const fullPublicId = `${folderName}/${publicId}`;
+    const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/v1/${fullPublicId}`;
 
-// Function to generate signature for Cloudinary's API
-// const generateSignature = (publicId) => {
-//     const timestamp = Math.floor(Date.now() / 1000); // Current timestamp
-//
-//     // Signature string format (without api_secret in the URL but using it to generate the signature)
-//     const signatureString = `public_id=${publicId}&timestamp=${timestamp}&api_key=${API_KEY}&api_secret=${API_SECRET}`;
-//
-//     // Create SHA1 hash of the signature string and encode it in Base64
-//     const signature = CryptoJS.SHA1(signatureString).toString(CryptoJS.enc.Base64);
-//
-//     return { signature, timestamp };
-// };
-// Function to delete an image from Cloudinary
-// export const deleteImage = async (publicId) => {
-//     cloudinary.v2.uploader.destroy(publicId, function(result) { console.log(result) });
-//
-// };
+    try {
+        const response = await fetch(url);
+        if (response.ok) {
+            console.log('Image exists.');
+            return true;
+        } else {
+            console.log('Image not found.');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error checking image existence:', error);
+        return false;
+    }
+};
 
-// Function to delete an image (via API request directly)
+// Delete image from Cloudinary
 export const deleteImage = async (folderName, publicId) => {
-    // Combine folderName and publicId into the full Cloudinary public_id
     const fullPublicId = `${folderName}/${publicId}`;
     console.log('Full publicId before destroy:', fullPublicId);
 
-    // Get the current timestamp
+    // Check if image exists before attempting deletion
+    const imageExists = await checkImageExists(folderName, publicId);
+    if (!imageExists) {
+        console.log('Image not found, skipping deletion.');
+        return; // Skip the deletion process if the image doesn't exist
+    }
+
     const timestamp = Math.floor(Date.now() / 1000);
-
-    // Create the string to sign by sorting parameters alphabetically and appending the API secret
     const stringToSign = `public_id=${fullPublicId}&timestamp=${timestamp}${API_SECRET}`;
-
-    // Generate the signature using SHA-1
     const signature = CryptoJS.SHA1(stringToSign).toString(CryptoJS.enc.Hex);
 
-    // Prepare the POST form data
     const formData = new FormData();
     formData.append('public_id', fullPublicId);
     formData.append('api_key', API_KEY);
@@ -81,13 +73,13 @@ export const deleteImage = async (folderName, publicId) => {
     }
 };
 
-// Function to upload the image to Cloudinary
-export const uploadImage = async (imageFile, folderName, categoryName) => {
+// Upload image to Cloudinary
+export const uploadImage = async (imageFile, folderName, public_id) => {
     const formData = new FormData();
     formData.append('file', imageFile);
     formData.append('upload_preset', UPLOAD_PRESET);
     formData.append('folder', folderName);           // Specify the folder
-    formData.append('public_id', categoryName);     // Set the public_id to categoryName
+    formData.append('public_id', public_id);     // Set the public_id to categoryName
 
     try {
         const response = await fetch(UPLOAD_URL, {
@@ -102,6 +94,58 @@ export const uploadImage = async (imageFile, folderName, categoryName) => {
         } else {
             throw new Error(data.message || 'Upload failed');
         }
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        throw error;
+    }
+};
+
+// Upload DOC file to Cloudinary (if needed)
+export const uploadDoc = async (docFile, folderName, categoryName) => {
+    const formData = new FormData();
+    formData.append('file', docFile);  // Append the DOC file
+    formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('folder', folderName);            // Specify the folder
+    formData.append('public_id', categoryName);      // Set the public_id to categoryName
+    formData.append('resource_type', 'raw');         // Specify that it's a raw file (DOCX)
+
+    // Use the raw upload endpoint for non-image files (like DOCX)
+    const UPLOAD_URL_RAW = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload`;
+
+    try {
+        const response = await fetch(UPLOAD_URL_RAW, {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await response.json();
+        console.log('Cloudinary DOC Upload Response:', data);
+
+        if (response.ok) {
+            return data;  // The Cloudinary response contains the uploaded file URL and other details
+        } else {
+            throw new Error(data.message || 'Upload failed');
+        }
+    } catch (error) {
+        console.error('Error uploading DOC file:', error);
+        throw error;
+    }
+};
+
+// Handle the image upload process including deletion of the old image if it exists
+export const handleImageUpload = async (imageFile, folderName, publicId) => {
+    // First, try deleting the existing image (if it exists)
+    try {
+        await deleteImage(folderName, publicId);
+    } catch (error) {
+        console.log('Image not found or error during deletion, uploading new image...');
+    }
+
+    // Upload the new image
+    try {
+        const uploadedData = await uploadImage(imageFile, folderName, publicId);
+        console.log('New image uploaded successfully:', uploadedData);
+        return uploadedData;
     } catch (error) {
         console.error('Error uploading image:', error);
         throw error;
