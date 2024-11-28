@@ -77,17 +77,17 @@ const UserDashboard = () => {
     },
   ];
   return (
-    <div className="min-[370px]:w-[350px] min-[420px]:w-[390px] md:w-[480px] lg:w-[360px] xl:w-[600px]  bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+    <div className="min-[370px]:w-[350px] min-[420px]:w-[390px] md:w-[480px] lg:w-[360px] xl:w-[600px] rounded-lg shadow bg-gray-800 p-4 md:p-6">
       <div className="flex justify-between">
         <div>
-          <p className="text-base font-normal text-gray-500 dark:text-gray-400">
+          <p className="text-base font-normal text-gray-400">
             Users this week
           </p>
-          <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">
+          <h5 className="leading-none text-3xl font-bold text-white pb-2">
             32.4k
           </h5>
         </div>
-        <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-500 text-center">
+        <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 text-center">
           12%
           <svg
             className="w-3 h-3 ms-1"

@@ -1,22 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@layer base {
-  /* Example base styles */
+/* @layer base {
   h1 {
-    @apply text-2xl font-bold; /* Applying Tailwind's base font size and bold style */
+    @apply text-2xl font-bold; 
   }
   h2 {
-    @apply text-xl font-semibold; /* Tailwind font size and weight */
+    @apply text-xl font-semibold; 
   }
   h3 {
-    @apply text-lg font-medium; /* Tailwind font size and weight */
+    @apply text-lg font-medium; 
   }
-  /* Styling for links */
   a {
-    @apply text-blue-600 underline; /* Tailwind styles for links */
+    @apply text-blue-600 underline; 
   }
-}
+} */
 
 @layer utilities {
   .clip-polygon {

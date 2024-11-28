@@ -23,6 +23,7 @@ import HomePageSeller from "./pages/seller/HomePageSeller.jsx";
 import ProductDetailSeller from "./pages/seller/ProductDetailSeller.jsx";
 import ProductSeller from "./pages/seller/ProductSeller.jsx";
 import NewProduct from "./pages/seller/NewProduct.jsx";
+import ShoppingCart from './pages/cart/ShoppingCart.jsx';
 
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
                 <Route path='/login' element={<Login/>}/>
                 <Route path='/register' element={<Register/>}/>
                 <Route path="/productFilter" element={<FilterProduct/>}/>
+                <Route path="/shoppingCart" element={<ShoppingCart />}/>
                 <Route path="/productDetail" element={<ProductDetail/>}/>
                 <Route path='/authentication' element={<Authentication/>}/>
                 <Route path='/Forgotpassword' element={<ForgotPassword/>}/>

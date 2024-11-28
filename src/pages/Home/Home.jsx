@@ -11,7 +11,7 @@ const Home = () => {
     return (
         <div className="w-full bg-white dark:bg-gray-900 dark:text-white overflow-hidden">
             <div className="fixed z-20 top-0 w-full">
-                <Navbar />
+                <Navbar backgroundClass="bg-white" />
             </div>
             <Carousel />
             <Services />

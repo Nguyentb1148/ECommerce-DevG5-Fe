@@ -68,11 +68,11 @@ const AddBranch = ({ onClose, navigate }) => {
 
     return (
         <div className="fixed inset-0 z-20 bg-black bg-opacity-30 flex items-center justify-center">
-            <div className="bg-white rounded-lg shadow-md p-6 w-[400px]">
-                <h2 className="text-xl font-bold mb-4">Add New Branch</h2>
+            <div className="bg-gray-800 rounded-lg shadow-md p-6 w-[400px]">
+                <h2 className="text-xl font-bold mb-4 text-white">Add New Branch</h2>
 
                 {/* File Upload */}
-                <div className="w-full py-6 bg-gray-50 rounded-2xl border border-gray-300 gap-3 grid border-dashed">
+                <div className="w-full py-6 bg-gray-700  rounded-2xl border border-gray-600 gap-3 grid border-dashed">
                     {previewUrl ? (
                         <img
                             src={previewUrl}
@@ -100,7 +100,7 @@ const AddBranch = ({ onClose, navigate }) => {
                         </div>
                     )}
                     <div className="grid gap-2">
-                        <h4 className="text-center text-gray-900 text-sm font-medium leading-snug">
+                        <h4 className="text-center text-gray-300 text-sm font-medium leading-snug">
                             Drag and Drop your file here or
                         </h4>
                         <div className="flex items-center justify-center">
@@ -116,24 +116,24 @@ const AddBranch = ({ onClose, navigate }) => {
 
                 {/* Branch Name */}
                 <div>
-                    <h3 className="text-lg font-medium py-2">Branch Name:</h3>
+                    <h3 className="text-lg font-medium py-2 text-white">Branch Name:</h3>
                     <input
                         type="text"
                         value={branchName}
                         onChange={(e) => setBranchName(e.target.value)}
                         placeholder="Enter branch name"
-                        className="w-full border border-gray-300 rounded p-2 mb-4"
+                        className="w-full border border-gray-600 bg-gray-700 text-white rounded p-2 mb-4"
                     />
                 </div>
 
                 {/* Branch Description */}
                 <div>
-                    <h3 className="text-lg font-medium py-2">Branch Description:</h3>
+                    <h3 className="text-lg font-medium py-2 text-white">Branch Description:</h3>
                     <textarea
                         value={branchDescription}
                         onChange={(e) => setBranchDescription(e.target.value)}
                         placeholder="Enter branch description"
-                        className="w-full border border-gray-300 rounded p-2 mb-4 h-20"
+                        className="w-full border border-gray-600 bg-gray-700 text-white rounded p-2 mb-4 h-20"
                     />
                 </div>
 
