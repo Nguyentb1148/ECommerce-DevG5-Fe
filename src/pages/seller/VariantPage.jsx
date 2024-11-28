@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Plus, Trash2 } from "lucide-react";
 import useVariantPermutation from '../../hooks/useVariantPermutation.tsx';
 
@@ -11,12 +11,14 @@ const Button = ({ onClick, children, className }) => (
         {children}
     </button>
 );
+
 // Simple Card Component
 const Card = ({ children, className }) => (
     <div className={`bg-white shadow-lg rounded-lg p-4 ${className}`}>
         {children}
     </div>
 );
+
 // Simple Input Component
 const Input = ({ value, onChange, placeholder, className, onKeyDown }) => (
     <input
@@ -29,12 +31,41 @@ const Input = ({ value, onChange, placeholder, className, onKeyDown }) => (
     />
 );
 
-const VariantPage = ({onSave}) => {
+const VariantPage = ({ onSave }) => {
     const [options, setOptions] = useState([]);
     const [variants, setVariants] = useState([]);
 
     // Generate all variants using the custom hook
     const allVariants = useVariantPermutation(options.map((opt) => opt.tags));
+
+    // Load options and variants from localStorage if they exist
+    useEffect(() => {
+        const savedOptions = localStorage.getItem('options');
+        const savedVariants = localStorage.getItem('variants');
+
+        if (savedOptions) {
+            setOptions(JSON.parse(savedOptions));
+        }
+
+        if (savedVariants) {
+            setVariants(JSON.parse(savedVariants));
+        }
+    }, []);
+
+    // Save options and variants to localStorage when they change
+    useEffect(() => {
+        if (options.length > 0) {
+            console.log("Saving options to localStorage:", options);  // Add debug
+            localStorage.setItem('options', JSON.stringify(options));
+        }
+    }, [options]);
+
+    useEffect(() => {
+        if (variants.length > 0) {
+            console.log("Saving variants to localStorage:", variants);  // Add debug
+            localStorage.setItem('variants', JSON.stringify(variants));
+        }
+    }, [variants]);
 
     const handleAddOption = () => {
         setOptions([...options, { title: '', tags: [], tagInput: '' }]);
@@ -91,19 +122,15 @@ const VariantPage = ({onSave}) => {
         })));
     };
 
-
     const handleVariantChange = (index, field, value) => {
         const newVariants = [...variants];
         newVariants[index][field] = value;
         setVariants(newVariants);
     };
 
-
     const handleRemoveVariant = (indexToRemove) => {
         setVariants(variants.filter((_, index) => index !== indexToRemove));
     };
-
-
 
     const handleSave = async () => {
         const attributes = options.reduce((acc, option) => {
@@ -113,7 +140,6 @@ const VariantPage = ({onSave}) => {
 
         const processedVariants = await Promise.all(
             variants.map(async (variant) => {
-
                 const attributeMapping = {};
                 options.forEach((option, index) => {
                     attributeMapping[option.title] = variant.attributes[index];
@@ -126,11 +152,13 @@ const VariantPage = ({onSave}) => {
                 };
             })
         );
-
-        onSave({ attributes, variants: processedVariants }); // Pass the data back to the parent
+        // Debugging the data to be saved
+        console.log("Saving data:", { attributes, variants: processedVariants });
+        // Saving to parent component via onSave
+        onSave({ attributes, variants: processedVariants });
+        // Also save to localStorage to persist after refresh
+        console.log("Saving to localStorage...");
     };
-
-
 
     return (
         <div className="w-full max-w-3xl mx-auto p-6">
@@ -234,12 +262,17 @@ const VariantPage = ({onSave}) => {
                                 />
                                 <Input
                                     value={variant.stockQuantity}
-                                    onChange={(e) => handleVariantChange(variantIndex, 'stockQuantity', e.target.value)}
-                                    placeholder="Enter stockQuantity"
+                                    onChange={(e) =>
+                                        handleVariantChange(variantIndex, 'stockQuantity', e.target.value)
+                                    }
+                                    placeholder="Enter stock quantity"
                                     className="max-w-xs mt-2"
                                 />
                             </div>
+
                             <Button
+                                variant="ghost"
+                                size="icon"
                                 onClick={() => handleRemoveVariant(variantIndex)}
                                 className="text-slate-500 hover:text-red-600"
                             >
@@ -253,9 +286,9 @@ const VariantPage = ({onSave}) => {
             {/* Save Button */}
             <Button
                 onClick={handleSave}
-                className="mt-6 w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600"
+                className="mt-8 w-full"
             >
-                Save Variants
+                Save
             </Button>
         </div>
     );

@@ -1,20 +1,65 @@
-import { useState, useRef, useEffect } from "react";
-import "froala-editor/css/froala_style.min.css";
-import "froala-editor/css/froala_editor.pkgd.min.css";
-import "froala-editor/js/plugins.pkgd.min.js";
-import { uploadDoc } from "../configs/Cloudinary.jsx"; // Assuming this is the path to the uploadDoc function
+import { useState, useEffect, useRef } from "react";
+import mammoth from "mammoth";  // Import Mammoth library
+import JSZip from "jszip";
 
-export const useFroala = () => {
-    const [model, setModel] = useState("<p > </p>");
+export const useFroala = (descriptionFileUrl) => {
+    const [model, setModel] = useState("<p> </p>");
+    const [isLoading, setIsLoading] = useState(false);
     const editorRef = useRef(null);
 
     useEffect(() => {
-        // Ensure Froala editor is initialized
-        if (editorRef.current) {
-            console.log("Froala editor initialized");
-        }
-    }, [editorRef]);
+        if (descriptionFileUrl) {
+            setIsLoading(true);
 
+            // First, fetch the raw content to check if it's HTML
+            fetch(descriptionFileUrl)
+                .then((response) => response.text())  // Fetch the raw content as text
+                .then((text) => {
+                    console.log("Raw file content:", text);
+                    // Check if the content is HTML, if it is throw an error
+                    if (text.includes("<html>")) {
+                        throw new Error("Received HTML content instead of DOCX.");
+                    }
+                    // If not HTML, proceed with fetching the file as an ArrayBuffer
+                    return fetch(descriptionFileUrl);  // Make a new fetch call to get the arrayBuffer
+                })
+                .then((response) => response.arrayBuffer())  // Now we can safely call arrayBuffer() here
+                .then((buffer) => {
+                    mammoth.convertToHtml({ arrayBuffer: buffer })
+                        .then((result) => {
+                            setModel(result.value);  // Set the HTML content to the Froala editor
+                            setIsLoading(false);
+                        })
+                        .catch((error) => {
+                            console.error("Error converting DOCX to HTML using Mammoth:", error);
+                            fetchAndParseDocx(descriptionFileUrl);  // Fallback to JSZip parsing
+                        });
+                })
+                .catch((error) => {
+                    console.error("Error fetching DOCX file:", error);
+                    setIsLoading(false);
+                });
+        }
+    }, [descriptionFileUrl]);
+
+    // Fallback function for parsing DOCX using JSZip
+    const fetchAndParseDocx = async (url) => {
+        try {
+            const response = await fetch(url);
+            const arrayBuffer = await response.arrayBuffer();
+            const zip = await JSZip.loadAsync(arrayBuffer);
+            const xmlContent = await zip.file("word/document.xml").async("text");
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(xmlContent, "application/xml");
+            console.log(doc);  // Debug the XML content
+            setModel(doc.documentElement.outerHTML); // Set XML content to the editor (you can adjust how you want to render it)
+        } catch (error) {
+            console.error("Error parsing DOCX:", error);
+            throw error;
+        }
+    };
+
+    // Function to export content from Froala editor to DOCX format
     const exportToDoc = async () => {
         if (editorRef.current) {
             let content = editorRef.current.editor.html.get();
@@ -34,7 +79,7 @@ export const useFroala = () => {
 
                         await new Promise((resolve, reject) => {
                             reader.onload = () => {
-                                img.setAttribute("src", reader.result); // Replace src with base64
+                                img.setAttribute("src", reader.result);  // Replace src with base64
                                 resolve();
                             };
                             reader.onerror = reject;
@@ -42,7 +87,6 @@ export const useFroala = () => {
                         });
                     } catch (error) {
                         console.error("Failed to fetch image:", src, error);
-                        // Handle fallback behavior or continue with the export without this image
                     }
                 }
             }
@@ -59,17 +103,14 @@ export const useFroala = () => {
                     ],
                     { type: "application/msword" }
                 );
-
-                // Creating a URL for the DOCX file and returning it
                 const docxFile = new File([blob], "exported_document.docx", { type: "application/msword" });
-                return docxFile;  // Return the file object here
+                return docxFile;
             } catch (error) {
-                console.error("Error creating the DOCX file:", error);
+                console.error("Error creating DOCX file:", error);
                 throw new Error("Failed to create DOCX file.");
             }
         }
     };
 
-
-    return { model, setModel, editorRef, exportToDoc };
+    return { model, setModel, editorRef, isLoading, exportToDoc };
 };

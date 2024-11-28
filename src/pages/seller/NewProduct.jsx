@@ -55,7 +55,8 @@ const NewProduct = () => {
     };
 
     const handleSaveProduct = async () => {
-        console.log("variants: ",variantData);
+        console.log("variants: ",variantData.variants);
+        console.log("attributes: ",variantData.attributes);
         // Step 1: Gather all the necessary data
         const user=JSON.parse(localStorage.getItem("user"))
         const productData = {
@@ -101,17 +102,15 @@ const NewProduct = () => {
             return;
         }
         // Step 5: Handle Technology Info
-        productData.technologyInfo = technologyData || "Default technology info"; // Ensure the state is used
-
-        // Step 6: Handle Variants and Attributes
-       productData.variants = variantData;
-
+        productData.information = technologyData || "Default technology info"; // Ensure the state is used
+        console.log("variants: ",variantData.variants);
+        console.log("attributes: ",variantData.attributes);
         // Final product data
         const finalProductData = {
             ...productData,
             sellerId:user.id,
             descriptionFileUrl: productData.descriptionFileUrl,
-            information: productData.technologyInfo,
+            information: productData.information,
             variants: variantData.variants,
             attributes:variantData.attributes,
             price: variantData.variants?.[0].price || 0, // Fallback to 0 if no variants
@@ -266,7 +265,7 @@ const NewProduct = () => {
                     {/* Attribute & Variant Button */}
                     <button
                         onClick={() => setIsVariantModalOpen(true)}
-                        className="bg-green-500 text-white py-2 px-2 rounded-md hover:bg-green-600"
+                        className="bg-green-500 text-white py-1 px-1 rounded-md hover:bg-green-600"
                     >
                         Add Attributes and Variants
                     </button>
@@ -276,7 +275,7 @@ const NewProduct = () => {
             {/* Save Product Button */}
             <button
                 onClick={handleSaveProduct}
-                className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+                className="mt-4 bg-blue-600 text-white py-1 px-2 rounded-md hover:bg-blue-700"
             >
                 Save Product
             </button>
@@ -285,7 +284,7 @@ const NewProduct = () => {
             {productSaved && (
                 <button
                     onClick={handleAddProduct}
-                    className="mt-4 bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700"
+                    className="mt-4 bg-gray-600 text-white py-1 px-2 rounded-md hover:bg-gray-700"
                 >
                     Add Another Product
                 </button>
