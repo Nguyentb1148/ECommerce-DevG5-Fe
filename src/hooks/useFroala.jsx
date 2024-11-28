@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import mammoth from "mammoth";  // Import Mammoth library
+import mammoth from "mammoth/mammoth.browser.js";  // Import Mammoth library
 import JSZip from "jszip";
 
 export const useFroala = (descriptionFileUrl) => {
-    const [model, setModel] = useState("<p> </p>");
+    const [model, setModel] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const editorRef = useRef(null);
 
@@ -13,6 +13,11 @@ export const useFroala = (descriptionFileUrl) => {
 
             // First, fetch the raw content to check if it's HTML
             fetch(descriptionFileUrl)
+                .then(async (response) => {
+                    const data = await response.blob()
+
+                    return response
+                })
                 .then((response) => response.text())  // Fetch the raw content as text
                 .then((text) => {
                     console.log("Raw file content:", text);
