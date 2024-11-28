@@ -6,14 +6,40 @@ const UPLOAD_PRESET = 'Dev5G-Image';
 const API_KEY = '341784271881655';
 const API_SECRET = '9YKI8kwjThQ1BGvF99_lYem4Src';
 
- export const deleteImage = async (folderName, publicId) => {
+// Check if the image exists on Cloudinary
+const checkImageExists = async (folderName, publicId) => {
+    const fullPublicId = `${folderName}/${publicId}`;
+    const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/v1/${fullPublicId}`;
+
+    try {
+        const response = await fetch(url);
+        if (response.ok) {
+            console.log('Image exists.');
+            return true;
+        } else {
+            console.log('Image not found.');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error checking image existence:', error);
+        return false;
+    }
+};
+
+// Delete image from Cloudinary
+export const deleteImage = async (folderName, publicId) => {
     const fullPublicId = `${folderName}/${publicId}`;
     console.log('Full publicId before destroy:', fullPublicId);
 
+    // Check if image exists before attempting deletion
+    const imageExists = await checkImageExists(folderName, publicId);
+    if (!imageExists) {
+        console.log('Image not found, skipping deletion.');
+        return; // Skip the deletion process if the image doesn't exist
+    }
+
     const timestamp = Math.floor(Date.now() / 1000);
-
     const stringToSign = `public_id=${fullPublicId}&timestamp=${timestamp}${API_SECRET}`;
-
     const signature = CryptoJS.SHA1(stringToSign).toString(CryptoJS.enc.Hex);
 
     const formData = new FormData();
@@ -47,7 +73,7 @@ const API_SECRET = '9YKI8kwjThQ1BGvF99_lYem4Src';
     }
 };
 
-// Function to upload the image to Cloudinary
+// Upload image to Cloudinary
 export const uploadImage = async (imageFile, folderName, public_id) => {
     const formData = new FormData();
     formData.append('file', imageFile);
@@ -73,7 +99,8 @@ export const uploadImage = async (imageFile, folderName, public_id) => {
         throw error;
     }
 };
-// Function to upload the DOC file to Cloudinary
+
+// Upload DOC file to Cloudinary (if needed)
 export const uploadDoc = async (docFile, folderName, categoryName) => {
     const formData = new FormData();
     formData.append('file', docFile);  // Append the DOC file
@@ -101,6 +128,26 @@ export const uploadDoc = async (docFile, folderName, categoryName) => {
         }
     } catch (error) {
         console.error('Error uploading DOC file:', error);
+        throw error;
+    }
+};
+
+// Handle the image upload process including deletion of the old image if it exists
+export const handleImageUpload = async (imageFile, folderName, publicId) => {
+    // First, try deleting the existing image (if it exists)
+    try {
+        await deleteImage(folderName, publicId);
+    } catch (error) {
+        console.log('Image not found or error during deletion, uploading new image...');
+    }
+
+    // Upload the new image
+    try {
+        const uploadedData = await uploadImage(imageFile, folderName, publicId);
+        console.log('New image uploaded successfully:', uploadedData);
+        return uploadedData;
+    } catch (error) {
+        console.error('Error uploading image:', error);
         throw error;
     }
 };

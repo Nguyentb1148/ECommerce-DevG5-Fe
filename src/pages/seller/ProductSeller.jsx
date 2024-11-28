@@ -47,13 +47,25 @@ const styles = {
         backgroundColor: "#f44336",
         color: "white",
     },
+    verifyPending: {
+        color: "#FFA500", // Orange for "Pending"
+        fontWeight: "bold",
+    },
+    verifyApproved: {
+        color: "#4CAF50", // Green for "Approved"
+        fontWeight: "bold",
+    },
+    verifyRejected: {
+        color: "#f44336", // Red for "Rejected"
+        fontWeight: "bold",
+    },
 };
 
 export default function ProductSeller() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const navigate = useNavigate(); // useNavigate hook
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -73,17 +85,16 @@ export default function ProductSeller() {
     }, []);
 
     const handleEdit = (productId) => {
-        navigate(`/seller/productDetail/${productId}`);
+        navigate(`/seller/product/${productId}`);
     };
 
     const handleDelete = async (productId) => {
         try {
             const response = await deleteProduct(productId);
             console.log(response);
-            // Handle further logic after successful response, e.g., show confirmation or remove product from UI
         } catch (error) {
             console.error("Error deleting product:", error);
-            alert(`Error: ${error.message}`);  // Optional: alert the user with a more specific error message
+            alert(`Error: ${error.message}`);
         }
     };
 
@@ -105,6 +116,7 @@ export default function ProductSeller() {
                         <th style={styles.th}>Image</th>
                         <th style={styles.th}>Price</th>
                         <th style={styles.th}>Rating</th>
+                        <th style={styles.th}>Verify</th>
                         <th style={styles.th}>Actions</th>
                     </tr>
                     </thead>
@@ -127,6 +139,18 @@ export default function ProductSeller() {
                             </td>
                             <td style={styles.td}>${product.price}</td>
                             <td style={styles.td}>{product.rating}</td>
+                            <td
+                                style={{
+                                    ...styles.td,
+                                    ...(product.verify.status === "pending"
+                                        ? styles.verifyPending
+                                        : product.verify.status === "approved"
+                                            ? styles.verifyApproved
+                                            : styles.verifyRejected),
+                                }}
+                            >
+                                {product.verify.status}
+                            </td>
                             <td style={styles.td}>
                                 <button
                                     style={{ ...styles.button, ...styles.buttonEdit }}

@@ -20,9 +20,9 @@ import CategoryManage from './pages/admin/category/CategoryManage.jsx';
 import UserManage from './pages/admin/user/UserManage.jsx';
 import BrandManage from "./pages/admin/brand/BrandManage.jsx";
 import HomePageSeller from "./pages/seller/HomePageSeller.jsx";
-import ProductDetailSeller from "./pages/seller/ProductDetailSeller.jsx";
 import ProductSeller from "./pages/seller/ProductSeller.jsx";
 import NewProduct from "./pages/seller/NewProduct.jsx";
+import ProductDetailSeller from "./pages/seller/ProductDetail.jsx";
 
 
 function App() {
@@ -55,10 +55,9 @@ function App() {
                     <Route path="change-password" element={<ChangePassword/>}/>
                 </Route>
                 <Route path='/seller' element={<HomePageSeller/>}>
-                    <Route path='product-detail' element={<ProductDetailSeller/>}/>
                     <Route path='product' element={<ProductSeller/>}/>
                     <Route path='create-product' element={<NewProduct/>}/>
-
+                    <Route path="product/:productId" element={<ProductDetailSeller />} />
                 </Route>
                 <Route path="/admin" element={<Admin/>}>
                     <Route path="" element={<DashboardAdmin/>}/>
