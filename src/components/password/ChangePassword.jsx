@@ -11,14 +11,26 @@ const ChangePassword = () => {
         newPassword: "",
         confirmPassword: "",
     });
+    const [error, setError] = useState(""); // Thêm state để hiển thị lỗi
 
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
+
+        // Kiểm tra New Password và Confirm Password có giống nhau không
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            setError("New Password and Confirm Password must match!");
+            return;
+        }
+
+        setError(""); // Xóa lỗi nếu không có vấn đề
         setLoading(true);
-        // Simulate API call
+
+        // Giả lập API call
         await new Promise((resolve) => setTimeout(resolve, 1500));
+
         setLoading(false);
         setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+        alert("Password changed successfully!");
     };
 
     const checkPasswordStrength = (password) => {
@@ -153,6 +165,8 @@ const ChangePassword = () => {
                         </button>
                     </div>
                 </div>
+
+                {error && <p className="text-red-500 text-sm">{error}</p>}
 
                 <div className="flex justify-end">
                     <button
