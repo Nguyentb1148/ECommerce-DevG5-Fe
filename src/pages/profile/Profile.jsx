@@ -58,14 +58,14 @@ const ProfilePage = () => {
         setUser((prev) => ({ ...prev, imageURL: reader.result }));
       };
       reader.readAsDataURL(file);
-        }
-    };
+    }
+  };
 
   const handleNavigation = (path) => {
     navigate(path);
   };
 
-    return (
+  return (
     <div className="flex">
       {/* Sidebar */}
       <div className="w-64 bg-gray-800 text-white h-screen">
@@ -75,12 +75,12 @@ const ProfilePage = () => {
             <li className="mb-4">
               <button onClick={() => handleNavigation("/user/profile")} className="hover:text-gray-300">
                 Profile
-                                </button>
+              </button>
             </li>
             <li className="mb-4">
               <button onClick={() => handleNavigation("/user/change-password")} className="hover:text-gray-300">
-                                    Change Password
-                                </button>
+                Change Password
+              </button>
             </li>
             <li className="mb-4">
               <button onClick={() => handleNavigation("/user/product-history")} className="hover:text-gray-300">
@@ -229,25 +229,25 @@ const ProfilePage = () => {
                 {/* Save or Edit button */}
                 <div className="flex items-center gap-4">
                   {!isEditing ? (
-                                <button
+                    <button
                       type="button"
                       onClick={() => setIsEditing(true)}
                       className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                                >
+                    >
                       Edit
-                                </button>
+                    </button>
                   ) : (
-                                <button
+                    <button
                       type="button"
                       onClick={handleSave}
                       className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-                                >
+                    >
                       Save
-                                </button>
+                    </button>
                   )}
-                            </div>
+                </div>
               </form>
-                        </div>
+            </div>
 
             {/* Image Section */}
             <div className="flex flex-col items-center justify-start w-64">
@@ -266,12 +266,12 @@ const ProfilePage = () => {
                   <input type="file" accept="image/*" onChange={handleImageUpload} />
                 </div>
               )}
-                        </div>
-                    </div>
-                </div>
             </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default ProfilePage;
