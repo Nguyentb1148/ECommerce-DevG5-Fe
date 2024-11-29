@@ -23,24 +23,26 @@ const UpdateProfile = () => {
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user"));
+        console.log(user);  // Log user to check if it's being fetched correctly
+    
         if (user) {
-            // Chuyển đổi birthDate từ ISO format sang YYYY-MM-DD
             const formattedBirthDate = user.dateOfBirth
-                ? new Date(user.dateOfBirth).toISOString().split("T")[0]
-                : ""; // Nếu không có birthDate, để trống
+                ? new Date(user.dateOfBirth).toISOString().split("T")[0] // Ensure correct format
+                : ""; // Set it to empty string if no birthDate
     
             setProfileData({
                 name: user.fullName || "",
                 email: user.email || "",
                 phone: user.phone || "",
                 address: user.address || "",
-                birthDate: formattedBirthDate || "", // Sử dụng ngày đã chuyển đổi
+                birthDate: formattedBirthDate,  // Don't set a default, leave empty if no value
                 gender: user.gender || "",
                 imageUrl: user.imageUrl || "",
             });
             setProfileImage(user.imageUrl || null);
         }
     }, []);
+   
     
         
 
@@ -88,7 +90,6 @@ const UpdateProfile = () => {
                 ...prevData,
                 [name]: value,
             };
-            console.log("Updated Profile Data:", updatedData); // Log data on every change
             return updatedData;
         });
         // Clear error for the field being edited
@@ -121,41 +122,55 @@ const UpdateProfile = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent default form submission behavior
-     
-        // Step 1: Validate data
+        e.preventDefault();
+    
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors); // Set the validation errors
-            return; // Stop if there are validation errors
+            setErrors(validationErrors);
+            return;
         }
-     
+    
         try {
             const user = JSON.parse(localStorage.getItem("user"));
-     
-            // Format birthDate as ISO 8601
+    
             let formattedBirthDate = profileData.birthDate;
             if (formattedBirthDate) {
                 const dateObj = new Date(formattedBirthDate);
                 if (!isNaN(dateObj.getTime())) {
-                    formattedBirthDate = dateObj.toISOString(); // Lưu dưới định dạng ISO 8601
+                    formattedBirthDate = dateObj.toISOString(); // Convert to ISO format
                 } else {
                     throw new Error("Invalid date format");
                 }
             }
-     
+    
             const updatedData = { 
                 ...profileData, 
-                birthDate: formattedBirthDate, // Lưu ngày đúng định dạng ISO
+                birthDate: formattedBirthDate, // ISO format date
                 userId: user.id 
             };
-     
+    
+            // Send the updated data to the server
             const response = await authApi.put(`/users/${user.id}`, updatedData);
             console.log("Profile updated successfully:", response.data);
-     
-            // Lưu lại vào localStorage
-            localStorage.setItem("user", JSON.stringify(response.data));
+    
+            // Remove the old user data from localStorage and save the new user data
+            localStorage.removeItem("user");
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+    
+            // Update state with new profile data
+            setProfileData({
+                name: response.data.user.fullName,
+                email: response.data.user.email,
+                phone: response.data.user.phone,
+                address: response.data.user.address,
+                birthDate: response.data.user.dateOfBirth ? new Date(response.data.user.dateOfBirth).toISOString().split("T")[0] : "", // Ensure birthDate is empty if not available
+                gender: response.data.user.gender,
+                imageUrl: response.data.user.imageUrl,
+            });
+    
+            // Show success message
             toast.success("Profile updated successfully!", { position: "top-right" });
+    
         } catch (error) {
             console.error("Error updating profile:", error);
             if (error.response?.status === 401) {
@@ -166,7 +181,6 @@ const UpdateProfile = () => {
             }
         }
     };
-    
     
 
     return (
@@ -217,10 +231,11 @@ const UpdateProfile = () => {
                         <input
                             type="email"
                             name="email"
-                            value={profileData.email}
-                            onChange={handleChange}
+                            value={profileData.email} // Value from profileData state
+                            onChange={handleChange}    // This still needed for validation (but won't change the email)
                             className={`mt-1 block w-full rounded-md border ${errors.email ? "border-red-500" : "border-gray-300"} dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
                             placeholder="john@example.com"
+                            readOnly // Make this field read-only
                         />
                         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                     </div>
@@ -246,9 +261,9 @@ const UpdateProfile = () => {
                             <input
                                 type="date"
                                 name="birthDate"
-                                value={profileData.birthDate}
+                                value={profileData.birthDate || ""} // This will be in yyyy-MM-dd format
                                 onChange={handleChange}
-                                className={`mt-1 block max-md:w-full w-60 rounded-md  ${errors.birthDate ? "border-red-500" : "border-gray-300"} border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
+                                className={`mt-1 block max-md:w-full w-60 rounded-md ${errors.birthDate ? "border-red-500" : "border-gray-300"} border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
                             />
                             {errors.birthDate && <p className="text-red-500 text-sm mt-1">{errors.birthDate}</p>}
                         </div>
