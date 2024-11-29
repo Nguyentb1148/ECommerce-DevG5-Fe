@@ -55,20 +55,18 @@ const VariantPage = ({ onSave }) => {
     // Save options and variants to localStorage when they change
     useEffect(() => {
         if (options.length > 0) {
-            console.log("Saving options to localStorage:", options);  // Add debug
             localStorage.setItem('options', JSON.stringify(options));
         }
     }, [options]);
 
     useEffect(() => {
         if (variants.length > 0) {
-            console.log("Saving variants to localStorage:", variants);  // Add debug
             localStorage.setItem('variants', JSON.stringify(variants));
         }
     }, [variants]);
 
     const handleAddOption = () => {
-        setOptions([...options, { title: '', tags: [], tagInput: '' }]);
+        setOptions([...options, { title: '', tagInput: '', tags: [] }]);
     };
 
     const handleRemoveOption = (indexToRemove) => {
@@ -81,36 +79,21 @@ const VariantPage = ({ onSave }) => {
         setOptions(newOptions);
     };
 
-    const handleAddTag = (optionIndex, tagValue) => {
-        if (!tagValue.trim()) return;
-
-        const newOptions = [...options];
-        if (!newOptions[optionIndex].tags.includes(tagValue.trim())) {
-            newOptions[optionIndex].tags.push(tagValue.trim());
-            newOptions[optionIndex].tagInput = ''; // Clear input after adding the tag
-            setOptions(newOptions);
-        }
-    };
-
-    const handleRemoveTag = (optionIndex, tagToRemove) => {
-        const newOptions = [...options];
-        newOptions[optionIndex].tags = newOptions[optionIndex].tags.filter(
-            tag => tag !== tagToRemove
-        );
-        setOptions(newOptions);
-    };
-
     const handleTagInputChange = (e, optionIndex) => {
         const newOptions = [...options];
         newOptions[optionIndex].tagInput = e.target.value;
         setOptions(newOptions);
     };
 
-    const handleTagInputKeyDown = (e, optionIndex) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const inputValue = e.target.value;
-            handleAddTag(optionIndex, inputValue);
+    const handleAddTag = (optionIndex) => {
+        const tagValue = options[optionIndex].tagInput.trim();
+        if (!tagValue) return;
+
+        const newOptions = [...options];
+        if (!newOptions[optionIndex].tags.includes(tagValue)) {
+            newOptions[optionIndex].tags.push(tagValue);
+            newOptions[optionIndex].tagInput = ''; // Clear input after adding the tag
+            setOptions(newOptions);
         }
     };
 
@@ -118,7 +101,7 @@ const VariantPage = ({ onSave }) => {
         setVariants(allVariants.map((variant) => ({
             attributes: variant,
             price: '',
-            stockQuantity: '' // Ensure stockQuantity is initialized here
+            stockQuantity: ''
         })));
     };
 
@@ -148,148 +131,154 @@ const VariantPage = ({ onSave }) => {
                 return {
                     attributes: attributeMapping,
                     price: variant.price,
-                    stockQuantity: variant.stockQuantity, // Include stock in save logic
+                    stockQuantity: variant.stockQuantity,
                 };
             })
         );
+
         // Debugging the data to be saved
         console.log("Saving data:", { attributes, variants: processedVariants });
         // Saving to parent component via onSave
         onSave({ attributes, variants: processedVariants });
-        // Also save to localStorage to persist after refresh
-        console.log("Saving to localStorage...");
     };
 
     return (
-        <div className="w-full max-w-3xl mx-auto p-6">
-            <h2 className="text-2xl font-bold mb-6">Product Options</h2>
+        <div className="w-[1300px] h-[650px] mx-auto p-6 flex">
+            {/* Left Section for Attribute Options */}
+            <div className="w-1/2 pr-4 space-y-6">
+                <h2 className="text-2xl font-bold mb-6">Product Options</h2>
 
-            {/* Options Section */}
-            <div className="space-y-4">
-                {options.map((option, optionIndex) => (
-                    <Card key={optionIndex} className="p-4">
-                        <div className="flex justify-between items-start">
-                            <div className="w-full">
-                                <div className="mb-4">
-                                    <label className="block text-sm font-medium mb-1">
-                                        Option title<span className="text-red-500">*</span>
-                                    </label>
-                                    <Input
-                                        value={option.title}
-                                        onChange={(e) => handleTitleChange(optionIndex, e.target.value)}
-                                        placeholder="Enter option title"
-                                        className="max-w-xs"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Tags (comma separated)
-                                    </label>
-                                    <div className="flex flex-wrap gap-2 mb-2">
-                                        {option.tags.map((tag, tagIndex) => (
-                                            <span
-                                                key={tagIndex}
-                                                className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-slate-900 text-white"
-                                            >
-                                                {tag}
-                                                <button
-                                                    onClick={() => handleRemoveTag(optionIndex, tag)}
-                                                    className="text-white hover:text-red-300"
-                                                >
-                                                    <X className="h-4 w-4" />
-                                                </button>
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <Input
-                                        value={option.tagInput} // Bind to the tagInput value in state
-                                        onChange={(e) => handleTagInputChange(e, optionIndex)} // Update the input state
-                                        placeholder="Type and press Enter to add tags"
-                                        onKeyDown={(e) => handleTagInputKeyDown(e, optionIndex)} // Handle key press
-                                        className="max-w-xs"
-                                    />
-                                </div>
-                            </div>
-
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleRemoveOption(optionIndex)}
-                                className="text-slate-500 hover:text-red-600"
-                            >
-                                <Trash2 className="h-5 w-5" />
-                            </Button>
-                        </div>
-                    </Card>
-                ))}
-
+                {/* Create Option Button */}
                 <Button
                     onClick={handleAddOption}
                     variant="outline"
                     className="w-full flex items-center justify-center gap-2"
                 >
                     <Plus className="h-4 w-4" />
-                    Add an option
+                    Create Option
+                </Button>
+
+                {/* Render all options */}
+                <div className="space-y-4 mt-4">
+                    {options.map((option, optionIndex) => (
+                        <Card key={optionIndex} className="p-4">
+                            <div className="flex justify-between items-start">
+                                <div className="w-full">
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium mb-1">
+                                            Option title<span className="text-red-500">*</span>
+                                        </label>
+                                        <Input
+                                            value={option.title}
+                                            onChange={(e) => handleTitleChange(optionIndex, e.target.value)}
+                                            placeholder="Enter option title"
+                                            className="max-w-xs"
+                                        />
+                                    </div>
+
+                                    {/* Tags and Input to add tags */}
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1">
+                                            Tags (comma separated)
+                                        </label>
+                                        <div className="flex flex-wrap gap-2 mb-2">
+                                            {option.tags.map((tag, tagIndex) => (
+                                                <span
+                                                    key={tagIndex}
+                                                    className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-slate-900 text-white"
+                                                >
+                                                    {tag}
+                                                    <button
+                                                        onClick={() => handleRemoveTag(optionIndex, tag)}
+                                                        className="text-white hover:text-red-300"
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Input
+                                                value={option.tagInput}
+                                                onChange={(e) => handleTagInputChange(e, optionIndex)}
+                                                placeholder="Type and press Enter to add tags"
+                                                className="max-w-xs"
+                                            />
+                                            <Button
+                                                onClick={() => handleAddTag(optionIndex)}
+                                                className="text-white bg-green-400 hover:bg-green-500"
+                                            >
+                                                Add
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleRemoveOption(optionIndex)}
+                                    className="text-slate-500 hover:text-red-600"
+                                >
+                                    <Trash2 className="h-5 w-5" />
+                                </Button>
+                            </div>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+
+            {/* Right Section for Variants */}
+            <div className="w-1/2 pl-4 space-y-6">
+                <h2 className="text-2xl font-bold mb-6">Variants</h2>
+
+                <div className="space-y-4">
+                    {variants.map((variant, variantIndex) => (
+                        <Card key={variantIndex} className="p-4">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <div className="mb-2">
+                                        <span className="font-semibold">Attributes:</span>{' '}
+                                        {variant.attributes.join(', ')}
+                                    </div>
+                                    <Input
+                                        value={variant.price}
+                                        onChange={(e) =>
+                                            handleVariantChange(variantIndex, 'price', e.target.value)
+                                        }
+                                        placeholder="Enter price"
+                                        className="max-w-xs"
+                                    />
+                                    <Input
+                                        value={variant.stockQuantity}
+                                        onChange={(e) =>
+                                            handleVariantChange(variantIndex, 'stockQuantity', e.target.value)
+                                        }
+                                        placeholder="Enter stock quantity"
+                                        className="max-w-xs mt-2"
+                                    />
+                                </div>
+
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleRemoveVariant(variantIndex)}
+                                    className="text-slate-500 hover:text-red-600"
+                                >
+                                    <Trash2 className="h-5 w-5" />
+                                </Button>
+                            </div>
+                        </Card>
+                    ))}
+                </div>
+
+                <Button
+                    onClick={handleSave}
+                    className="mt-8 w-full"
+                >
+                    Save
                 </Button>
             </div>
-
-            {/* Create Variants Section */}
-            <Button
-                onClick={handleCreateVariants}
-                className="mt-4 w-full flex items-center justify-center gap-2"
-            >
-                Create Variants
-            </Button>
-
-            {/* Variants Section */}
-            <div className="space-y-4 mt-6">
-                {variants.map((variant, variantIndex) => (
-                    <Card key={variantIndex} className="p-4">
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <div className="mb-2">
-                                    <span className="font-semibold">Attributes:</span>{' '}
-                                    {variant.attributes.join(', ')}
-                                </div>
-                                <Input
-                                    value={variant.price}
-                                    onChange={(e) =>
-                                        handleVariantChange(variantIndex, 'price', e.target.value)
-                                    }
-                                    placeholder="Enter price"
-                                    className="max-w-xs"
-                                />
-                                <Input
-                                    value={variant.stockQuantity}
-                                    onChange={(e) =>
-                                        handleVariantChange(variantIndex, 'stockQuantity', e.target.value)
-                                    }
-                                    placeholder="Enter stock quantity"
-                                    className="max-w-xs mt-2"
-                                />
-                            </div>
-
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleRemoveVariant(variantIndex)}
-                                className="text-slate-500 hover:text-red-600"
-                            >
-                                <Trash2 className="h-5 w-5" />
-                            </Button>
-                        </div>
-                    </Card>
-                ))}
-            </div>
-
-            {/* Save Button */}
-            <Button
-                onClick={handleSave}
-                className="mt-8 w-full"
-            >
-                Save
-            </Button>
         </div>
     );
 };

@@ -25,6 +25,7 @@ import ProductSeller from "./pages/seller/ProductSeller.jsx";
 import NewProduct from "./pages/seller/NewProduct.jsx";
 import ShoppingCart from './pages/cart/ShoppingCart.jsx';
 import ProductDetailSeller from "./pages/seller/ProductDetail.jsx";
+import ProductSlider from "./pages/products/ProductSlider.jsx";
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
                 <Route path='/authentication' element={<Authentication/>}/>
                 <Route path='/Forgotpassword' element={<ForgotPassword/>}/>
                 <Route path="/reset-password" element={<ResetPassword/>}/> {/* Adjusted to match query param handling */}
+                <Route path='/ProductSlider' element={<ProductSlider/>}/>
                 <Route path="/user" element={<User/>}>
                     <Route path="profile" element={<ProfilePage/>}/>
                     <Route path="change-password" element={<ChangePassword/>}/>

@@ -51,7 +51,8 @@
     "react-router-dom": "^6.28.0",
     "react-slick": "^0.30.2",
     "shared-types": "^1.0.0",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "swiper": "^11.1.15"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

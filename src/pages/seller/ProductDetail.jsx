@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
-import FroalaEditorComponent from "react-froala-wysiwyg";
 import { getCategories } from "../../services/api/CategoryApi.jsx";
 import { getBrands } from "../../services/api/BrandsApi.jsx";
 import { getProductById } from "../../services/api/ProductApi.jsx";
-import TechnologyInfo from "./TechnologyInfo";
 import VariantPage from "./VariantPage";
 import { useParams } from "react-router-dom";
-import { useFroala } from "../../hooks/useFroala"; // Assuming useFroala hook is in a hooks directory
-
 const ProductDetail = () => {
     const { productId } = useParams();
 
@@ -21,9 +17,7 @@ const ProductDetail = () => {
     const [productDetails, setProductDetails] = useState({});
     const [technologyData, setTechnologyData] = useState([]);
     const [variantData, setVariantData] = useState({ attributes: [], variants: [] });
-    const [descriptionFileUrl, setDescriptionFileUrl] = useState(""); // To store the DOCX URL
 
-    const { model, setModel, editorRef, isLoading, exportToDoc } = useFroala(descriptionFileUrl);  // Pass the URL to the hook
 
     useEffect(() => {
         const fetchData = async () => {
@@ -43,7 +37,6 @@ const ProductDetail = () => {
             setMainImage(productData.imageUrls[0] || null);
             setTechnologyData(productData.technologyInfo || []);
             setVariantData(productData.variants || []);
-            setDescriptionFileUrl(productData.descriptionFileUrl); // Set the DOCX URL
         };
 
         fetchData();
@@ -148,20 +141,8 @@ const ProductDetail = () => {
                 {/* Right Column */}
                 <div className="col-span-3 flex flex-col space-y-6">
                     {/* Part 3: Description */}
-                    <div
-                        className="p-2 bg-white rounded-lg shadow-md flex-grow max-h-[calc(100vh-12rem)] overflow-y-auto">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                        {isLoading ? (
-                            <p>Loading...</p>
-                        ) : (
-                            <FroalaEditorComponent
-                                tag="textarea"
-                                value={model}  // Using the model state from useFroala
-                                readOnly
-                                className="froala-editor"
-                                ref={editorRef}
-                            />
-                        )}
+                    <div>
+
                     </div>
 
                     {/* Variants */}
