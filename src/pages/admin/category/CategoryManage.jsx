@@ -168,7 +168,7 @@ const CategoryManage = () => {
 
   return (
     <div className="h-screen">
-      <h1 className="grid place-items-center text-4xl py-2 text-white">Manage Category</h1>
+      <h1 className="grid place-items-center text-4xl py-2 text-white">Category Management</h1>
       <button
         className="btn-add my-2 ml-6 bg-blue-500 text-white px-4 py-2 rounded"
         onClick={() => setIsAddCategoryOpen(true)}
