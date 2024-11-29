@@ -22,21 +22,27 @@ const UpdateProfile = () => {
     const [profileImage, setProfileImage] = useState(null); // State for profile image
 
     useEffect(() => {
-        // Retrieve and set user data from localStorage
         const user = JSON.parse(localStorage.getItem("user"));
         if (user) {
+            // Chuyển đổi birthDate từ ISO format sang YYYY-MM-DD
+            const formattedBirthDate = user.dateOfBirth
+                ? new Date(user.dateOfBirth).toISOString().split("T")[0]
+                : ""; // Nếu không có birthDate, để trống
+    
             setProfileData({
                 name: user.fullName || "",
                 email: user.email || "",
                 phone: user.phone || "",
                 address: user.address || "",
-                birthDate: user.birthDate || "",
+                birthDate: formattedBirthDate || "", // Sử dụng ngày đã chuyển đổi
                 gender: user.gender || "",
-                imageUrl: user.imageUrl || "" // Load image URL if available
+                imageUrl: user.imageUrl || "",
             });
-            setProfileImage(user.imageUrl || null); // Set profile image if available
+            setProfileImage(user.imageUrl || null);
         }
     }, []);
+    
+        
 
     // Validation logic
     const validate = () => {
@@ -115,34 +121,43 @@ const UpdateProfile = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent form reload
-
+        e.preventDefault(); // Prevent default form submission behavior
+     
         // Step 1: Validate data
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
+            setErrors(validationErrors); // Set the validation errors
+            return; // Stop if there are validation errors
         }
-    
+     
         try {
-            // Step 2: Send request to update data
             const user = JSON.parse(localStorage.getItem("user"));
-            const updatedData = { ...profileData, userId: user.id }; // Add userId if needed
-            
-            const response = await authApi.put("/user/update-profile", updatedData);
-            console.log(response)
-            console.log("Server Response:", response.data);
-    
-            // Step 3: Save updated data in localStorage
+     
+            // Format birthDate as ISO 8601
+            let formattedBirthDate = profileData.birthDate;
+            if (formattedBirthDate) {
+                const dateObj = new Date(formattedBirthDate);
+                if (!isNaN(dateObj.getTime())) {
+                    formattedBirthDate = dateObj.toISOString(); // Lưu dưới định dạng ISO 8601
+                } else {
+                    throw new Error("Invalid date format");
+                }
+            }
+     
+            const updatedData = { 
+                ...profileData, 
+                birthDate: formattedBirthDate, // Lưu ngày đúng định dạng ISO
+                userId: user.id 
+            };
+     
+            const response = await authApi.put(`/users/${user.id}`, updatedData);
+            console.log("Profile updated successfully:", response.data);
+     
+            // Lưu lại vào localStorage
             localStorage.setItem("user", JSON.stringify(response.data));
-    
-            // Display success message
             toast.success("Profile updated successfully!", { position: "top-right" });
-
         } catch (error) {
             console.error("Error updating profile:", error);
-    
-            // Handle authentication error, redirect to login
             if (error.response?.status === 401) {
                 toast.error("Session expired. Redirecting to login.", { position: "top-right" });
                 window.location.href = "/login";
@@ -151,6 +166,8 @@ const UpdateProfile = () => {
             }
         }
     };
+    
+    
 
     return (
         <div>

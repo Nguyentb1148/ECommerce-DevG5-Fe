@@ -8,6 +8,7 @@ const authApi = axios.create({
     baseURL: baseLink,
     headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Ensure token is attached for authorization
     }
 });
 
