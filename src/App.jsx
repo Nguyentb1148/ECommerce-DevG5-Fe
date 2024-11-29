@@ -26,6 +26,7 @@ import NewProduct from "./pages/seller/NewProduct.jsx";
 import ShoppingCart from './pages/cart/ShoppingCart.jsx';
 import ProductDetailSeller from "./pages/seller/ProductDetail.jsx";
 import ProductSlider from "./pages/products/ProductSlider.jsx";
+import EditProductPage from "./pages/seller/ProductDetail.jsx";
 
 
 function App() {
@@ -63,7 +64,7 @@ function App() {
                 <Route path='/seller' element={<HomePageSeller/>}>
                     <Route path='product' element={<ProductSeller/>}/>
                     <Route path='create-product' element={<NewProduct/>}/>
-                    <Route path="product/:productId" element={<ProductDetailSeller />} />
+                    <Route path="product/:productId" element={<EditProductPage />} />
                 </Route>
                 <Route path="/admin" element={<Admin/>}>
                     <Route path="" element={<DashboardAdmin/>}/>

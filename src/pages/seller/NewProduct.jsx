@@ -6,6 +6,7 @@ import { createProduct } from "../../services/api/ProductApi.jsx";
 import VariantPage from "./VariantPage";
 import { RiUploadCloudFill } from "react-icons/ri";
 import { X  } from "lucide-react";
+import { CiCircleQuestion } from "react-icons/ci";
 
 const NewProduct = () => {
     const [productName, setProductName] = useState("");
@@ -22,6 +23,7 @@ const NewProduct = () => {
     const [errors, setErrors] = useState({});
     const fileInputRef = useRef(null);
     const [invalidImageIndexes, setInvalidImageIndexes] = useState([]);  // State for invalid images
+    const [isHelpModalOpen, setIsHelpModalOpen] = useState(false); // State to control the help modal visibility
 
     useEffect(() => {
         const fetchData = async () => {
@@ -75,6 +77,18 @@ const NewProduct = () => {
             setMainImage(URL.createObjectURL(image.file));
         }
     };
+    const openHelpModal = () => {
+        setIsHelpModalOpen(true);
+    };
+
+    const closeHelpModal = () => {
+        setIsHelpModalOpen(false);
+    };
+
+    const handleHelpIconClick = () => {
+        openHelpModal();  // Open the modal
+    };
+
 
     const handleImageDelete = (index) => {
         // Remove the image from the list
@@ -360,19 +374,29 @@ const NewProduct = () => {
             {isVariantModalOpen && (
                 <div
                     className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
-                    onClick={() => setIsVariantModalOpen(false)}
+                    onClick={() => setIsVariantModalOpen(false)} // Close the variant modal when clicking outside
                 >
                     <div
                         className="bg-white rounded-lg w-[1500px] h-[800px] p-6 overflow-y-auto relative"
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
                     >
-                        {/* Close button in top-right corner */}
-                        <button
-                            onClick={() => setIsVariantModalOpen(false)}
-                            className="absolute top-4 right-4 text-xl text-gray-500 hover:text-gray-800"
-                        >
-                            <X className="h-6 w-6" />
-                        </button>
+                        {/* Top-right corner with question icon and close button */}
+                        <div className="absolute top-4 right-4 flex items-center gap-2">
+                            {/* Question Icon */}
+                            <button
+                                onClick={handleHelpIconClick} // This function should open the help modal
+                                className="text-xl text-gray-500 hover:text-gray-800"
+                            >
+                                <CiCircleQuestion className="h-6 w-6"/>
+                            </button>
+                            {/* Close button */}
+                            <button
+                                onClick={() => setIsVariantModalOpen(false)} // Close variant modal
+                                className="text-xl text-gray-500 hover:text-gray-800"
+                            >
+                                <X className="h-6 w-6"/>
+                            </button>
+                        </div>
 
                         {/* Full variant page inside the modal */}
                         <VariantPage
@@ -385,7 +409,55 @@ const NewProduct = () => {
                 </div>
             )}
 
+            {/* Help Modal */}
+            {isHelpModalOpen && (
+                <div
+                    className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
+                    onClick={closeHelpModal} // Close help modal when clicking outside
+                >
+                    <div
+                        className="bg-white rounded-lg w-[600px] p-6 overflow-y-auto relative"
+                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+                    >
+                        {/* Close help modal button */}
+                        <button
+                            onClick={closeHelpModal} // Close help modal
+                            className="absolute top-4 right-4 text-xl text-gray-500 hover:text-gray-800"
+                        >
+                            <X className="h-6 w-6" />
+                        </button>
 
+                        {/* Help modal content */}
+                        <h2 className="text-2xl font-bold mb-4">How to Create Attributes and Variants</h2>
+                        <p className="mb-4">
+                            In this section, you can create attributes for your product, such as size, color, RAM, storage, etc. These attributes are essential to define different variants of your product.
+                        </p>
+                        <p className="mb-4">
+                            For example, if you're selling a phone, you might create attributes like:
+                            <ul className="list-disc pl-5 mt-2">
+                                <li>Color: Red, Blue, Black</li>
+                                <li>RAM: 4GB, 8GB, 16GB</li>
+                                <li>Storage: 64GB, 128GB, 256GB</li>
+                            </ul>
+                        </p>
+                        <p className="mb-4">
+                            Once you have defined these attributes, you can click the <strong>Create Variants</strong> button. This will automatically generate product variants based on the combinations of these attributes.
+                        </p>
+                        <p>
+                            For instance, with the attributes above, variants like "Red - 8GB RAM - 128GB Storage" or "Blue - 16GB RAM - 256GB Storage" will be created.
+                        </p>
+
+                        <div className="mt-6">
+                            <button
+                                onClick={closeHelpModal} // Close the help modal
+                                className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            >
+                                Got it
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

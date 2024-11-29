@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { deleteProduct, getProducts } from "../../services/api/ProductApi.jsx";
+import {deleteProduct, getProducts, getProductsByUserId} from "../../services/api/ProductApi.jsx";
 import { useNavigate } from "react-router-dom";
 
 const styles = {
@@ -70,8 +70,9 @@ export default function ProductSeller() {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
+                const user = JSON.parse(localStorage.getItem("user"));
                 setLoading(true);
-                const productsData = await getProducts();
+                const productsData = await getProductsByUserId(user.id);
                 setProducts(productsData);
                 console.log("Fetched products data:", productsData);
             } catch (err) {

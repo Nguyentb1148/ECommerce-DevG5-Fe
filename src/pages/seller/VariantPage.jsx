@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Plus, Trash2 } from "lucide-react";
+import { X, Plus } from "lucide-react"; // Import X instead of Trash2
 import useVariantPermutation from '../../hooks/useVariantPermutation.tsx';
 
 // Simple Button Component
@@ -145,28 +145,28 @@ const VariantPage = ({ onSave }) => {
     return (
         <div className="w-[1300px] h-[650px] mx-auto p-6 flex">
             {/* Left Section for Attribute Options */}
-            <div className="w-1/2 pr-4 space-y-6">
+            <div className="w-1/2 pr-4 space-y-6  p-4">
                 <h2 className="text-2xl font-bold mb-6">Product Options</h2>
 
                 {/* Create Option Button */}
                 <Button
                     onClick={handleAddOption}
                     variant="outline"
-                    className="w-full flex items-center justify-center gap-2"
+                    className="w-full flex items-center justify-center gap-2 bg-blue-400 text-white hover:bg-blue-500"
                 >
                     <Plus className="h-4 w-4" />
-                    Create Option
+                    Create Attribute
                 </Button>
 
                 {/* Render all options */}
                 <div className="space-y-4 mt-4">
                     {options.map((option, optionIndex) => (
-                        <Card key={optionIndex} className="p-4">
+                        <Card key={optionIndex} className="border border-gray-300 p-4">
                             <div className="flex justify-between items-start">
                                 <div className="w-full">
                                     <div className="mb-4">
                                         <label className="block text-sm font-medium mb-1">
-                                            Option title<span className="text-red-500">*</span>
+                                            Attribute<span className="text-red-500">*</span>
                                         </label>
                                         <Input
                                             value={option.title}
@@ -179,7 +179,7 @@ const VariantPage = ({ onSave }) => {
                                     {/* Tags and Input to add tags */}
                                     <div>
                                         <label className="block text-sm font-medium mb-1">
-                                            Tags (comma separated)
+                                            Value <span className="text-red-500">*</span>
                                         </label>
                                         <div className="flex flex-wrap gap-2 mb-2">
                                             {option.tags.map((tag, tagIndex) => (
@@ -206,7 +206,7 @@ const VariantPage = ({ onSave }) => {
                                             />
                                             <Button
                                                 onClick={() => handleAddTag(optionIndex)}
-                                                className="text-white bg-green-400 hover:bg-green-500"
+                                                className="flex items-center justify-center gap-2 bg-blue-400 text-white hover:bg-blue-500"
                                             >
                                                 Add
                                             </Button>
@@ -220,7 +220,7 @@ const VariantPage = ({ onSave }) => {
                                     onClick={() => handleRemoveOption(optionIndex)}
                                     className="text-slate-500 hover:text-red-600"
                                 >
-                                    <Trash2 className="h-5 w-5" />
+                                    <X className="h-5 w-5" />
                                 </Button>
                             </div>
                         </Card>
@@ -229,43 +229,62 @@ const VariantPage = ({ onSave }) => {
             </div>
 
             {/* Right Section for Variants */}
-            <div className="w-1/2 pl-4 space-y-6">
+            <div className="w-1/2 pl-4 space-y-6  p-4">
                 <h2 className="text-2xl font-bold mb-6">Variants</h2>
 
-                <div className="space-y-4">
+                {/* Create Variants Button */}
+                <Button
+                    onClick={handleCreateVariants}
+                    className="w-full flex items-center justify-center gap-2 bg-blue-400 text-white hover:bg-blue-500"
+                >
+                    <Plus className="h-4 w-4" />
+                    Create Variants
+                </Button>
+
+                <div className="space-y-4 mt-4">
                     {variants.map((variant, variantIndex) => (
-                        <Card key={variantIndex} className="p-4">
-                            <div className="flex justify-between items-center">
+                        <Card key={variantIndex} className="border border-gray-300 p-4">
+                            <div className="flex justify-between items-start relative">
                                 <div>
                                     <div className="mb-2">
                                         <span className="font-semibold">Attributes:</span>{' '}
                                         {variant.attributes.join(', ')}
                                     </div>
-                                    <Input
-                                        value={variant.price}
-                                        onChange={(e) =>
-                                            handleVariantChange(variantIndex, 'price', e.target.value)
-                                        }
-                                        placeholder="Enter price"
-                                        className="max-w-xs"
-                                    />
-                                    <Input
-                                        value={variant.stockQuantity}
-                                        onChange={(e) =>
-                                            handleVariantChange(variantIndex, 'stockQuantity', e.target.value)
-                                        }
-                                        placeholder="Enter stock quantity"
-                                        className="max-w-xs mt-2"
-                                    />
+                                    <div className="mb-2">
+                                        <label className="block text-sm font-medium mb-1">
+                                            Price<span className="text-red-500">*</span>
+                                        </label>
+                                        <Input
+                                            value={variant.price}
+                                            onChange={(e) =>
+                                                handleVariantChange(variantIndex, 'price', e.target.value)
+                                            }
+                                            placeholder="Enter price"
+                                            className="max-w-xs"
+                                        />
+                                    </div>
+                                    <div className="mb-2">
+                                        <label className="block text-sm font-medium mb-1">
+                                            Quantity<span className="text-red-500">*</span>
+                                        </label>
+                                        <Input
+                                            value={variant.stockQuantity}
+                                            onChange={(e) =>
+                                                handleVariantChange(variantIndex, 'stockQuantity', e.target.value)
+                                            }
+                                            placeholder="Enter quantity"
+                                            className="max-w-xs"
+                                        />
+                                    </div>
                                 </div>
 
                                 <Button
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => handleRemoveVariant(variantIndex)}
-                                    className="text-slate-500 hover:text-red-600"
+                                    className="absolute top-0 right-0 text-slate-500 hover:text-red-600"
                                 >
-                                    <Trash2 className="h-5 w-5" />
+                                    <X className="h-5 w-5" />
                                 </Button>
                             </div>
                         </Card>
@@ -274,7 +293,7 @@ const VariantPage = ({ onSave }) => {
 
                 <Button
                     onClick={handleSave}
-                    className="mt-8 w-full"
+                    className="w-full flex items-center justify-center gap-2 bg-blue-400 text-white hover:bg-blue-500"
                 >
                     Save
                 </Button>

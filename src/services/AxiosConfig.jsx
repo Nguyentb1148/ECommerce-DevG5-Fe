@@ -15,7 +15,6 @@ const authApi = axios.create({
 authApi.interceptors.request.use(
     (config) => {
         const accessToken = JSON.parse(localStorage.getItem('accessToken'));
-        console.log('---->',accessToken);
         if (accessToken) {
             config.headers['Authorization'] = `Bearer ${accessToken}`;
         }
