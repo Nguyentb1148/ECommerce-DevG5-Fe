@@ -1,6 +1,7 @@
 import authApi from "../AxiosConfig";
+import api from "./api";
 
-const userData = async (userId) => {
+export const userData = async (userId) => {
   try {
     const response = await authApi.get(`/user/${userId}`);
     console.log("userId", response);
@@ -11,10 +12,9 @@ const userData = async (userId) => {
   }
 };
 
-export const GetAllUsers = async (credentials) => {
+export const GetAllUsers = async () => {
   try {
-    console.log("admin request...");
-    const response = await authApi.get("/users", credentials);
+    const response = await authApi.get("/users");
     return response.data;
   } catch (error) {
     console.error("Error:", error);
@@ -53,5 +53,3 @@ export const UpdateUserInfo = async (credentials) => {
     throw error;
   }
 };
-
-export { userData };

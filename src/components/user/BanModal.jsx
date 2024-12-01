@@ -1,5 +1,4 @@
-import React from "react";
-import axios from "axios";
+import { toast } from "react-toastify";
 import { BanUser } from "../../services/api/UserApi";
 
 const BanModal = ({ user, onClose, onBan }) => {
@@ -9,17 +8,14 @@ const BanModal = ({ user, onClose, onBan }) => {
         userId: user._id,
         isBanned: !user.isBanned, // Toggle the ban status
       };
-      console.log(credentials);
-      // Call the BanUser API
-      await BanUser(credentials);
-
-      alert(
-        `User ${user.fullName} has been ${
-          user.isBanned ? "unbanned" : "banned"
-        }.`
-      );
+      const response = await BanUser(credentials);
       onBan(); // Refresh data
       onClose(); // Close modal
+      if (credentials.isBanned) {
+        toast.success(`${user.fullName} has been banned.`);
+      } else {
+        toast.success(`${user.fullName} has been unbanned.`);
+      }
     } catch (error) {
       console.error(
         "Error banning/unbanning user:",
@@ -38,7 +34,7 @@ const BanModal = ({ user, onClose, onBan }) => {
         </h2>
         <p>
           Are you sure you want to {user.isBanned ? "unban" : "ban"}{" "}
-          <strong>{user.name}</strong>?
+          <strong>{user.fullName}</strong>?
         </p>
         <div className="flex justify-end mt-4">
           <button
