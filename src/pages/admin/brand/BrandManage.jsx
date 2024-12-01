@@ -4,6 +4,7 @@ import DataTable, { createTheme } from "react-data-table-component";
 import { deleteBrand, getBrands } from "../../../services/api/BrandsApi.jsx";
 import AddBrand from "../../../components/brand/AddBrand.jsx";
 import EditBrand from "../../../components/brand/EditBrand.jsx";
+import { toast, ToastContainer } from "react-toastify";
 
 createTheme(
   "dark",
@@ -39,6 +40,7 @@ const BrandManage = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedBranch, setSelectedBranch] = useState(null);
+  const [reFetchBrand, setReFetchBrand] = useState(false);
 
   const updateScrollHeight = () => {
     if (window.innerWidth < 768) {
@@ -72,7 +74,7 @@ const BrandManage = () => {
     };
 
     fetchBranches();
-  }, []);
+  }, [reFetchBrand]);
 
   const handleDelete = async (row) => {
     const confirm = window.confirm(
@@ -84,7 +86,7 @@ const BrandManage = () => {
         setBranches((prevBranches) =>
           prevBranches.filter((branch) => branch._id !== row._id)
         );
-        alert(`Branch ${row.name} deleted successfully!`);
+        toast.success(`Branch ${row.name} deleted successfully!`);
       } catch (error) {
         console.error(`Error deleting branch ${row.name}:`, error);
         setErrorMessage("Failed to delete the branch.");
@@ -97,13 +99,13 @@ const BrandManage = () => {
       name: "Brand",
       selector: (row) => row.name,
       sortable: true,
-      center: true,
+      center: "true",
     },
     {
       name: "Description",
       selector: (row) => row.description || "N/A", // Fallback if description is missing
       sortable: true,
-      center: true,
+      center: "true",
     },
     {
       name: "Image",
@@ -131,7 +133,7 @@ const BrandManage = () => {
           />
         </div>
       ),
-      center: true,
+      center: "true",
     },
 
     {
@@ -218,14 +220,22 @@ const BrandManage = () => {
       </div>
       {/* Modals */}
       {isAddBranchOpen && (
-        <AddBrand onClose={() => setIsAddBranchOpen(false)} />
+        <AddBrand
+          onClose={() => setIsAddBranchOpen(false)}
+          setReFetchBrand={setReFetchBrand}
+          reFetchBrand={reFetchBrand}
+        />
       )}
       {isEditBranchOpen && selectedBranch && (
         <EditBrand
           onClose={() => setIsEditBranchOpen(false)}
           branch={selectedBranch}
+          setReFetchBrand={setReFetchBrand}
+          reFetchBrand={reFetchBrand}
         />
       )}
+
+      <ToastContainer />
     </div>
   );
 };
