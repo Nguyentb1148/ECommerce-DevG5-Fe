@@ -1,48 +1,159 @@
 import React, { useState } from "react";
 import { FiEye, FiEyeOff, FiLock } from "react-icons/fi";
+import { updateUserProfile } from '../../services/api/UserApi';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import styles
 
 const ChangePassword = () => {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [passwordData, setPasswordData] = useState({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-    });
-    const [error, setError] = useState(""); // Thêm state để hiển thị lỗi
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
+    const [feedback, setFeedback] = useState([]);
+    const [successMessage, setSuccessMessage] = useState("");
+
+    // Function to calculate password strength
+    const calculateStrength = (password) => {
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/)) strength++;
+        if (password.match(/[^A-Za-z0-9]/)) strength++;
+        return strength;
+    };
+
+    // Get strength label and color based on the score
+    const getStrengthLabelAndColor = (strength) => {
+        const labels = ["Weak", "Medium", "Good", "Strong"];
+        const colors = ["bg-red-500", "bg-yellow-500", "bg-blue-500", "bg-green-500"];
+
+        // Ensure that the strength is at least 1 to avoid undefined values
+        const index = Math.max(strength - 1, 0); // Use 0 as a fallback if strength is 0
+        return { label: labels[index], color: colors[index] };
+    };
 
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
 
-        // Kiểm tra New Password và Confirm Password có giống nhau không
-        if (passwordData.newPassword !== passwordData.confirmPassword) {
+        const feedbackMessages = validatePassword(newPassword);
+
+        if (feedbackMessages.length > 0) {
+            setError("Please strengthen your password.");
+            setFeedback(feedbackMessages);
+            setSuccessMessage("");
+            return;
+        }
+        if (currentPassword === newPassword) {
+            setError("The current password must be different from the old password.");
+            setSuccessMessage("");
+            return;
+        }
+        if (newPassword !== confirmPassword) {
             setError("New Password and Confirm Password must match!");
+            setSuccessMessage("");
             return;
         }
 
-        setError(""); // Xóa lỗi nếu không có vấn đề
+        setError("");
+        setFeedback([]);
         setLoading(true);
 
-        // Giả lập API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const updatePassword = { currentPassword, newPassword };
 
-        setLoading(false);
-        setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
-        alert("Password changed successfully!");
+        try {
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (!user || !user.id) {
+                setError("User not found!");
+                setSuccessMessage("");
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const response = await updateUserProfile(user.id, updatePassword);
+                
+                // Debugging: Check response structure and message
+                console.log('Response object: ', response);
+                console.log('Response message: ', response.message);
+                
+                // Strip spaces, handle lowercase, and ensure exact matching
+                const normalizedMessage = response.message?.trim().toLowerCase();
+                console.log('Normalized message: ', normalizedMessage);
+                
+                // Condition to check if the response message is correct
+                if (normalizedMessage === "user updated successfully") {
+                    console.log("Password update successful, showing success toast");
+                    setError(""); // Reset any error messages
+                    toast.success("Password updated successfully!", {
+                        style: {
+                          color: 'green',
+                          backgroundColor: '#eafaf1',
+                          border: '1px solid green',
+                        },
+                        position: 'top-center',  // Directly using the string value
+                    });
+                } else {
+                    console.error("Unexpected response message:", response.message);
+                    setError("Failed to update password.");
+                    setSuccessMessage("");
+                    toast.error("Failed to update password.");
+                }
+            } catch (error) {
+                console.error("Error during update: ", error);
+                setError("An unexpected error occurred.");
+                toast.error("An unexpected error occurred.");
+            }
+            
+            
+        } catch (error) {
+            setError("An error occurred while updating your password. Please try again.");
+            setSuccessMessage("");
+
+            toast.error("An error occurred while updating your password. Please try again.");
+        } finally {
+            setLoading(false);
+            setCurrentPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+        }
     };
 
+    // Check password strength
     const checkPasswordStrength = (password) => {
-        const criteria = [
-            password.length >= 8,
-            /[A-Z]/.test(password),
-            /[a-z]/.test(password),
-            /[0-9]/.test(password),
-            /[^A-Za-z0-9]/.test(password),
-        ];
-        return criteria.filter(Boolean).length;
+        const strength = calculateStrength(password);
+        return strength;
     };
+
+    // Validate password
+    const validatePassword = (password) => {
+        const feedbackMessages = [];
+
+        if (password.length < 8) {
+            feedbackMessages.push("Password must be at least 8 characters long.");
+        }
+        if (!/[A-Z]/.test(password)) {
+            feedbackMessages.push("Add at least one uppercase letter.");
+        }
+        if (!/[a-z]/.test(password)) {
+            feedbackMessages.push("Add at least one lowercase letter.");
+        }
+        if (!/[0-9]/.test(password)) {
+            feedbackMessages.push("Add at least one number.");
+        }
+        if (!/[^A-Za-z0-9]/.test(password)) {
+            feedbackMessages.push("Add at least one special character.");
+        }
+
+        return feedbackMessages;
+    };
+
+    // Get the current password strength
+    const strength = checkPasswordStrength(newPassword);
+    const { label, color } = getStrengthLabelAndColor(strength);
 
     return (
         <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
@@ -61,10 +172,8 @@ const ChangePassword = () => {
                         <input
                             type={showPassword ? "text" : "password"}
                             id="currentPassword"
-                            value={passwordData.currentPassword}
-                            onChange={(e) =>
-                                setPasswordData({ ...passwordData, currentPassword: e.target.value })
-                            }
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
                             className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                             required
                         />
@@ -96,10 +205,8 @@ const ChangePassword = () => {
                         <input
                             type={showNewPassword ? "text" : "password"}
                             id="newPassword"
-                            value={passwordData.newPassword}
-                            onChange={(e) =>
-                                setPasswordData({ ...passwordData, newPassword: e.target.value })
-                            }
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
                             className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                             required
                         />
@@ -115,19 +222,19 @@ const ChangePassword = () => {
                             )}
                         </button>
                     </div>
+
                     <div className="mt-2">
-                        <div className="flex space-x-2">
-                            {[...Array(5)].map((_, index) => (
+                        <div className="flex gap-1">
+                            {[...Array(4)].map((_, index) => (
                                 <div
                                     key={index}
-                                    className={`h-2 w-full rounded ${
-                                        index < checkPasswordStrength(passwordData.newPassword)
-                                            ? "bg-green-500"
-                                            : "bg-gray-200 dark:bg-gray-600"
-                                    }`}
+                                    className={`h-2 w-full rounded-full ${index < strength ? color : "bg-gray-200 dark:bg-gray-600"}`}
                                 />
                             ))}
                         </div>
+                        <p className="text-sm text-black dark:text-gray-400 mt-1">
+                            Password Strength: {strength > 0 ? label : "None"}
+                        </p>
                     </div>
                 </div>
 
@@ -145,10 +252,8 @@ const ChangePassword = () => {
                         <input
                             type={showConfirmPassword ? "text" : "password"}
                             id="confirmPassword"
-                            value={passwordData.confirmPassword}
-                            onChange={(e) =>
-                                setPasswordData({ ...passwordData, confirmPassword: e.target.value })
-                            }
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                             className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                             required
                         />
@@ -166,7 +271,21 @@ const ChangePassword = () => {
                     </div>
                 </div>
 
-                {error && <p className="text-red-500 text-sm">{error}</p>}
+                {feedback.length > 0 && (
+                    <ul className="text-yellow-500 text-sm">
+                        {feedback.map((msg, idx) => (
+                            <li key={idx}>{msg}</li>
+                        ))}
+                    </ul>
+                )}
+
+                {/* {error && (
+                    <div className="text-red-500 text-sm">{error}</div>
+                )} */}
+
+                {successMessage && (
+                    <div className="text-green-500 text-sm">{successMessage}</div>
+                )}
 
                 <div className="flex justify-end">
                     <button
@@ -201,6 +320,7 @@ const ChangePassword = () => {
                     </button>
                 </div>
             </form>
+            <ToastContainer />
         </div>
     );
 };

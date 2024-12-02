@@ -38,13 +38,13 @@ const getUserById = async (userId) => {
 
 const updateUserProfile = async (userId, updatedData) => {
     try {
-        // Sending PUT request to update the user profile
-        const response = await authApi.put(`/users/${userId}`, updatedData);
-        console.log('Profile updated successfully:', response.data);
+        console.log("userID: ",userId)
+        console.log("updatePassword: ",updatedData)
+        const response = await authApi.patch(`/users/${userId}`, updatedData);
         return response.data;
     } catch (error) {
         console.error('Error updating user profile:', error);
-        throw error; // Re-throw the error to be handled elsewhere
+        throw error; 
     }
 };
 
@@ -59,4 +59,7 @@ const deleteUser = async (userId) => {
         throw error; // Re-throw the error to be handled elsewhere
     }
 };
+
+
+
 export  {userData, getAllUsers, getUserById, deleteUser, updateUserProfile} ;
