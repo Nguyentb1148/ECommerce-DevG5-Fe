@@ -1,16 +1,24 @@
 // 1. All your imports at the top
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import Login from "../../components/background/Login";
 import Register from "../../components/background/Register";
 import ForgotPassword from "../../components/background/ForgotPassword";
 import AnimatedBackground from "../../components/background/AnimatedBackGround";
-import authApi from "../../services/AxiosConfig";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
-import { forgotPassword, login, register } from "../../services/Api/AuthApi";
+import {
+  forgotPassword,
+  googleSignIn,
+  login,
+  register,
+} from "../../services/Api/AuthApi";
+
+const clientId =
+  "671407638676-nc6tsp0nscas88kneq1jt9q3itl2l6h8.apps.googleusercontent.com";
 
 // 2. Then the rest of your code
 const AuthForm = () => {
@@ -148,6 +156,45 @@ const AuthForm = () => {
     }
   };
 
+  const handleLoginSuccess = async (response) => {
+    const decoded = jwtDecode(response.credential);
+    const { email } = decoded;
+
+    try {
+      // Attempt login or registration via Google
+      const res = await googleSignIn(email);
+
+      const decodedToken = jwtDecode(res.token.accessToken);
+      localStorage.setItem("user", JSON.stringify(decoded));
+      localStorage.setItem(
+        "accessToken",
+        JSON.stringify(res.token.accessToken)
+      );
+      Cookies.set("refreshToken", res.token.refreshToken, {
+        expires: 7,
+        secure: true,
+        sameSite: "Strict",
+      });
+
+      if (decodedToken.role === "admin") {
+        navigate("/admin");
+      } else if (decodedToken.role === "seller") {
+        navigate("/seller");
+      } else {
+        navigate("/");
+      }
+
+      toast.success("Login successful!");
+    } catch (error) {
+      toast.error("Login failed via Google!");
+      console.error(error);
+    }
+  };
+
+  const handleLoginFailure = (response) => {
+    console.log("Login failed:", response);
+  };
+
   const getFormTitle = () => {
     switch (formType) {
       case "login":
@@ -264,6 +311,15 @@ const AuthForm = () => {
               </button>
             )}
           </div>
+          <div className="pt-2 pb-2"></div>
+          <GoogleOAuthProvider clientId={clientId}>
+            <GoogleLogin
+              onSuccess={handleLoginSuccess}
+              onError={handleLoginFailure}
+              scope="profile email"
+              disabled={loading}
+            />
+          </GoogleOAuthProvider>
         </div>
       </div>
       <ToastContainer />

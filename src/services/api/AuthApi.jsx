@@ -68,4 +68,20 @@ const resetPassword = async (token, password) => {
   }
 };
 
-export { login, register, forgotPassword, resetPassword };
+const googleSignIn = async (email) => {
+  try {
+    const response = await authApi.post("/auth/signin-with-google", { email });
+    // If the login is successful, return the response data (which should contain the token)
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      const errorMessage = err.response.data.error || "Google login failed!";
+      toast.error(errorMessage);
+    } else {
+      toast.error("Network error, please try again later.");
+    }
+    throw err; // Propagate error for further handling if necessary
+  }
+};
+
+export { login, register, forgotPassword, resetPassword, googleSignIn };
