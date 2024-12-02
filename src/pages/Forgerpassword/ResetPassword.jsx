@@ -43,7 +43,7 @@ const ResetPassword = () => {
 
         try {
 
-            const response = await resetPassword(token, password); // Call the fixed API function
+            const response = await resetPassword(token, password); 
             setSuccessMessage('Password reset successfully!');
             setPasswordMatch(true); // Passwords match, show success
             setShowSuccess(true); // Show the success indicator

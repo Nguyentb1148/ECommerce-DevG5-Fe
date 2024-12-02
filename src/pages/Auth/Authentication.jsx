@@ -1,3 +1,4 @@
+// 1. All your imports at the top
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Login from "../../components/background/Login";
@@ -8,26 +9,28 @@ import authApi from "../../services/AxiosConfig";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
-import Cookies from "js-cookie"; //
-import { login, register } from "../../services/Api/AuthApi";
+import Cookies from "js-cookie";
+import { forgotPassword, login, register } from "../../services/Api/AuthApi";
 
+// 2. Then the rest of your code
 const AuthForm = () => {
   const [formType, setFormType] = useState("login");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  // Separate state for each form type
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
+
   const [registerData, setRegisterData] = useState({
     fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+
   const [forgotData, setForgotData] = useState({
     email: "",
   });
@@ -37,12 +40,11 @@ const AuthForm = () => {
   const validateEmail = (email) => email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   const validatePassword = (password) => password.length >= 8;
   const validateFullName = (fullName) => {
-    return /^[a-zA-Z\s]+$/.test(fullName) && fullName.length >= 5; // Only letters and spaces, at least 3 characters
+    return /^[a-zA-Z\s]+$/.test(fullName) && fullName.length >= 5;
   };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    // Update state based on formType
     switch (formType) {
       case "login":
         setLoginData({ ...loginData, [name]: value });
@@ -58,38 +60,28 @@ const AuthForm = () => {
     }
 
     const newErrors = { ...errors };
-
-    // Validate input based on form type
-    if (name === "fullName") {
-      if (!validateFullName(value)) {
-        newErrors.fullName = "Full Name must be at least 5 characters long";
-      } else {
-        delete newErrors.fullName; // Only delete error if valid
-      }
+    if (name === "fullName" && !validateFullName(value)) {
+      newErrors.fullName = "Full Name must be at least 5 characters long";
+    } else {
+      delete newErrors.fullName;
     }
 
-    if (name === "email") {
-      if (!validateEmail(value)) {
-        newErrors.email = "Please enter a valid email address";
-      } else {
-        delete newErrors.email; // Only delete error if valid
-      }
+    if (name === "email" && !validateEmail(value)) {
+      newErrors.email = "Please enter a valid email address";
+    } else {
+      delete newErrors.email;
     }
 
-    if (name === "password") {
-      if (!validatePassword(value)) {
-        newErrors.password = "Password must be at least 8 characters long";
-      } else {
-        delete newErrors.password; // Only delete error if valid
-      }
+    if (name === "password" && !validatePassword(value)) {
+      newErrors.password = "Password must be at least 8 characters long";
+    } else {
+      delete newErrors.password;
     }
 
-    if (name === "confirmPassword") {
-      if (value !== registerData.password) {
-        newErrors.confirmPassword = "Passwords do not match";
-      } else {
-        delete newErrors.confirmPassword; // Only delete error if valid
-      }
+    if (name === "confirmPassword" && value !== registerData.password) {
+      newErrors.confirmPassword = "Passwords do not match";
+    } else {
+      delete newErrors.confirmPassword;
     }
 
     setErrors(newErrors);
@@ -101,7 +93,6 @@ const AuthForm = () => {
 
     if (formType === "login") {
       try {
-        // Call login API
         const response = await login(loginData);
         const decoded = jwtDecode(response.token.accessToken);
         localStorage.setItem("user", JSON.stringify(decoded));
@@ -123,29 +114,36 @@ const AuthForm = () => {
           navigate("/");
         }
         toast.success("Login successful!");
-        // Redirect or do other actions on successful login
+      } catch (error) {
+        // toast.error("Login failed! Please try again.");
       } finally {
-        setLoading(false); // Reset loading state after request
+        setLoading(false);
       }
     } else if (formType === "register") {
       try {
-        // Call register API
         if (registerData.password !== registerData.confirmPassword) {
           setErrors({ ...errors, confirmPassword: "Passwords do not match" });
           return;
         }
-        // Remove confirmPassword before sending the request
         const { confirmPassword, ...dataToSend } = registerData;
-        // Call register API
         const response = await register(dataToSend);
         if (response) {
           navigate("/");
         }
-        setFormType("login"); // Switch to login form after successful registration
+        setFormType("login");
       } catch (error) {
-        toast.error("Something went wrong! Please try again.");
+        // toast.error("Something went wrong! Please try again.");
       } finally {
-        setLoading(false); // Reset loading state after the request completes
+        setLoading(false);
+      }
+    } else if (formType === "forgot") {
+      try {
+        await forgotPassword(forgotData.email);
+        toast.success("Please check your email to reset password!");
+      } catch (error) {
+        // toast.error("Failed to send password reset email.");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -227,7 +225,7 @@ const AuthForm = () => {
               <button
                 type="submit"
                 className="w-full mt-6 bg-gradient-to-tl from-gray-900 to-slate-800 text-white py-2 rounded-lg hover:opacity-80 transition-opacity duration-300"
-                disabled={loading} // Disable button while loading
+                disabled={loading}
               >
                 {loading ? (
                   <div className="flex justify-center items-center">
