@@ -1,13 +1,20 @@
+import { toast } from "react-toastify";
 import authApi from "../AxiosConfig";
-import api from "./api";
 
 const login = async (credentials) => {
   try {
     const response = await authApi.post("/auth/signin", credentials);
     return response.data;
-  } catch (error) {
-    console.error("Error:", error);
-    throw error;
+  } catch (err) {
+    if (err.response) {
+      // Server responded with an error
+      const errorMessage = err.response.data.error || "Something went wrong!";
+      toast.error(errorMessage); // Show error message using toast
+    } else {
+      // Network or other errors
+      toast.error("Network error, please try again later.");
+    }
+    throw err; // Propagate error for further handling if necessary
   }
 };
 
@@ -15,9 +22,14 @@ const register = async (userData) => {
   try {
     const response = await authApi.post("/auth/signup", userData);
     return response.data;
-  } catch (error) {
-    console.error("Error:", error);
-    throw error;
+  } catch (err) {
+    if (err.response) {
+      const errorMessage = err.response.data.error || "Something went wrong!";
+      toast.error(errorMessage);
+    } else {
+      toast.error("Network error, please try again later.");
+    }
+    throw err;
   }
 };
 
@@ -26,9 +38,14 @@ const forgotPassword = async (email) => {
     console.log("Forgot password email: ", email);
     const response = await authApi.post("/user/forgot-password", { email }); // Wrap email in an object
     return response; // Return the full response, not just response.data
-  } catch (error) {
-    console.error("Error in forgot password API:", error);
-    throw error;
+  } catch (err) {
+    if (err.response) {
+      const errorMessage = err.response.data.error || "Something went wrong!";
+      toast.error(errorMessage);
+    } else {
+      toast.error("Network error, please try again later.");
+    }
+    throw err;
   }
 };
 
@@ -40,9 +57,14 @@ const resetPassword = async (token, password) => {
       newPassword: password,
     }); // Send token and newPassword
     return response.data;
-  } catch (error) {
-    console.error("Error in reset password API:", error);
-    throw error;
+  } catch (err) {
+    if (err.response) {
+      const errorMessage = err.response.data.error || "Something went wrong!";
+      toast.error(errorMessage);
+    } else {
+      toast.error("Network error, please try again later.");
+    }
+    throw err;
   }
 };
 
