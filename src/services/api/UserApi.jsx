@@ -11,7 +11,17 @@ export const userData = async (userId) => {
     throw error;
   }
 };
-
+export const updateUserProfile = async (userId, updatedData) => {
+    try {
+        console.log("userID: ",userId)
+        console.log("updatePassword: ",updatedData)
+        const response = await authApi.patch(`/users/${userId}`, updatedData);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating user profile:', error);
+        throw error; 
+    }
+};
 export const GetAllUsers = async () => {
   try {
     const response = await authApi.get("/users");
@@ -53,5 +63,3 @@ export const UpdateUserInfo = async (credentials) => {
     throw error;
   }
 };
-
-

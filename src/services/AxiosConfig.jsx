@@ -5,6 +5,7 @@ const baseLink = "https://project-2-back-end.onrender.com/api";
 
 // Create an Axios instance
 const authApi = axios.create({
+
   baseURL: baseLink,
   headers: {
     "Content-Type": "application/json",

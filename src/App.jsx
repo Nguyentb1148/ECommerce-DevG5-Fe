@@ -14,6 +14,7 @@ import ChangePassword from "./pages/profile/ChangePassword";
 import FilterProduct from "./pages/products/FilterProduct";
 import ProductDetail from "./pages/products/ProductDetail";
 import Authentication from "./pages/Auth/Authentication.jsx";
+
 import Admin from "./pages/admin/home/Admin.jsx";
 import DashboardAdmin from "./pages/admin/dashboard/DashboardAdmin.jsx";
 import CategoryManage from "./pages/admin/category/CategoryManage.jsx";

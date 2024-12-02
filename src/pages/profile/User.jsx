@@ -2,69 +2,56 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { MdLogout } from "react-icons/md";
-import { RiLockPasswordFill } from "react-icons/ri";
+import { RiLockPasswordFill } from "react-icons/ri"; // Ensure this import exists
 import { Link } from "react-router-dom";
-import authApi from "../../services/AxiosConfig";
 
 const User = () => {
-  const [dropdown, setDropdown] = useState(true);
+    const [dropdown, setDropdown] = useState(true);
 
-  const logout = async () => {
-    const accessToken = JSON.parse(localStorage.getItem("accessToken"));
-    if (accessToken) {
-      await authApi.post(
-        "/users/logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-    }
-    localStorage.clear();
-    window.location.href = "/";
-  };
+    const logout = () => {
+        localStorage.clear();
+        window.location.href = "/";
+    };
 
-  return (
-    <div>
-      {/* Avatar and Dropdown */}
-      <div className="avatar relative">
-        <div className="w-10 h-10 rounded-full">
-          <img
-            src="https://i.pinimg.com/474x/4b/71/f8/4b71f8137985eaa992d17a315997791e.jpg"
-            onClick={() => setDropdown(!dropdown)}
-            className="cursor-pointer rounded-full"
-            alt="User Avatar"
-          />
+    return (
+        <div>
+            {/* Avatar with dropdown toggle */}
+            <div className="avatar relative">
+                <div className="w-10 h-10 rounded-full">
+                    <img
+                        src="https://i.pinimg.com/474x/4b/71/f8/4b71f8137985eaa992d17a315997791e.jpg"
+                        onClick={() => setDropdown(!dropdown)}
+                        className="cursor-pointer rounded-full"
+                        alt="User Avatar"
+                    />
+                </div>
+
+                {/* Dropdown Menu */}
+                {!dropdown && (
+                    <ul className="z-10 absolute top-11 left-[-50px] md:left-[-90px] lg:left-[-50px] rounded-md bg-white text-slate-600 dark:bg-gray-900 dark:text-gray-500 font-medium shadow-md">
+                        <li className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300">
+                            <CgProfile className="h-6 w-6 mr-2" />
+                            <Link to="/user/profile">Profile</Link>
+                        </li>
+                        <li className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300">
+                            <RiLockPasswordFill className="h-6 w-6 mr-2" />
+                            <Link to="/user/change-password">Change Password</Link>
+                        </li>
+                        <li
+                            onClick={logout}
+                            className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300 cursor-pointer"
+                        >
+                            <MdLogout className="h-6 w-6 mr-2" />
+                            Logout
+                        </li>
+                    </ul>
+                )}
+            </div>
+
+            {/* Render nested routes */}
+            <Outlet />
         </div>
-
-        {/* Dropdown Menu */}
-        {!dropdown && (
-          <ul className="z-10 absolute top-11 left-[-50px] md:left-[-90px] lg:left-[-50px] rounded-md bg-white text-slate-600 dark:bg-gray-900 dark:text-gray-500 font-medium shadow-md">
-            <li className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300">
-              <CgProfile className="h-6 w-6 mr-2" />
-              <Link to="/user/profile">Profile</Link>
-            </li>
-            <li className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300">
-              <RiLockPasswordFill className="h-6 w-6 mr-2" />
-              <Link to="/user/change-password">Password</Link>
-            </li>
-            <li
-              onClick={logout}
-              className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300 cursor-pointer"
-            >
-              <MdLogout className="h-6 w-6 mr-2" />
-              Logout
-            </li>
-          </ul>
-        )}
-      </div>
-
-      {/* Render nested routes */}
-      <Outlet />
-    </div>
-  );
+    );
 };
 
 export default User;
