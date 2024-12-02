@@ -311,15 +311,19 @@ const AuthForm = () => {
               </button>
             )}
           </div>
-          <div className="pt-2 pb-2"></div>
-          <GoogleOAuthProvider clientId={clientId}>
-            <GoogleLogin
-              onSuccess={handleLoginSuccess}
-              onError={handleLoginFailure}
-              scope="profile email"
-              disabled={loading}
-            />
-          </GoogleOAuthProvider>
+          <div className="py-2"></div>
+          {formType === "login" && (
+            <div className="py-2">
+              <GoogleOAuthProvider clientId={clientId}>
+                <GoogleLogin
+                  onSuccess={handleLoginSuccess}
+                  onError={handleLoginFailure}
+                  scope="profile email"
+                  disabled={loading}
+                />
+              </GoogleOAuthProvider>
+            </div>
+          )}
         </div>
       </div>
       <ToastContainer />
