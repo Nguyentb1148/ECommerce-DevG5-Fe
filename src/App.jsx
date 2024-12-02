@@ -25,6 +25,8 @@ import ProductSeller from "./pages/seller/ProductSeller.jsx";
 import NewProduct from "./pages/seller/NewProduct.jsx";
 import ShoppingCart from "./pages/cart/ShoppingCart.jsx";
 import ProductDetailSeller from "./pages/seller/ProductDetail.jsx";
+import ProductSlider from "./pages/products/ProductSlider.jsx";
+import EditProductPage from "./pages/seller/ProductDetail.jsx";
 
 function App() {
   React.useEffect(() => {
@@ -68,6 +70,7 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
+
 }
 
 export default App;

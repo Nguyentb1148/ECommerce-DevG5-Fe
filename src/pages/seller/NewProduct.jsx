@@ -1,15 +1,12 @@
-import  { useState, useEffect, useRef } from "react";
-import FroalaEditorComponent from "react-froala-wysiwyg";
+import { useState, useEffect, useRef } from "react";
 import { getCategories } from "../../services/api/CategoryApi.jsx";
 import { getBrands } from "../../services/api/BrandsApi.jsx";
-import { useFroala } from "../../hooks/useFroala.jsx";
-import TechnologyInfo from "./TechnologyInfo";
-import VariantPage from "./VariantPage"; // Import VariantPage for the modal
+import { uploadImage } from "../../configs/Cloudinary.jsx";
+import { createProduct } from "../../services/api/ProductApi.jsx";
+import VariantPage from "./VariantPage";
 import { RiUploadCloudFill } from "react-icons/ri";
-import { IoMdCloseCircleOutline } from "react-icons/io";
-import { uploadDoc, uploadImage } from "../../configs/Cloudinary.jsx";
-import technologyInfo from "./TechnologyInfo";
-import {createProduct} from "../../services/api/ProductApi.jsx"; // Import close icon
+import { X  } from "lucide-react";
+import { CiCircleQuestion } from "react-icons/ci";
 
 const NewProduct = () => {
     const [productName, setProductName] = useState("");
@@ -19,13 +16,15 @@ const NewProduct = () => {
     const [brands, setBrands] = useState([]);
     const [images, setImages] = useState([]);
     const [mainImage, setMainImage] = useState(null);
-    const { model, setModel, editorRef, exportToDoc } = useFroala();
-    const [isTechnologyModalOpen, setIsTechnologyModalOpen] = useState(false);
-    const [isVariantModalOpen, setIsVariantModalOpen] = useState(false); // State for Attribute and Variant Modal
-    const [productSaved, setProductSaved] = useState(false); // Track if the product was saved successfully
-    const fileInputRef = useRef(null);
-    const [technologyData, setTechnologyData] = useState([]);
+    const [description, setDescription] = useState("");
+    const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
     const [variantData, setVariantData] = useState({ attributes: [], processedVariants: [] });
+    const [productSaved, setProductSaved] = useState(false);
+    const [errors, setErrors] = useState({});
+    const fileInputRef = useRef(null);
+    const [invalidImageIndexes, setInvalidImageIndexes] = useState([]);  // State for invalid images
+    const [isHelpModalOpen, setIsHelpModalOpen] = useState(false); // State to control the help modal visibility
+
     useEffect(() => {
         const fetchData = async () => {
             const categoriesData = await getCategories();
@@ -37,131 +36,185 @@ const NewProduct = () => {
     }, []);
 
     const handleUpload = () => {
-        fileInputRef.current.click(); // Trigger the hidden file input
+        fileInputRef.current.click();
     };
 
     const handleFileChange = (event) => {
-        const selectedFiles = Array.from(event.target.files); // Convert FileList to an array
-        const newImages = selectedFiles.map((file) => ({ file, name: file.name }));
-        setImages((prevImages) => [...prevImages, ...newImages]); // Append new files to the existing images
+        const selectedFiles = Array.from(event.target.files);
+        const newImages = [];
+        const invalidIndexes = [];
+
+        selectedFiles.forEach((file, index) => {
+            if (file.size > 2 * 1024 * 1024) { // If the file exceeds 2MB
+                invalidIndexes.push(newImages.length); // Mark the index of the invalid image
+                newImages.push({ file, name: file.name, isLarge: true }); // Indicate that the image is large
+            } else {
+                newImages.push({ file, name: file.name, isLarge: false });
+            }
+        });
+
+        if (invalidIndexes.length > 0) {
+            setInvalidImageIndexes(invalidIndexes); // Store invalid image indexes for warning
+        } else {
+            setInvalidImageIndexes([]); // Clear invalid indexes if all images are valid
+        }
+
+        setImages((prevImages) => {
+            const updatedImages = [...prevImages, ...newImages];
+
+            // If this is the first image being added, set it as the main image
+            if (updatedImages.length === newImages.length) {
+                setMainImage(URL.createObjectURL(updatedImages[0].file)); // Set the first image as the main image
+            }
+
+            return updatedImages;
+        });
     };
+
 
     const handleThumbnailClick = (image) => {
-        setMainImage(URL.createObjectURL(image.file));
+        if (image && image.file) {
+            setMainImage(URL.createObjectURL(image.file));
+        }
+    };
+    const openHelpModal = () => {
+        setIsHelpModalOpen(true);
     };
 
+    const closeHelpModal = () => {
+        setIsHelpModalOpen(false);
+    };
+
+    const handleHelpIconClick = () => {
+        openHelpModal();  // Open the modal
+    };
+
+
     const handleImageDelete = (index) => {
-        setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+        // Remove the image from the list
+        setImages((prevImages) => {
+            const updatedImages = prevImages.filter((_, i) => i !== index);
+
+            // Check if there are any remaining images to set a new main image
+            if (updatedImages.length === 0) {
+                setMainImage(null); // If no images are left, set main image to null
+            } else {
+                // Set the new main image to the first image in the updated list
+                setMainImage(URL.createObjectURL(updatedImages[0].file));
+            }
+
+            return updatedImages;
+        });
+
+        // Remove from invalid image indexes as well
+        setInvalidImageIndexes((prevIndexes) => prevIndexes.filter((i) => i !== index));
+    };
+
+
+    const validate = () => {
+        const newErrors = {};
+        const wordCount = productName.trim().split(" ").length;
+
+        if (productName.trim() === "" || wordCount < 2) {
+            newErrors.productName = "Product name must have at least two words.";
+        }
+        if (!selectedCategory) {
+            newErrors.selectedCategory = "Category is required.";
+        }
+        if (!selectedBrand) {
+            newErrors.selectedBrand = "Brand is required.";
+        }
+        if (images.length < 4 || images.length > 6) {
+            newErrors.images = "You must upload between 4 and 6 images.";
+        } else {
+            for (let i = 0; i < images.length; i++) {
+                if (images[i].file.size > 2 * 1024 * 1024) {
+                    newErrors.images = "Each image must be under 2MB.";
+                    break;
+                }
+            }
+        }
+        if (description.trim() === "" || description.split(" ").length > 500) {
+            newErrors.description = "Description is required and must not exceed 500 words.";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleSaveProduct = async () => {
-        console.log("variants: ",variantData.variants);
-        console.log("attributes: ",variantData.attributes);
-        // Step 1: Gather all the necessary data
-        const user=JSON.parse(localStorage.getItem("user"))
+        if (!validate()) return;
+
+        const user = JSON.parse(localStorage.getItem("user"));
         const productData = {
             name: productName,
             categoryId: selectedCategory,
             brandId: selectedBrand,
-            imageUrls: images,  // Will be updated after upload
-            information: "", // You can get this from your Technology Info modal
-            variants: [], // You can get this from VariantPage modal
+            imageUrls: images,
+            description,
+            variants: variantData.variants,
         };
 
-        // Step 2: Upload Images to Cloudinary
         const imageUploadPromises = productData.imageUrls.map(async (image) => {
-            const imageId = Math.random().toString(36).substring(2, 8); // Generate a 6-character image ID
+            const imageId = Math.random().toString(36).substring(2, 8);
             const uploadedImageUrl = await uploadImage(image.file, productData.name, imageId);
             return uploadedImageUrl.url;
         });
-        // Wait for all images to be uploaded and get their URLs
+
         const uploadedImageUrls = await Promise.all(imageUploadPromises);
-        productData.imageUrls = uploadedImageUrls;  // Update product data with uploaded URLs
+        productData.imageUrls = uploadedImageUrls;
 
-        // Step 3: Export the description to DOCX and get the file
-        let docxFile;
         try {
-            docxFile = await exportToDoc(); // This function should now return the DOCX file
-            if (!docxFile) {
-                throw new Error("Failed to export DOCX file from Froala.");
-            }
-        } catch (error) {
-            console.error("Error exporting DOCX:", error);
-            // Handle the error and return if needed
-            return;
-        }
-
-        // Step 4: Upload DOCX file to Cloudinary
-        try {
-            const descriptionFileName = `${productData.name}_description.docx`;
-            const descriptionUploadUrl = await uploadDoc(docxFile, productData.name, descriptionFileName);
-            productData.descriptionFileUrl = descriptionUploadUrl.url;
-
-        } catch (error) {
-            console.error("Error uploading DOCX:", error);
-            return;
-        }
-        // Step 5: Handle Technology Info
-        productData.information = technologyData || "Default technology info"; // Ensure the state is used
-        console.log("variants: ",variantData.variants);
-        console.log("attributes: ",variantData.attributes);
-        // Final product data
-        const finalProductData = {
-            ...productData,
-            sellerId:user.id,
-            descriptionFileUrl: productData.descriptionFileUrl,
-            information: productData.information,
-            variants: variantData.variants,
-            attributes:variantData.attributes,
-            price: variantData.variants?.[0].price || 0, // Fallback to 0 if no variants
-        };
-
-        // Step 7: Send the final product data to the server
-        try {
-            const response = await createProduct(finalProductData);
+            const response = await createProduct({
+                ...productData,
+                sellerId: user.id,
+                price: variantData.variants?.[0].price || 0,
+            });
             console.log("Product saved successfully:", response);
-            setProductSaved(true); // Set the productSaved flag to true after successful save
+            setProductSaved(true);
         } catch (error) {
             console.error("Error saving product:", error);
         }
     };
-    // Reset the form to add another product
+
     const handleAddProduct = () => {
         setProductName("");
         setSelectedCategory("");
         setSelectedBrand("");
         setImages([]);
         setMainImage(null);
-        setModel("");
-        setProductSaved(false); // Reset the saved flag
+        setDescription("");
+        setProductSaved(false);
+        setErrors({});
     };
+
     return (
         <div className="p-4 bg-gray-100 min-h-screen">
             <h2 className="text-2xl font-semibold mb-2 text-gray-800">Add Product</h2>
             <div className="grid grid-cols-5 gap-8">
-                {/* Left Column */}
                 <div className="col-span-2 flex flex-col space-y-6">
-                    {/* Part 1: Form Fields */}
                     <div className="p-2 bg-white rounded-lg shadow-md space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Product Name</label>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Product Name<span className="text-red-500 ml-1">*</span>
+                            </label>
                             <input
                                 type="text"
                                 value={productName}
                                 onChange={(e) => setProductName(e.target.value)}
-                                className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+                                className={`w-full border ${errors.productName ? "border-red-500" : "border-gray-300"} rounded-md p-2 focus:ring-blue-500 focus:border-blue-500`}
                             />
+                            {errors.productName && <p className="text-red-500 text-sm">{errors.productName}</p>}
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Category</label>
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Category<span className="text-red-500 ml-1">*</span>
+                                </label>
                                 <select
                                     value={selectedCategory}
-                                    onChange={(e) => {
-                                        setSelectedCategory(e.target.value);
-                                        console.log("Selected Category ID:", e.target.value); // Logs the selected category ID
-                                    }}
-                                    className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    className={`w-full border ${errors.selectedCategory ? "border-red-500" : "border-gray-300"} rounded-md p-2 focus:ring-blue-500 focus:border-blue-500`}
                                 >
                                     <option value="">Select Category</option>
                                     {categories.map((category) => (
@@ -170,18 +223,17 @@ const NewProduct = () => {
                                         </option>
                                     ))}
                                 </select>
-
-
+                                {errors.selectedCategory &&
+                                    <p className="text-red-500 text-sm">{errors.selectedCategory}</p>}
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Brand</label>
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Brand<span className="text-red-500 ml-1">*</span>
+                                </label>
                                 <select
                                     value={selectedBrand}
-                                    onChange={(e) => {
-                                        setSelectedBrand(e.target.value);
-                                        console.log("Selected brand ID:", e.target.value); // Logs the selected category ID
-                                    }}
-                                    className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+                                    onChange={(e) => setSelectedBrand(e.target.value)}
+                                    className={`w-full border ${errors.selectedBrand ? "border-red-500" : "border-gray-300"} rounded-md p-2 focus:ring-blue-500 focus:border-blue-500`}
                                 >
                                     <option value="">Select Brand</option>
                                     {brands.map((brand) => (
@@ -190,46 +242,80 @@ const NewProduct = () => {
                                         </option>
                                     ))}
                                 </select>
-
-
+                                {errors.selectedBrand && <p className="text-red-500 text-sm">{errors.selectedBrand}</p>}
                             </div>
                         </div>
                     </div>
-                    {/* Part 2: Images */}
                     <div className="p-2 bg-white rounded-lg shadow-md flex space-x-4">
-                        <div className="w-96 h-96 border border-gray-300 rounded-md flex items-center justify-center bg-gray-50">
-                            {mainImage ? (
-                                <img
-                                    src={mainImage}
-                                    alt="Main"
-                                    className="w-full h-full object-contain" // Fits the image in the container without cropping and maintains aspect ratio
-                                />
-                            ) : (
-                                <p className="text-gray-500">No image selected</p>
-                            )}
-                        </div>
-                        <div className="flex flex-col space-y-4 w-28 max-h-96 overflow-y-auto">
-                            {images.map((image, index) => (
-                                <div key={index} className="relative">
+                        {/* Main image on the left */}
+                        <div className="w-full">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Images<span className="text-red-500 ml-1">*</span>
+                            </label>
+                            <div
+                                className="w-96 h-96 border border-gray-300 rounded-md flex items-center justify-center bg-gray-50">
+                                {mainImage ? (
                                     <img
-                                        src={URL.createObjectURL(image.file)}
-                                        alt="Thumbnail"
-                                        className="w-full h-28 border border-gray-300 rounded-md cursor-pointer object-contain" // Ensures the image is contained within the fixed size and maintains its aspect ratio
-                                        onClick={() => handleThumbnailClick(image)}
+                                        src={mainImage}
+                                        alt="Main"
+                                        className="w-full h-full object-contain"
                                     />
-                                    <button
-                                        onClick={() => handleImageDelete(index)}
-                                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                                    >
-                                        ×
-                                    </button>
-                                </div>
-                            ))}
+                                ) : (
+                                    <p className="text-gray-500">No image selected</p>
+                                )}
+                            </div>
+                            {errors.images && <p className="text-red-500 text-sm">{errors.images}</p>}
+                        </div>
+
+                        {/* List of images on the right with size display */}
+                        <div className="flex flex-col space-y-4 w-64 max-h-96 overflow-y-auto">
+                            {/* Display validation message for large images */}
+                            {invalidImageIndexes.length > 0 && (
+                                <p className="text-red-500 text-sm mb-2">
+                                    Some images are too large (must be under 2MB).
+                                </p>
+                            )}
+
+                            {/* List of images */}
+                            {images.map((image, index) => {
+                                // Check if the image object exists
+                                if (!image || !image.file) {
+                                    return null;  // Skip this image if it's invalid
+                                }
+
+                                // Get image size in MB for display (rounded to 2 decimal places)
+                                const imageSize = (image.file.size / 1048576).toFixed(2); // Size in MB
+
+                                return (
+                                    <div key={index} className="flex items-center space-x-2">
+                                        <div className="relative">
+                                            <img
+                                                src={URL.createObjectURL(image.file)}
+                                                alt="Thumbnail"
+                                                className={`w-full h-28 border border-gray-300 rounded-md cursor-pointer object-contain ${invalidImageIndexes.includes(index) ? 'border-red-500' : ''}`}
+                                                onClick={() => handleThumbnailClick(image)}
+                                            />
+                                            <button
+                                                onClick={() => handleImageDelete(index)}
+                                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                        {/* Image size display next to the thumbnail in MB */}
+                                        <span className="text-sm text-gray-500">
+                {imageSize} MB {image.isLarge && <span className="text-red-500">(Too large)</span>}
+            </span>
+                                    </div>
+                                );
+                            })}
+
+
                             <button
                                 className="w-full border border-gray-300 rounded-md p-2 flex items-center justify-center bg-blue-50 hover:bg-blue-100"
                                 onClick={handleUpload}
                             >
-                                <RiUploadCloudFill className="mr-2 text-4xl" />
+                                <RiUploadCloudFill className="mr-2 text-4xl"/>
                             </button>
                             <input
                                 type="file"
@@ -242,30 +328,27 @@ const NewProduct = () => {
                     </div>
 
 
-                    {/* Technology Info Button */}
-                    <button
-                        onClick={() => setIsTechnologyModalOpen(true)}
-                        className="bg-blue-500 text-white py-2 px-2 rounded-md hover:bg-blue-600"
-                    >
-                        Add Technology Information
-                    </button>
                 </div>
-
-                {/* Right Column */}
                 <div className="col-span-3 flex flex-col space-y-6">
-                    {/* Part 3: Description */}
                     <div
-                        className="p-2 bg-white rounded-lg shadow-md flex-grow max-h-[calc(100vh-12rem)] overflow-y-auto">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                        <FroalaEditorComponent
-                            tag="textarea"
-                            ref={editorRef}
-                            model={model}
-                            onModelChange={(newModel) => setModel(newModel)}
-                        />
+                        className="p-2 bg-white rounded-lg shadow-md flex-grow"
+                        style={{
+                            height: "calc(2 * (14rem + 1rem))", // Ensures height matches Part 1 + Part 2
+                            display: "flex", // Ensures the textarea stretches to fit
+                            flexDirection: "column",
+                        }}
+                    >
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Description<span className="text-red-500 ml-1">*</span>
+                        </label>
+                        <textarea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            className={`w-full flex-grow border ${errors.description ? "border-red-500" : "border-gray-300"} rounded-md p-2 focus:ring-blue-500 focus:border-blue-500 resize-none`}
+                        ></textarea>
+                        {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
                     </div>
 
-                    {/* Attribute & Variant Button */}
                     <button
                         onClick={() => setIsVariantModalOpen(true)}
                         className="bg-green-500 text-white py-1 px-1 rounded-md hover:bg-green-600"
@@ -274,16 +357,12 @@ const NewProduct = () => {
                     </button>
                 </div>
             </div>
-
-            {/* Save Product Button */}
             <button
                 onClick={handleSaveProduct}
                 className="mt-4 bg-blue-600 text-white py-1 px-2 rounded-md hover:bg-blue-700"
             >
                 Save Product
             </button>
-
-            {/* Add Another Product Button */}
             {productSaved && (
                 <button
                     onClick={handleAddProduct}
@@ -292,56 +371,90 @@ const NewProduct = () => {
                     Add Another Product
                 </button>
             )}
-
-            {isTechnologyModalOpen && (
+            {isVariantModalOpen && (
                 <div
                     className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
-                    onClick={() => setIsTechnologyModalOpen(false)}
+                    onClick={() => setIsVariantModalOpen(false)} // Close the variant modal when clicking outside
                 >
                     <div
-                        className="bg-white rounded-lg w-11/12 max-w-2xl p-2 overflow-y-auto max-h-[800px] relative"
-                        onClick={(e) => e.stopPropagation()} // Prevent closing modal when clicking inside
+                        className="bg-white rounded-lg w-[1500px] h-[800px] p-6 overflow-y-auto relative"
+                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
                     >
-                        {/* Close Button */}
-                        <button
-                            onClick={() => setIsTechnologyModalOpen(false)}
-                            className="absolute top-2 right-2 text-3xl text-gray-500"
-                        >
-                            <IoMdCloseCircleOutline />
-                        </button>
-                        <TechnologyInfo
+                        {/* Top-right corner with question icon and close button */}
+                        <div className="absolute top-4 right-4 flex items-center gap-2">
+                            {/* Question Icon */}
+                            <button
+                                onClick={handleHelpIconClick} // This function should open the help modal
+                                className="text-xl text-gray-500 hover:text-gray-800"
+                            >
+                                <CiCircleQuestion className="h-6 w-6"/>
+                            </button>
+                            {/* Close button */}
+                            <button
+                                onClick={() => setIsVariantModalOpen(false)} // Close variant modal
+                                className="text-xl text-gray-500 hover:text-gray-800"
+                            >
+                                <X className="h-6 w-6"/>
+                            </button>
+                        </div>
+
+                        {/* Full variant page inside the modal */}
+                        <VariantPage
                             onSave={(data) => {
-                                setTechnologyData(data); // Save data from TechnologyInfo
-                                setIsTechnologyModalOpen(false); // Close the modal
+                                setVariantData(data);
+                                setIsVariantModalOpen(false);
                             }}
                         />
                     </div>
                 </div>
             )}
 
-            {/* Variant Modal */}
-            {isVariantModalOpen && (
+            {/* Help Modal */}
+            {isHelpModalOpen && (
                 <div
                     className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
-                    onClick={() => setIsVariantModalOpen(false)}
+                    onClick={closeHelpModal} // Close help modal when clicking outside
                 >
                     <div
-                        className="bg-white rounded-lg w-11/12 max-w-2xl p-2 overflow-y-auto max-h-[800px] relative"
-                        onClick={(e) => e.stopPropagation()} // Prevent closing modal when clicking inside
+                        className="bg-white rounded-lg w-[600px] p-6 overflow-y-auto relative"
+                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
                     >
-                        {/* Close Button */}
+                        {/* Close help modal button */}
                         <button
-                            onClick={() => setIsVariantModalOpen(false)}
-                            className="absolute top-2 right-2 text-3xl text-gray-500"
+                            onClick={closeHelpModal} // Close help modal
+                            className="absolute top-4 right-4 text-xl text-gray-500 hover:text-gray-800"
                         >
-                            <IoMdCloseCircleOutline />
+                            <X className="h-6 w-6" />
                         </button>
-                        <VariantPage
-                            onSave={(data) => {
-                                setVariantData(data); // Save data from VariantPage
-                                setIsVariantModalOpen(false); // Close the modal
-                            }}
-                        />
+
+                        {/* Help modal content */}
+                        <h2 className="text-2xl font-bold mb-4">How to Create Attributes and Variants</h2>
+                        <p className="mb-4">
+                            In this section, you can create attributes for your product, such as size, color, RAM, storage, etc. These attributes are essential to define different variants of your product.
+                        </p>
+                        <p className="mb-4">
+                            For example, if you're selling a phone, you might create attributes like:
+                            <ul className="list-disc pl-5 mt-2">
+                                <li>Color: Red, Blue, Black</li>
+                                <li>RAM: 4GB, 8GB, 16GB</li>
+                                <li>Storage: 64GB, 128GB, 256GB</li>
+                            </ul>
+                        </p>
+                        <p className="mb-4">
+                            Once you have defined these attributes, you can click the <strong>Create Variants</strong> button. This will automatically generate product variants based on the combinations of these attributes.
+                        </p>
+                        <p>
+                            For instance, with the attributes above, variants like "Red - 8GB RAM - 128GB Storage" or "Blue - 16GB RAM - 256GB Storage" will be created.
+                        </p>
+
+                        <div className="mt-6">
+                            <button
+                                onClick={closeHelpModal} // Close the help modal
+                                className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            >
+                                Got it
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
