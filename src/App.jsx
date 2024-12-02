@@ -3,10 +3,10 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PageNotFound from "./pages/PageNotFound";
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
-import ForgotPassword from "./pages/Forgerpassword/Forgotpassword";
-import ResetPassword from "./pages/Forgerpassword/ResetPassword";
+// import Login from "./pages/Auth/Login";
+// import Register from "./pages/Auth/Register";
+// import ForgotPassword from "./pages/Forgerpassword/Forgotpassword";
+import ResetPassword from "./components/background/ResetPassword.jsx";
 import ProfilePage from "./pages/profile/Profile";
 import User from "./pages/profile/User";
 import Home from "./pages/Home/Home";
@@ -50,7 +50,7 @@ function App() {
         <Route path="/shoppingCart" element={<ShoppingCart />} />
         <Route path="/productDetail" element={<ProductDetail />} />
         <Route path="/authentication" element={<Authentication />} />
-        <Route path="/Forgotpassword" element={<ForgotPassword />} />
+        {/* <Route path="/Forgotpassword" element={<ForgotPassword />} /> */}
         <Route path="/reset-password" element={<ResetPassword />} />{" "}
         {/* Adjusted to match query param handling */}
         <Route path="/user" element={<User />}>
@@ -71,7 +71,6 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
-
 }
 
 export default App;

@@ -35,9 +35,9 @@ const register = async (userData) => {
 
 const forgotPassword = async (email) => {
   try {
-    console.log("Forgot password email: ", email);
-    const response = await authApi.post("/user/forgot-password", { email }); // Wrap email in an object
-    return response; // Return the full response, not just response.data
+    const response = await authApi.post("/users/forgot-password", { email });
+    console.log("Please check your email");
+    return response.data; // Return the full response, not just response.data
   } catch (err) {
     if (err.response) {
       const errorMessage = err.response.data.error || "Something went wrong!";
@@ -52,7 +52,7 @@ const forgotPassword = async (email) => {
 const resetPassword = async (token, password) => {
   try {
     console.log("Reset password with token:", token, "and password:", password);
-    const response = await authApi.post("/user/reset-password", {
+    const response = await authApi.post("/users/reset-password", {
       token,
       newPassword: password,
     }); // Send token and newPassword
