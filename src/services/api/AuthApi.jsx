@@ -1,55 +1,71 @@
+import { toast } from "react-toastify";
 import authApi from "../AxiosConfig";
 
-
 const login = async (credentials) => {
-    try {
-        console.log("Sending login request...");
-        const response = await authApi.post('/auth/signin', credentials);
-        console.log("Response received:", response.data);
-        console.log('User logged in successfully.');
-        return response.data;
-    } catch (error) {
-        console.error('Error:', error);
-        throw error;
+  try {
+    const response = await authApi.post("/auth/signin", credentials);
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      // Server responded with an error
+      const errorMessage = err.response.data.error || "Something went wrong!";
+      toast.error(errorMessage); // Show error message using toast
+    } else {
+      // Network or other errors
+      toast.error("Network error, please try again later.");
     }
+    throw err; // Propagate error for further handling if necessary
+  }
 };
-
 
 const register = async (userData) => {
-    try {
-        console.log("Register data", userData);
-        const response = await authApi.post('/auth/signup', userData);
-        return response.data;
-    } catch (error) {
-        console.error('Error:', error);
-        throw error;
+  try {
+    const response = await authApi.post("/auth/signup", userData);
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      const errorMessage = err.response.data.error || "Something went wrong!";
+      toast.error(errorMessage);
+    } else {
+      toast.error("Network error, please try again later.");
     }
+    throw err;
+  }
 };
-
 
 const forgotPassword = async (email) => {
-    try {
-        console.log("Forgot password email: ", email);
-        const response = await authApi.post('/user/forgot-password', { email }); // Wrap email in an object
-        return response; // Return the full response, not just response.data
-    } catch (error) {
-        console.error('Error in forgot password API:', error);
-        throw error;
+  try {
+    console.log("Forgot password email: ", email);
+    const response = await authApi.post("/user/forgot-password", { email }); // Wrap email in an object
+    return response; // Return the full response, not just response.data
+  } catch (err) {
+    if (err.response) {
+      const errorMessage = err.response.data.error || "Something went wrong!";
+      toast.error(errorMessage);
+    } else {
+      toast.error("Network error, please try again later.");
     }
+    throw err;
+  }
 };
-
 
 const resetPassword = async (token, password) => {
-    try {
-        console.log("Reset password with token:", token, "and password:", password);
-        const response = await authApi.post('/user/reset-password', { token, newPassword: password }); // Send token and newPassword
-        return response.data;
-    } catch (error) {
-        console.error('Error in reset password API:', error);
-        throw error;
+  try {
+    console.log("Reset password with token:", token, "and password:", password);
+    const response = await authApi.post("/user/reset-password", {
+      token,
+      newPassword: password,
+    }); // Send token and newPassword
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      const errorMessage = err.response.data.error || "Something went wrong!";
+      toast.error(errorMessage);
+    } else {
+      toast.error("Network error, please try again later.");
     }
+    throw err;
+  }
 };
 
-
-
-export  {login,register, forgotPassword, resetPassword};
+export { login, register, forgotPassword, resetPassword };
