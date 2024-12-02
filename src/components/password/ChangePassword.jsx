@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { FiEye, FiEyeOff, FiLock } from "react-icons/fi";
 import { updateUserProfile } from '../../services/api/UserApi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import styles
-
 
 const ChangePassword = () => {
     const [loading, setLoading] = useState(false);
@@ -39,7 +38,6 @@ const ChangePassword = () => {
 
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
-
         const feedbackMessages = validatePassword(newPassword);
 
         if (feedbackMessages.length > 0) {
@@ -49,7 +47,8 @@ const ChangePassword = () => {
             return;
         }
         if (currentPassword === newPassword) {
-            setError("The current password must be different from the old password.");
+            // setError("The current password must be different from the old password.");
+            toast.error("The current password must be different from the old password.");
             setSuccessMessage("");
             return;
         }
@@ -67,6 +66,8 @@ const ChangePassword = () => {
 
         try {
             const user = JSON.parse(localStorage.getItem("user"));
+
+            console.log('user id :', user.id);
             if (!user || !user.id) {
                 setError("User not found!");
                 setSuccessMessage("");
@@ -104,9 +105,8 @@ const ChangePassword = () => {
                     toast.error("Failed to update password.");
                 }
             } catch (error) {
-                console.error("Error during update: ", error);
                 setError("An unexpected error occurred.");
-                toast.error("An unexpected error occurred.");
+                toast.error(error.response.data.error );
             }
             
             

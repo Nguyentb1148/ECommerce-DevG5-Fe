@@ -5,7 +5,7 @@ import PaymentCardForm from "../payment/PaymentCardForm";
 const ConfirmInfoPayment = () => {
   const [selectedPayment, setSelectedPayment] = useState("stripe");
   const [formData, setFormData] = useState({
-    name: "",
+    fullname: "",
     city: "",
     district: "",
     ward: "",
