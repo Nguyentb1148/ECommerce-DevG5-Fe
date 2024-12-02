@@ -193,6 +193,7 @@ const UpdateProfile = () => {
                     <div className="relative">
                         <img
                             src={profileImage || "https://banner2.cleanpng.com/20180920/yko/kisspng-computer-icons-portable-network-graphics-avatar-ic-1713936211478.webp"}
+
                             alt="Profile"
                             className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700"
                         />
@@ -204,6 +205,7 @@ const UpdateProfile = () => {
                                 accept="image/*"
                                 onChange={handleFileChange}
                             />
+
                         </label>
                     </div>
                 </div>
@@ -298,6 +300,7 @@ const UpdateProfile = () => {
                             placeholder="Enter your address"
                         ></textarea>
                         {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+
                     </div>
                 </div>
 
@@ -315,3 +318,4 @@ const UpdateProfile = () => {
 };
 
 export default UpdateProfile;
+

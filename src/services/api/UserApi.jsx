@@ -1,42 +1,17 @@
-import authApi  from "../AxiosConfig";
+import authApi from "../AxiosConfig";
+import api from "./api";
 
-const userData= async (userId)=>{
-    try{
-        const  response= await authApi.get(`/user/${userId}`)
-        console.log('userId',response)
-        return response;
-    }
-    catch(error){
-        console.error('Error:', error);
-        throw error;
-    }
-}
-
-const getAllUsers = async () => {
-    try {
-        // Sending GET request to retrieve all users
-        const response = await authApi.get('/users');
-        console.log('All users:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching all users:', error);
-        throw error; // Re-throw the error to be handled elsewhere
-    }
+export const userData = async (userId) => {
+  try {
+    const response = await authApi.get(`/user/${userId}`);
+    console.log("userId", response);
+    return response;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
 };
-
-const getUserById = async (userId) => {
-    try {
-        // Sending GET request to retrieve user data by userId
-        const response = await authApi.get(`/users/${userId}`);
-        console.log('User data by ID:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching user data by ID:', error);
-        throw error; // Re-throw the error to be handled elsewhere
-    }
-};
-
-const updateUserProfile = async (userId, updatedData) => {
+export const updateUserProfile = async (userId, updatedData) => {
     try {
         console.log("userID: ",userId)
         console.log("updatePassword: ",updatedData)
@@ -47,19 +22,44 @@ const updateUserProfile = async (userId, updatedData) => {
         throw error; 
     }
 };
-
-const deleteUser = async (userId) => {
-    try {
-        // Sending DELETE request to remove a user by userId
-        const response = await authApi.delete(`/users/${userId}`);
-        console.log('User deleted successfully:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error deleting user:', error);
-        throw error; // Re-throw the error to be handled elsewhere
-    }
+export const GetAllUsers = async () => {
+  try {
+    const response = await authApi.get("/users");
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
 };
 
+export const BanUser = async (credentials) => {
+  try {
+    console.log("admin request...");
+    const response = await authApi.post("/admin/ban-user", credentials);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
 
+export const UpdateUserRole = async (credentials) => {
+  try {
+    console.log("admin request...");
+    const response = await authApi.put("/admin/update-user-role", credentials);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
 
-export  {userData, getAllUsers, getUserById, deleteUser, updateUserProfile} ;
+export const UpdateUserInfo = async (credentials) => {
+  try {
+    const response = await authApi.patch(`/admin/update-user`, credentials);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user info:", error);
+    throw error;
+  }
+};

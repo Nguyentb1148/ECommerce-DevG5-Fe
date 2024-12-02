@@ -4,6 +4,7 @@ import { updateUserProfile } from '../../services/api/UserApi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import styles
 
+
 const ChangePassword = () => {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -154,7 +155,6 @@ const ChangePassword = () => {
     // Get the current password strength
     const strength = checkPasswordStrength(newPassword);
     const { label, color } = getStrengthLabelAndColor(strength);
-
     return (
         <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
             <form onSubmit={handlePasswordSubmit} className="space-y-6 max-w-md mx-auto">
@@ -174,6 +174,7 @@ const ChangePassword = () => {
                             id="currentPassword"
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
+
                             className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                             required
                         />
@@ -207,6 +208,7 @@ const ChangePassword = () => {
                             id="newPassword"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
+
                             className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                             required
                         />
@@ -222,7 +224,6 @@ const ChangePassword = () => {
                             )}
                         </button>
                     </div>
-
                     <div className="mt-2">
                         <div className="flex gap-1">
                             {[...Array(4)].map((_, index) => (
@@ -235,6 +236,7 @@ const ChangePassword = () => {
                         <p className="text-sm text-black dark:text-gray-400 mt-1">
                             Password Strength: {strength > 0 ? label : "None"}
                         </p>
+
                     </div>
                 </div>
 
@@ -254,6 +256,7 @@ const ChangePassword = () => {
                             id="confirmPassword"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
+
                             className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                             required
                         />
@@ -286,6 +289,7 @@ const ChangePassword = () => {
                 {successMessage && (
                     <div className="text-green-500 text-sm">{successMessage}</div>
                 )}
+
 
                 <div className="flex justify-end">
                     <button

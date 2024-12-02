@@ -3,7 +3,8 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/flowbite/**/*.js"
+    "./node_modules/flowbite/**/*.js",
+    "./node_modules/@tiptap/core/dist/index.esm.js"
   ],
   darkMode: "class",
 
@@ -19,8 +20,10 @@ export default {
         "40v": "40vh",
         "50v": "50vh",
         "60v": "60vh",
+        "66v": "66.9vh",
         "70v": "70vh",
         "80v": "80vh",
+        "83v": "83.9vh",
         "90v": "90vh",
         "94v": "94vh",
         "100v": "100vh",
@@ -31,5 +34,6 @@ export default {
     require('flowbite/plugin')({
         charts: true,
     }),
+    require('@tailwindcss/typography')
   ],
 }

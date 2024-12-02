@@ -64,7 +64,7 @@ const Sidebar = () => {
                     </Link>
                 </div>
                 <div className="item-sidebar">
-                    <Link className="text-lg" to="">
+                    <Link className="text-lg" to="/shoppingCart">
                         <MdOutlineShoppingCart className="text-3xl" />
                     </Link>
                 </div>

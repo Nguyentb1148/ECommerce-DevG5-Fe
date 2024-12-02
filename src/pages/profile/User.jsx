@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { MdLogout } from "react-icons/md";
 import { Link } from 'react-router-dom';
@@ -32,8 +33,35 @@ const User = () => {
                     </ul>
                 )}
             </div>
+
         </div>
-    );
+
+        {/* Dropdown Menu */}
+        {!dropdown && (
+          <ul className="z-10 absolute top-11 left-[-50px] md:left-[-90px] lg:left-[-50px] rounded-md bg-white text-slate-600 dark:bg-gray-900 dark:text-gray-500 font-medium shadow-md">
+            <li className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300">
+              <CgProfile className="h-6 w-6 mr-2" />
+              <Link to="/user/profile">Profile</Link>
+            </li>
+            <li className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300">
+              <RiLockPasswordFill className="h-6 w-6 mr-2" />
+              <Link to="/user/change-password">Password</Link>
+            </li>
+            <li
+              onClick={logout}
+              className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300 cursor-pointer"
+            >
+              <MdLogout className="h-6 w-6 mr-2" />
+              Logout
+            </li>
+          </ul>
+        )}
+      </div>
+
+      {/* Render nested routes */}
+      <Outlet />
+    </div>
+  );
 };
 
 export default User;

@@ -1,99 +1,148 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { deleteImage, uploadImage } from "../../configs/Cloudinary.jsx";
+import { updateCategory } from "../../services/api/CategoryApi.jsx";
+import { toast } from "react-toastify";
 
-const EditCategory = ({ onClose }) => {
-    const [categoryName, setCategoryName] = useState("");
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState("");
+const EditCategory = ({
+  onClose,
+  category,
+  reFetchCategory,
+  setReFetchCategory,
+}) => {
+  const [categoryName, setCategoryName] = useState(category.name);
+  const [currentImageUrl, setCurrentImageUrl] = useState(category.imageUrl);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(category.imageUrl);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setSelectedFile(file);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
 
-            // Tạo URL để xem trước hình ảnh
-            const preview = URL.createObjectURL(file);
-            setPreviewUrl(preview);
+  const handleUpdateCategory = async () => {
+    setLoading(true);
+    setErrorMessage("");
+
+    try {
+      let updatedImageUrl = currentImageUrl;
+
+      // Step 1: Delete old image and upload new one if a new image is provided
+      if (selectedFile) {
+        // Delete the old image
+        const folderName = "Category"; // The folder name used in Cloudinary
+        const oldImagePublicId = currentImageUrl.split("/").pop().split(".")[0]; // Extract public ID from URL
+
+        try {
+          await deleteImage(folderName, oldImagePublicId); // Call the deleteImage function
+          console.log("Old image deleted successfully.");
+        } catch (deleteError) {
+          console.error("Failed to delete old image:", deleteError);
+          setErrorMessage("Failed to delete old image.");
+          return; // Stop execution if the old image cannot be deleted
         }
-    };
-    const handleUpdateCategory = () => {
-        alert(`Category "${categoryName}" has been Update!`);
-        onClose(); // Đóng modal sau khi thêm
-    };
-    return (
-        <div className="fixed inset-0 z-20 bg-black bg-opacity-30 flex items-center justify-center">
-            <div className="bg-white rounded-lg shadow-md p-6 w-[400px]">
-                <h2 className="text-xl font-bold mb-4">Update Category</h2>
-                {/* File Upload */}
-                <div className="w-full py-6 bg-gray-50 rounded-2xl border border-gray-300 gap-3 grid border-dashed">
-                    {previewUrl ? (
-                        <img
-                            src={previewUrl}
-                            alt="Preview"
-                            className="w-full h-40 object-cover rounded-md"
-                        />
-                    ) : (
-                        <div className="grid gap-1">
-                            <svg
-                                className="mx-auto"
-                                width="40"
-                                height="40"
-                                viewBox="0 0 40 40"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M31.6497 10.6056L32.2476 10.0741L31.6497 10.6056ZM28.6559 7.23757L28.058 7.76907L28.058 7.76907L28.6559 7.23757Z"
-                                    fill="#4F46E5"
-                                />
-                            </svg>
-                            <h2 className="text-center text-gray-400 text-xs leading-4">
-                                PNG, JPG or PDF, smaller than 15MB
-                            </h2>
-                        </div>
-                    )}
-                    <div className="grid gap-2">
-                        <h4 className="text-center text-gray-900 text-sm font-medium leading-snug">
-                            Drag and Drop your file here or
-                        </h4>
-                        <div className="flex items-center justify-center">
-                            <label>
-                                <input type="file" hidden onChange={handleFileChange} />
-                                <div className="flex w-28 h-9 px-2 flex-col bg-indigo-600 rounded-full shadow text-white text-xs font-semibold leading-4 items-center justify-center cursor-pointer focus:outline-none">
-                                    Choose File
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                {/* Category Name */}
 
-                <div>
-                    <h3 className="text-lg font-medium py-2">Name Category:</h3>
-                    <input
-                        type="text"
-                        value={categoryName}
-                        onChange={(e) => setCategoryName(e.target.value)}
-                        placeholder="Enter category name"
-                        className="w-full border border-gray-300 rounded p-2 mb-4"
-                    />
+        // Upload new image
+        const uploadedImage = await uploadImage(
+          selectedFile,
+          folderName,
+          categoryName
+        );
+        updatedImageUrl = uploadedImage.secure_url; // Set new image URL
+      }
+
+      // Step 2: Prepare updated category data
+      const updatedCategory = {
+        name: categoryName,
+        imageUrl: updatedImageUrl,
+      };
+
+      // Step 3: Update category via API
+      await updateCategory(category._id, updatedCategory);
+
+      toast.success("Category updated successfully!");
+      onClose(); // Close the modal after successful update
+      setReFetchCategory(!reFetchCategory);
+    } catch (error) {
+      console.error("Error updating category:", error);
+      setErrorMessage("Failed to update the category.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-20 bg-black bg-opacity-30 flex items-center justify-center">
+      <div className="bg-gray-800 rounded-lg shadow-md p-6 w-[400px]">
+        <h2 className="text-xl font-bold mb-4 text-white">Update Category</h2>
+        <div className="w-full  bg-gray-700 rounded-2xl border border-gray-600">
+          {previewUrl && (
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className="w-full h-40 object-cover rounded-md mb-4"
+            />
+          )}
+          <div className="grid gap-2 py-2">
+            <div className="flex items-center justify-center">
+              <label>
+                <input type="file" hidden onChange={handleFileChange} />
+                <div className="flex w-28 h-9 px-2 flex-col bg-indigo-600 rounded-full shadow text-white text-xs font-semibold leading-4 items-center justify-center cursor-pointer focus:outline-none">
+                  Choose File
                 </div>
-                <div className="flex justify-end">
-                    <button
-                        onClick={onClose}
-                        className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded mr-2"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleUpdateCategory}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-                    >
-                        Update
-                    </button>
-                </div>
+              </label>
             </div>
+          </div>
         </div>
-    )
-}
+        {/* Category Name */}
+        <div>
+          <h3 className="text-lg font-medium py-2 text-white">
+            Name Category:
+          </h3>
+          <input
+            type="text"
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
+            placeholder="Enter category name"
+            className="w-full border border-gray-600 bg-gray-700 text-white rounded p-2 mb-4"
+          />
+        </div>
 
-export default EditCategory
+        <div className="flex justify-end">
+          <button
+            onClick={onClose}
+            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded mr-2"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleUpdateCategory}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+            disabled={loading}
+          >
+            {loading ? "Updating..." : "Update"}
+          </button>
+        </div>
+        {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
+      </div>
+    </div>
+  );
+};
+
+EditCategory.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  category: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    imageUrl: PropTypes.string,
+    createdAt: PropTypes.string,
+    updatedAt: PropTypes.string,
+  }).isRequired,
+};
+
+export default EditCategory;

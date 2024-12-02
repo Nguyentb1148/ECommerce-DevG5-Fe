@@ -25,6 +25,16 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    if (!fullName.trim().includes(' ')) {
+      setErrorMessage('Full name must contain at least two words.');
+      setLoading(false);
+      return;
+    }
+    if (!email.includes('@gmail.')) {
+      setErrorMessage('Email must be a Gmail address (e.g., example@gmail.com).');
+      setLoading(false);
+      return;
+    }
 
     if (password !== confirmPassword) {
       setErrorMessage('The password and confirmation password do not match.');
@@ -124,7 +134,12 @@ const Register = () => {
             </div>
             <div className="form-group">
               <label>Email:</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required/>
+              <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required/>
             </div>
             <div className="form-group">
               <label>Password:</label>
