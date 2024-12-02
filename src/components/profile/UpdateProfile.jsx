@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { FaUpload } from "react-icons/fa";
 // import { uploadImage } from './path-to-your-upload-image-function';
 import { uploadImage } from '../../configs/Cloudinary';
 import authApi from '../../services/AxiosConfig';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 
 const UpdateProfile = () => {
     const [profileData, setProfileData] = useState({

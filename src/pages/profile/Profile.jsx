@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Navbar from '../../components/navbar/Navbar';
 import UpdateProfile from '../../components/profile/UpdateProfile';
 import ChangePassword from '../../components/password/ChangePassword';
