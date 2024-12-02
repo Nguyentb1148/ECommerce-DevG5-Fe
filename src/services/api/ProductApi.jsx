@@ -26,7 +26,6 @@ export const getProducts = async () => {
 // Get all products by sellerId
 export const getProductsByUserId = async (userId) => {
     try {
-        console.log('Seller Id: ', userId);
         const response = await authApi.get(`/products/seller/${userId}`);
         return response.data;
     } catch (error) {
@@ -38,9 +37,7 @@ export const getProductsByUserId = async (userId) => {
 // Get a single product by ID
 export const getProductById = async (id) => {
     try {
-        console.log("Product send request: ", id);
         const response = await authApi.get(`/products/${id}`);
-        console.log('product data server sent: ', response.data);
         return response.data;
     } catch (error) {
         console.error("Error fetching product by ID:", error);

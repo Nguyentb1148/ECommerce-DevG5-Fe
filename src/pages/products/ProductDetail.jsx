@@ -12,27 +12,12 @@ const ProductDetail = () => {
   const toggleReviewModal = () => setIsReviewModalOpen(!isReviewModalOpen);
 
   const images = [
-    // "https://via.placeholder.com/600",
-    // "https://via.placeholder.com/601",
-    // "https://via.placeholder.com/602",
-    // "https://via.placeholder.com/603",
-    // "https://via.placeholder.com/604",
-    // "https://via.placeholder.com/605",
-    // "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732775618/Apple%20MacBook%20Air%20M2%202024%208CPU%208GPU%2016GB%20256GB/knqrz4.webp",
-    // "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732775618/Apple%20MacBook%20Air%20M2%202024%208CPU%208GPU%2016GB%20256GB/g0hi5j.webp",
-    // "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732775618/Apple%20MacBook%20Air%20M2%202024%208CPU%208GPU%2016GB%20256GB/knqrz4.webp",
-    // "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732775618/Apple%20MacBook%20Air%20M2%202024%208CPU%208GPU%2016GB%20256GB/knqrz4.webp",
-    // "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732775618/Apple%20MacBook%20Air%20M2%202024%208CPU%208GPU%2016GB%20256GB/knqrz4.webp",
-    // "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732775618/Apple%20MacBook%20Air%20M2%202024%208CPU%208GPU%2016GB%20256GB/knqrz4.webp",
-
       "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732773993/Laptop%20Lenovo%20IdeaPad%20Slim%205%2014Q8X9%2083HL000KVN/jzz5zd.webp",
       "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732773993/Laptop%20Lenovo%20IdeaPad%20Slim%205%2014Q8X9%2083HL000KVN/cn281q.webp",
       "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732773993/Laptop%20Lenovo%20IdeaPad%20Slim%205%2014Q8X9%2083HL000KVN/l21h3o.webp",
       "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732773993/Laptop%20Lenovo%20IdeaPad%20Slim%205%2014Q8X9%2083HL000KVN/2737cy.webp",
       "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732773993/Laptop%20Lenovo%20IdeaPad%20Slim%205%2014Q8X9%2083HL000KVN/izducf.webp",
       "http://res.cloudinary.com/dkffhpyc6/image/upload/v1732773993/Laptop%20Lenovo%20IdeaPad%20Slim%205%2014Q8X9%2083HL000KVN/4sxkpp.webp"
-
-
   ];
 
   const [selectedVariant, setSelectedVariant] = useState("Off White");
