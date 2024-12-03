@@ -1,110 +1,106 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import ProductSlider from "./ProductSlider";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import { FaShoppingCart } from 'react-icons/fa';
+import { getProductById } from '../../services/api/ProductApi'; // Adjust the import according to your project structure
 
 const ProductDetail = () => {
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [cart, setCart] = useState([]);
   const [quantity, setQuantity] = useState(1);
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedVariant, setSelectedVariant] = useState("");
+  const [selectedPrice, setSelectedPrice] = useState(0);
+
+  useEffect(() => {
+    console.log("Product ID from URL:", id); // Log the ID to check if it's being retrieved correctly
+
+    if (!id) {
+      console.error("Product ID is undefined");
+      return;
+    }
+
+    const fetchProduct = async () => {
+      try {
+        const productData = await getProductById(id);
+        console.log("Product Data:", productData); // Log the product data to check if it's being retrieved correctly
+        setProduct(productData);
+        setSelectedColor(productData.variants[0].attributes.color);
+        setSelectedVariant(productData.variants[0].attributes.option);
+        setSelectedPrice(productData.variants[0].price);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
+    };
+    fetchProduct();
+  }, [id]);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
   const toggleReviewModal = () => setIsReviewModalOpen(!isReviewModalOpen);
 
-  const images = [
-    "https://cdn.ankhang.vn/media/product/21199_asus_gaming_rog_strix_g15_g513ih_hn015w.jpg",
-    "https://bizweb.dktcdn.net/thumb/1024x1024/100/329/122/products/laptop-gaming-asus-rog-zephyrus-duo-16-2023-gx650pz-nm031w-4.jpg?v=1711947035900",
-    "https://philong.com.vn/media/product/250-30152-asus-rog-flow-x16-gv601vv-nl016w-philong2.png",
-    "https://laptoptv.vn/wp-content/uploads/2024/05/8-1-scaled.jpg",
-    "https://bizweb.dktcdn.net/thumb/1024x1024/100/329/122/products/laptop-gaming-asus-rog-zephyrus-duo-16-2023-gx650pz-nm031w-4.jpg?v=1711947035900",
-    "https://www.phucanh.vn/media/news/1910_ROGStrixG16.jpg"
-  ];
-
-  const [selectedVariant, setSelectedVariant] = useState("Off White");
-
-  const variants = ["Off White", "Space Gray", "Jet Black"];
+  const handleColorClick = (color) => {
+    setSelectedColor(color);
+    updatePrice(color, selectedVariant);
+  };
 
   const handleVariantClick = (variant) => {
     setSelectedVariant(variant);
+    updatePrice(selectedColor, variant);
+  };
+
+  const updatePrice = (color, variant) => {
+    const selectedProduct = product.variants.find(
+      (v) => v.attributes.color === color && v.attributes.option === variant
+    );
+    if (selectedProduct) {
+      setSelectedPrice(selectedProduct.price);
+    }
   };
 
   const handleAddToCart = () => {
-    const product = {
-      name: "ABABABABABABABABABAB",
-      price: 423424242,
+    const productToAdd = {
+      name: product.name,
+      price: selectedPrice * quantity,
+      color: selectedColor,
       variant: selectedVariant,
       quantity: quantity,
     };
-    setCart([...cart, product]);
+    setCart([...cart, productToAdd]);
     alert("Product added to cart!");
   };
 
   const handleQuantityChange = (amount) => {
-    setQuantity((prevQuantity) => Math.max(1, prevQuantity + amount));
-  };
-
-  const features = [
-    "Trang bị bộ xử lý Intel Core i5-13420H cân mọi tác vụ văn phòng, học tập",
-    "RAM 8GB DDR4 có thể nâng cấp tối đa lên 32GB, cho bạn thoải mái lướt web mà không lo lag giật",
-    "Ổ cứng 512GB rộng rãi, hỗ trợ lưu trữ tài liệu, tải game thoải mái",
-    "Card đồ họa RTX 2050 giúp chỉnh sửa ảnh, video hay chơi game với mức cấu hình cao",
-    "Màn hình 15.6 inch FHD cho bạn thoải mái làm việc, giải trí với chất lượng hình ảnh sắc nét, chân thực",
-  ];
-
-  const specifications = {
-    "Loại card đồ họa": "NVIDIA GeForce RTX 2050 4GB GDDR6",
-    "Dung lượng RAM": "8GB",
-    "Loại RAM": "DDR4 3200MHz",
-    "Số khe ram": "2 khe (Nâng cấp tối đa 32 GB)",
-    "Ổ cứng": "512GB PCIe NVMe Gen4 (2 khe, nâng cấp tối đa 2TB SSD)",
-    "Công nghệ màn hình": "Viền mỏng, Màn hình chống chói Acer ComfyView",
-    "Cổng giao tiếp": `
-      1 x USB Type-C (USB 3.2 Gen 2, Thunderbolt 4)
-      2 x USB 3.2 Gen 1
-      1 x HDMI 2.1 hỗ trợ HDCP
-      1 x 3.5 mm headphone/speaker jack
-      1 x Ethernet (RJ-45)
-      DC-in jack
-    `,
-    "Kích thước màn hình": "15.6 inches",
-  };
-  const [generalRating, setGeneralRating] = useState(0);
-  const [experienceRatings, setExperienceRatings] = useState({
-    performance: 0,
-    battery: 0,
-    camera: 0,
-  });
-  const [comment, setComment] = useState("");
-
-  const handleRatingClick = (rating) => {
-    setGeneralRating(rating);
-  };
-
-  const handleExperienceRating = (key, rating) => {
-    setExperienceRatings({ ...experienceRatings, [key]: rating });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (comment.length < 15) {
-      alert("Vui lòng nhập ít nhất 15 ký tự.");
-      return;
+    const newQuantity = Math.max(1, quantity + amount);
+    if (selectedVariantData && newQuantity <= selectedVariantData.stockQuantity) {
+      setQuantity(newQuantity);
     }
-    console.log("Đánh giá:", {
-      generalRating,
-      experienceRatings,
-      comment,
-    });
-    toggleReviewModal();
+  };
+  const handleQuantityInputChange = (e) => {
+    let newQuantity = Number(e.target.value);
+    if (newQuantity === 0) {
+      newQuantity = 0;
+    } else {
+      newQuantity = Math.max(1, Math.min(selectedVariantData ? selectedVariantData.stockQuantity : 1, newQuantity));
+    }
+    setQuantity(newQuantity);
   };
 
-  const reviews = {
-    rating: 5.0,
-    totalReviews: 1,
-    stars: [1, 0, 0, 0, 0], // Number of reviews for each star rating
-  };
+  if (!product) {
+    return <div>Loading...</div>;
+  }
+
+  const fallbackImage = "https://via.placeholder.com/150"; // Fallback image URL
+
+  // Get unique colors and variants
+  const uniqueColors = [...new Set(product.variants.map(variant => variant.attributes.color))];
+  const uniqueVariants = [...new Set(product.variants.map(variant => variant.attributes.option))];
+
+  const selectedVariantData = product.variants.find(v => v.attributes.option === selectedVariant);
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
@@ -116,22 +112,35 @@ const ProductDetail = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {/* Left Section - Product Images */}
             <div>
-              <ProductSlider images={images} />
+              <ProductSlider images={product.imageUrls.map(url => url || fallbackImage)} />
             </div>
             {/* Right Section - Product Details */}
             <div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold dark:text-white">Name product: ABABABABABABABABABAB</h1>
-              <p className="text-red-600 text-lg sm:text-2xl lg:text-3xl font-semibold mt-4">$423424242</p>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold dark:text-white">{product.name}</h1>
               <div className="mt-4">
-                <p className="text-gray-600 dark:text-gray-400">Brand: NewSUS Tech Company</p>
-                <p className="text-gray-600 dark:text-gray-400">Size: 15.7 x 11 x 1.0 inches (W x D x H)</p>
-                <p className="text-gray-600 dark:text-gray-400">Weight: 6.28 pounds</p>
-                <p className="text-gray-600 dark:text-gray-400">Delivery: Worldwide</p>
+                <p className="text-gray-600 dark:text-gray-400">Thương hiệu: {product.brandId.name}</p>
+              </div>
+              <div className="mt-4">
+                <span className="text-gray-600 dark:text-gray-400">Màu sắc:</span>
+                <div className="flex gap-4 mt-2">
+                  {uniqueColors.map((color) => (
+                    <button
+                      key={color}
+                      className={`px-2 sm:px-4 py-1 sm:py-2 border rounded ${selectedColor === color
+                        ? "bg-gray-800 text-white"
+                        : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                        }`}
+                      onClick={() => handleColorClick(color)}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="mt-4">
                 <span className="text-gray-600 dark:text-gray-400">Variant:</span>
                 <div className="flex gap-4 mt-2">
-                  {variants.map((variant) => (
+                  {uniqueVariants.map((variant) => (
                     <button
                       key={variant}
                       className={`px-2 sm:px-4 py-1 sm:py-2 border rounded ${selectedVariant === variant
@@ -144,33 +153,34 @@ const ProductDetail = () => {
                     </button>
                   ))}
                 </div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">Selected Variant: {selectedVariant}</p>
+                {selectedVariantData && (
+                  <span className="text-gray-600 dark:text-gray-400 mt-1">
+                    Số lượng còn kho: {selectedVariantData.stockQuantity}
+                  </span>
+                )}
               </div>
-              <div className="mt-4 flex gap-4 items-center">
+              <div className="mt-4 flex gap-3 items-center">
                 <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded overflow-hidden">
-                  <button
-                    onClick={() => handleQuantityChange(-1)}
-                    className="bg-gray-300 dark:bg-gray-600 text-black dark:text-white px-4 py-2"
-                  >
-                    -
-                  </button>
-                  <span className="mx-5">{quantity}</span>
-                  <button
-                    onClick={() => handleQuantityChange(1)}
-                    className="bg-gray-300 dark:bg-gray-600 text-black dark:text-white px-4 py-2"
-                  >
-                    +
-                  </button>
+                  <input
+                    type="number"
+                    className="w-13 text-center"
+                    value={quantity}
+                    onChange={(e) => handleQuantityInputChange(e)}
+                    min="1"
+                    max={selectedVariantData ? selectedVariantData.stockQuantity : 1}
+                  />
                 </div>
                 <button className="bg-red-500 text-white px-4 sm:px-6 py-2 rounded">Buy Now</button>
                 <button
-  onClick={handleAddToCart}
-  className="bg-blue-500 text-white px-4 sm:px-6 py-2 rounded flex items-center"
->
-  <FaShoppingCart className="mr-2" />
-  Add to Cart
-</button>
-
+                  onClick={handleAddToCart}
+                  className="bg-blue-500 text-white px-4 sm:px-6 py-2 rounded flex items-center"
+                >
+                  <FaShoppingCart className="mr-2" />
+                  Thêm vào giỏ hàng
+                </button>
+              </div>
+              <div className="mt-4">
+                <p className="text-red-600 text-lg sm:text-2xl lg:text-3xl font-semibold">${selectedPrice * quantity}</p>
               </div>
             </div>
           </div>
@@ -181,8 +191,8 @@ const ProductDetail = () => {
           <div className="col-span-1 lg:col-span-3 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
             <h2 className="text-lg sm:text-xxl font-semibold mb-4 dark:text-white text-center">Đặc Điểm Nổi Bật</h2>
             <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
-              {features.map((feature, index) => (
-                <li key={index} dangerouslySetInnerHTML={{ __html: feature }}></li>
+              {product.description && product.description.split('\n').map((line, index) => (
+                <li key={index}>{line}</li>
               ))}
             </ul>
           </div>
