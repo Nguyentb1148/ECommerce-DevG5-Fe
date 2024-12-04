@@ -1,9 +1,8 @@
 import authApi from "../AxiosConfig";
-import api from "./api";
 
 export const userData = async (userId) => {
   try {
-    const response = await authApi.get(`/user/${userId}`);
+    const response = await authApi.get(`/users/${userId}`);
     console.log("userId", response);
     return response;
   } catch (error) {
