@@ -47,7 +47,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/productFilter" element={<FilterProduct />} />
         <Route path="/shoppingCart" element={<ShoppingCart />} />
-        <Route path="/productDetail" element={<ProductDetail />} />
+        <Route path="/productDetail/:id" element={<ProductDetail />} />
         <Route path="/authentication" element={<Authentication />} />
         {/* <Route path="/Forgotpassword" element={<ForgotPassword />} /> */}
         <Route path="/reset-password" element={<ResetPassword />} />{" "}
@@ -66,6 +66,7 @@ function App() {
           <Route path="category" element={<CategoryManage />} />
           <Route path="brand" element={<BrandManage />} />
           <Route path="user" element={<UserManage />} />
+        
         </Route>
       </Routes>
     </BrowserRouter>
