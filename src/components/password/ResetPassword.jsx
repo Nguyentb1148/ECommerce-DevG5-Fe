@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import AnimatedBackground from "./AnimatedBackGround";
+import AnimatedBackground from "../background/AnimatedBackGround";
 import InputPassword from "./InputPassword";
 import StrengthMeterPassword from "./StrengthMeterPassword";
 import { useNavigate, useSearchParams } from "react-router-dom";

@@ -28,27 +28,27 @@ const ListVoucher = () => {
         }
     ]);
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Available Vouchers</h2>
+        <div className="bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4 text-gray-100">Available Vouchers</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {vouchers.map((voucher) => (
                     <div
                         key={voucher.id}
-                        className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow bg-white dark:bg-gray-700"
+                        className="border border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow bg-gray-700"
                     >
                         <div className="flex items-center gap-2 mb-2">
-                            <FiPercent className="text-blue-500 dark:text-blue-400" />
-                            <span className="font-bold text-lg text-gray-800 dark:text-gray-100">{voucher.code}</span>
+                            <FiPercent className="text-blue-400" />
+                            <span className="font-bold text-lg text-gray-100">{voucher.code}</span>
                         </div>
-                        <div className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                        <div className="text-xl font-bold text-blue-400 mb-2">
                             {voucher.discount} OFF
                         </div>
-                        <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">{voucher.description}</p>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-gray-300 text-sm mb-2">{voucher.description}</p>
+                        <div className="text-sm text-gray-400">
                             <p>Min. Purchase: ${voucher.minPurchase}</p>
                             <p>Valid until: {voucher.validUntil}</p>
                         </div>
-                        <button className="mt-3 w-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 py-2 rounded-md hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                        <button className="mt-3 w-full bg-blue-900 text-blue-300 py-2 rounded-md hover:bg-blue-800 transition-colors">
                             Copy Code
                         </button>
                     </div>

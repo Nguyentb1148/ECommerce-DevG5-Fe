@@ -5,7 +5,6 @@ import CartItem from "../../components/cart/CartItem";
 import CartSummary from "../../components/cart/CartSummary";
 import VoucherApply from "../../components/voucher/VoucherApply";
 import Navbar from "../../components/navbar/Navbar";
-import Sidebar from "../../components/sidebar/Sidebar";
 import ConfirmInfoPayment from "../../components/payment/ConfirmInfoPayment"
 import { Link } from "react-router-dom";
 const dummyProducts = [
@@ -87,7 +86,6 @@ const ShoppingCart = () => {
     return (
         <div className="w-full h-screen">
             <Navbar backgroundClass="bg-gray-100" />
-            <Sidebar />
             {currentStep === 2 && (
                 <>
                     <div className="h-83v grid place-items-center bg-gray-100 dark:bg-gray-900 dark:text-gray-300 ">

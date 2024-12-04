@@ -168,14 +168,14 @@ const UpdateProfile = () => {
         <div>
             <form
                 onSubmit={handleSubmit}
-                className="space-y-6 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md"
+                className="space-y-6 p-6 bg-gray-800 rounded-lg shadow-md"
             >
                 <div className="flex items-center justify-center mb-8">
                     <div className="relative">
                         <img
                             src={profileImage || "https://example.com/default-avatar.png"}
                             alt="Profile"
-                            className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700"
+                            className="w-32 h-32 rounded-full object-cover border-4 border-gray-700"
                         />
                         <label className="absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full cursor-pointer hover:bg-blue-600 transition-colors">
                             <FaUpload className="text-white" />
@@ -191,7 +191,7 @@ const UpdateProfile = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label className="block text-sm font-medium text-gray-300">
                             Name
                         </label>
                         <input
@@ -199,14 +199,14 @@ const UpdateProfile = () => {
                             name="name"
                             value={profileData.fullName}
                             onChange={handleChange}
-                            className={`mt-1 block w-full rounded-md border ${errors.fullName ? "border-red-500" : "border-gray-300"} dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
+                            className={`mt-1 block w-full rounded-md border ${errors.fullName ? "border-red-500" : "border-gray-300"} border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
                             placeholder="John Doe"
                         />
                         {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label className="block text-sm font-medium text-gray-300">
                             Email
                         </label>
                         <input
@@ -214,7 +214,7 @@ const UpdateProfile = () => {
                             name="email"
                             value={profileData.email}
                             onChange={handleChange}
-                            className={`mt-1 block w-full rounded-md border ${errors.email ? "border-red-500" : "border-gray-300"} dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
+                            className={`mt-1 block w-full rounded-md border ${errors.email ? "border-red-500" : "border-gray-300"} border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
                             placeholder="john@example.com"
                             readOnly
                         />
@@ -222,7 +222,7 @@ const UpdateProfile = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label className="block text-sm font-medium text-gray-300">
                             Phone
                         </label>
                         <input
@@ -230,7 +230,7 @@ const UpdateProfile = () => {
                             name="phone"
                             value={profileData.phone}
                             onChange={handleChange}
-                            className={`mt-1 block w-full rounded-md border ${errors.phone ? "border-red-500" : "border-gray-300"} dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
+                            className={`mt-1 block w-full rounded-md border ${errors.phone ? "border-red-500" : "border-gray-300"} border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
                             placeholder="0XXXXXXXXX"
                         />
                         {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
@@ -238,26 +238,26 @@ const UpdateProfile = () => {
 
                     <div className="md:flex justify-between">
                         <div className="max-md:mb-4">
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Birth
+                            <label className="block text-sm font-medium text-gray-300">Birth
                                 Date</label>
                             <input
                                 type="date"
                                 name="dateOfBirth"
                                 value={profileData.dateOfBirth || ""}
                                 onChange={handleChange}
-                                className={`mt-1 block max-md:w-full w-60 rounded-md ${errors.dateOfBirth ? "border-red-500" : "border-gray-300"} border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
+                                className={`mt-1 block max-md:w-full w-60 rounded-md ${errors.dateOfBirth ? "border-red-500" : "border-gray-300"} border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
                             />
                             {errors.dateOfBirth && <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Gender</label>
+                            <label className="block text-sm font-medium text-gray-300">Gender</label>
                             <select
                                 id="gender"
                                 name="gender"
                                 value={profileData.gender}
                                 onChange={handleChange}
-                                className={`block max-md:w-full w-60 ${errors.gender ? "border-red-500" : "border-gray-300"} mt-1 px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600`}
+                                className={`block max-md:w-full w-60 ${errors.gender ? "border-red-500" : "border-gray-300"} mt-1 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-gray-300 border-gray-600`}
                             >
                                 <option value="">-- Select Gender --</option>
                                 <option value="male">Male</option>
@@ -269,7 +269,7 @@ const UpdateProfile = () => {
                     </div>
 
                     <div className="col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label className="block text-sm font-medium text-gray-300">
                             Address
                         </label>
                         <input
@@ -277,7 +277,7 @@ const UpdateProfile = () => {
                             name="address"
                             value={profileData.address}
                             onChange={handleChange}
-                            className={`mt-1 block w-full rounded-md border ${errors.address ? "border-red-500" : "border-gray-300"} dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
+                            className={`mt-1 block w-full rounded-md border ${errors.address ? "border-red-500" : "border-gray-300"} border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
                             placeholder="123 Main St, City"
                         />
                         {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}

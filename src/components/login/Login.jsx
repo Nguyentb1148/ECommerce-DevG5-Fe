@@ -1,6 +1,6 @@
 import React from "react";
 import { FaEnvelope } from "react-icons/fa";
-import InputPassword from "./InputPassword";
+import InputPassword from "../password/InputPassword";
 
 const Login = ({
   formData,

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import ProductSlider from "./ProductSlider";
+import ProductSlider from "../../components/products/ProductSlider";
 import Navbar from "../../components/navbar/Navbar";
-import Sidebar from "../../components/sidebar/Sidebar";
 
 const ProductDetail = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -102,7 +101,6 @@ const ProductDetail = () => {
   return (
       <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
         <Navbar />
-        <Sidebar />
         <div className="max-w-7xl mx-auto p-4">
           {/* Main Content */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
