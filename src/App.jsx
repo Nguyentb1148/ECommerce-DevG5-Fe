@@ -8,7 +8,6 @@ import PageNotFound from "./pages/PageNotFound";
 // import Register from "./pages/Auth/Register";
 // import ForgotPassword from "./pages/Forgerpassword/Forgotpassword";
 import ResetPassword from "./components/background/ResetPassword.jsx";
-import ProfilePage from "./pages/profile/Profile";
 import User from "./pages/profile/User";
 import Home from "./pages/Home/Home";
 import ChangePassword from "./pages/profile/ChangePassword";
@@ -53,7 +52,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />{" "}
         {/* Adjusted to match query param handling */}
         <Route path="/user" element={<User />}>
-          <Route path="profile" element={<ProfilePage />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="change-password" element={<ChangePassword />} />
         </Route>
         <Route path="/seller" element={<Seller />}>
@@ -66,7 +65,6 @@ function App() {
           <Route path="category" element={<CategoryManage />} />
           <Route path="brand" element={<BrandManage />} />
           <Route path="user" element={<UserManage />} />
-        
         </Route>
       </Routes>
     </BrowserRouter>
