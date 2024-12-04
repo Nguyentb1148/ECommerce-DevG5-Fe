@@ -28,6 +28,7 @@ import ShoppingCart from "./pages/cart/ShoppingCart.jsx";
 import ProductDetailSeller from "./pages/seller/ProductDetail.jsx";
 import ProductSlider from "./pages/products/ProductSlider.jsx";
 import EditProductPage from "./pages/seller/ProductDetail.jsx";
+import CartProvider from "./context/CartContext.jsx";
 
 function App() {
   React.useEffect(() => {
@@ -40,37 +41,37 @@ function App() {
     AOS.refresh();
   }, []);
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="*" element={<PageNotFound />} />
-        <Route path="/login" element={<Authentication />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/productFilter" element={<FilterProduct />} />
-        <Route path="/shoppingCart" element={<ShoppingCart />} />
-        <Route path="/productDetail/:id" element={<ProductDetail />} />
-        <Route path="/authentication" element={<Authentication />} />
-        {/* <Route path="/Forgotpassword" element={<ForgotPassword />} /> */}
-        <Route path="/reset-password" element={<ResetPassword />} />{" "}
-        {/* Adjusted to match query param handling */}
-        <Route path="/user" element={<User />}>
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="change-password" element={<ChangePassword />} />
-        </Route>
-        <Route path="/seller" element={<HomePageSeller />}>
-          <Route path="product" element={<ProductSeller />} />
-          <Route path="create-product" element={<NewProduct />} />
-          <Route path="product/:productId" element={<ProductDetailSeller />} />
-        </Route>
-        <Route path="/admin" element={<Admin />}>
-          <Route path="" element={<DashboardAdmin />} />
-          <Route path="category" element={<CategoryManage />} />
-          <Route path="brand" element={<BrandManage />} />
-          <Route path="user" element={<UserManage />} />
-        
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <CartProvider>
+      {/* Wrap entire app in CartProvider */}
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<PageNotFound />} />
+          <Route path="/login" element={<Authentication />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/productFilter" element={<FilterProduct />} />
+          <Route path="/shoppingCart" element={<ShoppingCart />} />
+          <Route path="/productDetail/:id" element={<ProductDetail />} />
+          <Route path="/authentication" element={<Authentication />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/user" element={<User />}>
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="change-password" element={<ChangePassword />} />
+          </Route>
+          <Route path="/seller" element={<HomePageSeller />}>
+            <Route path="product" element={<ProductSeller />} />
+            <Route path="create-product" element={<NewProduct />} />
+            <Route path="product/:productId" element={<ProductDetailSeller />} />
+          </Route>
+          <Route path="/admin" element={<Admin />}>
+            <Route path="" element={<DashboardAdmin />} />
+            <Route path="category" element={<CategoryManage />} />
+            <Route path="brand" element={<BrandManage />} />
+            <Route path="user" element={<UserManage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </CartProvider>
   );
 }
 

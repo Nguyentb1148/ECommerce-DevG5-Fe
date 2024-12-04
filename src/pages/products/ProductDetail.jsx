@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import ProductSlider from "./ProductSlider";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import { FaShoppingCart } from 'react-icons/fa';
 import { getProductById } from '../../services/api/ProductApi'; // Adjust the import according to your project structure
+import { CartContext } from "../../context/CartContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -16,15 +18,13 @@ const ProductDetail = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedVariant, setSelectedVariant] = useState("");
   const [selectedPrice, setSelectedPrice] = useState(0);
-
+  const { addToCart } = useContext(CartContext);
   useEffect(() => {
     console.log("Product ID from URL:", id); // Log the ID to check if it's being retrieved correctly
-
     if (!id) {
       console.error("Product ID is undefined");
       return;
     }
-
     const fetchProduct = async () => {
       try {
         const productData = await getProductById(id);
@@ -39,20 +39,16 @@ const ProductDetail = () => {
     };
     fetchProduct();
   }, [id]);
-
   const toggleModal = () => setIsModalOpen(!isModalOpen);
   const toggleReviewModal = () => setIsReviewModalOpen(!isReviewModalOpen);
-
   const handleColorClick = (color) => {
     setSelectedColor(color);
     updatePrice(color, selectedVariant);
   };
-
   const handleVariantClick = (variant) => {
     setSelectedVariant(variant);
     updatePrice(selectedColor, variant);
   };
-
   const updatePrice = (color, variant) => {
     const selectedProduct = product.variants.find(
       (v) => v.attributes.color === color && v.attributes.option === variant
@@ -61,48 +57,46 @@ const ProductDetail = () => {
       setSelectedPrice(selectedProduct.price);
     }
   };
-
   const handleAddToCart = () => {
     const productToAdd = {
+      productId: product.id,
       name: product.name,
       price: selectedPrice * quantity,
       color: selectedColor,
       variant: selectedVariant,
       quantity: quantity,
     };
-    setCart([...cart, productToAdd]);
-    alert("Product added to cart!");
-  };
-
-  const handleQuantityChange = (amount) => {
-    const newQuantity = Math.max(1, quantity + amount);
-    if (selectedVariantData && newQuantity <= selectedVariantData.stockQuantity) {
-      setQuantity(newQuantity);
+  
+    try {
+      addToCart(productToAdd); // Call the API to add the product to the cart
+      alert("Product added to cart!");
+  
+      // Chuyển thông tin sản phẩm sang giỏ hàng
+      navigate("/Shoppingcart", { state: { addedProduct: productToAdd } });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add product to cart. Please try again.");
     }
   };
   const handleQuantityInputChange = (e) => {
     let newQuantity = Number(e.target.value);
     if (newQuantity === 0) {
-      newQuantity = 0;
+      newQuantity = 1;
     } else {
       newQuantity = Math.max(1, Math.min(selectedVariantData ? selectedVariantData.stockQuantity : 1, newQuantity));
     }
     setQuantity(newQuantity);
   };
-
   if (!product) {
     return <div>Loading...</div>;
   }
-
   const fallbackImage = "https://via.placeholder.com/150"; // Fallback image URL
-
   // Get unique colors and variants
   const uniqueColors = [...new Set(product.variants.map(variant => variant.attributes.color))];
   const uniqueVariants = [...new Set(product.variants.map(variant => variant.attributes.option))];
-
   const selectedVariantData = product.variants.find(v => v.attributes.option === selectedVariant);
 
-  return (
+return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
       <Navbar />
       <Sidebar />
@@ -118,10 +112,10 @@ const ProductDetail = () => {
             <div>
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold dark:text-white">{product.name}</h1>
               <div className="mt-4">
-                <p className="text-gray-600 dark:text-gray-400">Thương hiệu: {product.brandId.name}</p>
+                <p className="text-gray-600 dark:text-gray-400">Brand: {product.brandId.name}</p>
               </div>
               <div className="mt-4">
-                <span className="text-gray-600 dark:text-gray-400">Màu sắc:</span>
+                <span className="text-gray-600 dark:text-gray-400">Color:</span>
                 <div className="flex gap-4 mt-2">
                   {uniqueColors.map((color) => (
                     <button
@@ -185,7 +179,6 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
           {/* Features Section */}
           <div className="col-span-1 lg:col-span-3 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
@@ -217,7 +210,6 @@ const ProductDetail = () => {
                     </button>
                   ))}
                 </div>
-
                 {/* Đánh giá chi tiết */}
                 <h4 className="font-semibold mb-2 dark:text-white">Theo trải nghiệm</h4>
                 {[
@@ -241,7 +233,6 @@ const ProductDetail = () => {
                     </div>
                   </div>
                 ))}
-
                 {/* Bình luận */}
                 <textarea
                   className="w-full mt-4 p-2 border rounded dark:bg-gray-700 dark:text-gray-300"
@@ -250,7 +241,6 @@ const ProductDetail = () => {
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                 ></textarea>
-
                 {/* Gửi đánh giá */}
                 <div className="mt-6 flex justify-end gap-2">
                   <button
@@ -271,7 +261,6 @@ const ProductDetail = () => {
             </div>
           </div>
         )}
-
         {/* Related Products */}
         <div className="mt-12">
           <h2 className="text-lg sm:text-xl font-semibold mb-4 dark:text-white">Related Products</h2>
@@ -295,5 +284,4 @@ const ProductDetail = () => {
     </div>
   );
 };
-
 export default ProductDetail;

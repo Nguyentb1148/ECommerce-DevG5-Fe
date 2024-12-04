@@ -7,6 +7,7 @@ const CartSummary = ({ currentStep, items, discount, discountPercentage }) => {
   const percentageDiscount = discountPercentage ? (subtotal * discountPercentage) / 100 : 0;
   const totalDiscount = (discount || 0) + percentageDiscount;
   const total = subtotal + tax + shipping - totalDiscount;
+  
 
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
