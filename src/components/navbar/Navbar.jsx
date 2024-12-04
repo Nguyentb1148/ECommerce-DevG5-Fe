@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { MdOutlineShoppingCart } from "react-icons/md";
 import User from '../../pages/profile/User';
-import Search from '../search/Search';
 
-const Navbar = ({ backgroundClass }) => {
+const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
 
@@ -23,13 +23,13 @@ const Navbar = ({ backgroundClass }) => {
     };
 
     return (
-        <div className="navbar w-full z-20 bg-white dark:bg-gray-900 ">
-            <div className="flex items-center justify-between w-[90%] mx-auto px-4 py-3">
+        <div className="navbar w-full z-20 bg-gray-900 ">
+            <div className="flex items-center justify-between w-[90%] mx-auto p-4">
                 <a href="/" className=" text-primary font-semibold tracking-widest text-2xl uppercase sm:text-3xl">
                     DevSHOP
                 </a>
                 <button
-                    className="text-gray-500 dark:text-white md:hidden focus:outline-none"
+                    className="text-white md:hidden focus:outline-none"
                     onClick={toggleMenu}
                 >
                     <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -41,26 +41,29 @@ const Navbar = ({ backgroundClass }) => {
                         />
                     </svg>
                 </button>
-                <ul className="hidden md:flex items-center lg:gap-2">
-                    <li>
-                        <a href="/" className="item-navbar">
-                            Home
-                        </a>
-                    </li>
-                    <li>
-                        <Link to="/productFilter" className="item-navbar">
-                            Product
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/contact" className="item-navbar">
-                            Contact
-                        </Link>
-                    </li>
-                    <Search />
-                </ul>
+
                 <div className="hidden md:block">
-                    <div className="flex items-center">
+                    <ul className="flex items-center gap-5">
+                        <li>
+                            <a href="/" className="item-navbar">
+                                Home
+                            </a>
+                        </li>
+                        <li>
+                            <Link to="/productFilter" className="item-navbar">
+                                Product
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/contact" className="item-navbar">
+                                Contact
+                            </Link>
+                        </li>
+                        <li>
+                            <Link className="item-navbar" to="/shoppingCart">
+                                <MdOutlineShoppingCart size={25} />
+                            </Link>
+                        </li>
                         {isLogin ? (
                             <User />
                         ) : (
@@ -68,29 +71,33 @@ const Navbar = ({ backgroundClass }) => {
                                 Login
                             </Link>
                         )}
-                    </div>
+                    </ul>
                 </div>
             </div>
 
             {/* Mobile Dropdown Menu */}
             {isMenuOpen && (
-                <div className="md:hidden bg-white dark:bg-gray-800 shadow-lg">
+                <div className="md:hidden bg-gray-800 shadow-lg">
                     <ul className="flex flex-col items-center gap-4 p-4">
-                        <Search />
                         <li>
-                            <a href="/#" className="inline-block font-semibold text-gray-500 hover:text-black dark:hover:text-white duration-200">
+                            <a href="/#" className="item-navbar">
                                 Home
                             </a>
                         </li>
                         <li>
-                            <Link to="/productFilter" className="inline-block font-semibold text-gray-500 hover:text-black dark:hover:text-white duration-200">
+                            <Link to="/productFilter" className="item-navbar">
                                 Product
                             </Link>
                         </li>
                         <li>
-                            <Link to="/contact" className="inline-block font-semibold text-gray-500 hover:text-black dark:hover:text-white duration-200">
-                            Contact
-                        </Link>
+                            <Link to="/contact" className="item-navbar">
+                                Contact
+                            </Link>
+                        </li>
+                        <li>
+                            <Link className="item-navbar" to="/shoppingCart">
+                                <MdOutlineShoppingCart size={25} />
+                            </Link>
                         </li>
                         {isLogin ? (
                             <User />

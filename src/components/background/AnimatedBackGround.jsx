@@ -39,7 +39,7 @@ const AnimatedBackground = () => {
 
             geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
 
-            const material = new THREE.PointsMaterial({ color: 0xffffff, size: 2 });
+            const material = new THREE.PointsMaterial({ color: 0xffffff, size: 1.2 });
             const particles = new THREE.Points(geometry, material);
 
             sceneRef.current.add(particles);

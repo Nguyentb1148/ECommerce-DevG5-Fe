@@ -156,18 +156,18 @@ const ChangePassword = () => {
     const strength = checkPasswordStrength(newPassword);
     const { label, color } = getStrengthLabelAndColor(strength);
     return (
-        <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div className="p-6 bg-gray-800 rounded-lg shadow-md">
             <form onSubmit={handlePasswordSubmit} className="space-y-6 max-w-md mx-auto">
                 <div>
                     <label
                         htmlFor="currentPassword"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="block text-sm font-medium text-gray-300"
                     >
                         Current Password
                     </label>
                     <div className="mt-1 relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <FiLock className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                            <FiLock className="h-5 w-5 text-gray-500" />
                         </div>
                         <input
                             type={showPassword ? "text" : "password"}
@@ -175,7 +175,7 @@ const ChangePassword = () => {
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
 
-                            className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                            className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm rounded-md border-gray-600 bg-gray-700 text-white"
                             required
                         />
                         <button
@@ -184,9 +184,9 @@ const ChangePassword = () => {
                             onClick={() => setShowPassword(!showPassword)}
                         >
                             {showPassword ? (
-                                <FiEyeOff className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                                <FiEyeOff className="h-5 w-5 text-gray-500" />
                             ) : (
-                                <FiEye className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                                <FiEye className="h-5 w-5 text-gray-500" />
                             )}
                         </button>
                     </div>
@@ -195,13 +195,13 @@ const ChangePassword = () => {
                 <div>
                     <label
                         htmlFor="newPassword"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="block text-sm font-medium text-gray-300"
                     >
                         New Password
                     </label>
                     <div className="mt-1 relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <FiLock className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                            <FiLock className="h-5 w-5 text-gray-500" />
                         </div>
                         <input
                             type={showNewPassword ? "text" : "password"}
@@ -209,7 +209,7 @@ const ChangePassword = () => {
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
 
-                            className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                            className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm rounded-md border-gray-600 bg-gray-700 text-white"
                             required
                         />
                         <button
@@ -218,9 +218,9 @@ const ChangePassword = () => {
                             onClick={() => setShowNewPassword(!showNewPassword)}
                         >
                             {showNewPassword ? (
-                                <FiEyeOff className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                                <FiEyeOff className="h-5 w-5 text-gray-500" />
                             ) : (
-                                <FiEye className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                                <FiEye className="h-5 w-5 text-gray-500" />
                             )}
                         </button>
                     </div>
@@ -229,11 +229,11 @@ const ChangePassword = () => {
                             {[...Array(4)].map((_, index) => (
                                 <div
                                     key={index}
-                                    className={`h-2 w-full rounded-full ${index < strength ? color : "bg-gray-200 dark:bg-gray-600"}`}
+                                    className={`h-2 w-full rounded-full ${index < strength ? color : "bg-gray-600"}`}
                                 />
                             ))}
                         </div>
-                        <p className="text-sm text-black dark:text-gray-400 mt-1">
+                        <p className="text-sm text-gray-400 mt-1">
                             Password Strength: {strength > 0 ? label : "None"}
                         </p>
 
@@ -243,13 +243,13 @@ const ChangePassword = () => {
                 <div>
                     <label
                         htmlFor="confirmPassword"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="block text-sm font-medium text-gray-300"
                     >
                         Confirm New Password
                     </label>
                     <div className="mt-1 relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <FiLock className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                            <FiLock className="h-5 w-5 text-gray-500" />
                         </div>
                         <input
                             type={showConfirmPassword ? "text" : "password"}
@@ -257,7 +257,7 @@ const ChangePassword = () => {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
 
-                            className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                            className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-10 sm:text-sm rounded-md border-gray-600 bg-gray-700 text-white"
                             required
                         />
                         <button
@@ -266,9 +266,9 @@ const ChangePassword = () => {
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
                             {showConfirmPassword ? (
-                                <FiEyeOff className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                                <FiEyeOff className="h-5 w-5 text-gray-500" />
                             ) : (
-                                <FiEye className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                                <FiEye className="h-5 w-5 text-gray-500" />
                             )}
                         </button>
                     </div>
@@ -295,7 +295,7 @@ const ChangePassword = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800"
                     >
                         {loading ? (
                             <svg
