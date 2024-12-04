@@ -50,7 +50,7 @@ const RichTextEditor = forwardRef(({ docxUrl, fileName, onDescriptionUrlChange }
         return doc.body.innerHTML;
     };
 
-    const handleUploadToCloudinary = async () => {
+    const handleUploadToCloudinary = async (callback) => {
         if (!html) {
             console.error("No content to upload.");
             return;
@@ -64,21 +64,27 @@ const RichTextEditor = forwardRef(({ docxUrl, fileName, onDescriptionUrlChange }
                 { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }
             );
 
-            // Check the size of the file (5 MB = 5 * 1024 * 1024 bytes)
             if (docxFile.size > 5 * 1024 * 1024) {
-                console.error("File size exceeds 5 MB. Please reduce the content.");
-                alert("The generated file size exceeds 5 MB. Please reduce the content or remove large images.");
-                return; // Exit the function if the file is too large
+                console.error("File size exceeds 5 MB");
+                alert("The generated file size exceeds 5 MB. Please reduce the content.");
+                return;
             }
 
             const response = await uploadDoc(docxFile, "document", fileName || "default_folder");
 
-            // Notify parent of the uploaded URL
+            // If a callback is provided, use it
+            if (callback) {
+                callback(response.secure_url);
+            }
+            // Also call onDescriptionUrlChange if it exists
             if (onDescriptionUrlChange) {
                 onDescriptionUrlChange(response.secure_url);
             }
+
+            return response.secure_url;
         } catch (error) {
             console.error("Error uploading file:", error);
+            throw error;
         }
     };
 
@@ -86,6 +92,7 @@ const RichTextEditor = forwardRef(({ docxUrl, fileName, onDescriptionUrlChange }
     useImperativeHandle(ref, () => ({
         uploadToCloudinary: handleUploadToCloudinary,
     }));
+
 
     return (
         <div className="editor-container">

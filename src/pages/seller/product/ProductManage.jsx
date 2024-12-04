@@ -8,7 +8,6 @@ import {
   getProductsByUserId,
 } from "../../../services/api/ProductApi";
 import {ToastContainer} from "react-toastify";
-// import { ToastContainer } from "react-toastify";
 
 createTheme(
   "dark",
