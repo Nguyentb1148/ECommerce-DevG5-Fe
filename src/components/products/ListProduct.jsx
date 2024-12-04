@@ -11,7 +11,7 @@ const ListProduct = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const productData = await getProducts();
+      const productData = await getProducts(1, itemsPerPage);
       console.log("Product Data:", productData); // Log the product data to check if it's being retrieved correctly
       setProductsData(productData);
     };
@@ -20,12 +20,15 @@ const ListProduct = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = productsData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentProducts = productsData.slice(0, indexOfLastItem);
   const totalPages = Math.ceil(productsData.length / itemsPerPage);
 
-  const fetchMoreProducts = () => {
+  const fetchMoreProducts = async () => {
     if (currentPage < totalPages) {
-      setCurrentPage(prevPage => prevPage + 1);
+      const nextPage = currentPage + 1;
+      const productData = await getProducts(nextPage, itemsPerPage);
+      setProductsData(prevProducts => [...prevProducts, ...productData]);
+      setCurrentPage(nextPage);
     }
   };
 
