@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import DataTable, { createTheme } from "react-data-table-component";
-import Image from "../../../assets/robot-assistant.png";
 import AddProduct from "../../../components/products/AddProduct";
 import EditProduct from "../../../components/products/EditProduct";
 import {
-  getProducts,
+  deleteProduct,
   getProductsByUserId,
 } from "../../../services/api/ProductApi";
-import { ToastContainer } from "react-toastify";
+import {ToastContainer} from "react-toastify";
+// import { ToastContainer } from "react-toastify";
 
 createTheme(
   "dark",
@@ -85,6 +85,7 @@ const ProductManage = () => {
         setLoading(true);
         const user = JSON.parse(localStorage.getItem("user"));
         const response = await getProductsByUserId(user.id);
+        console.log(`product data of seller ${user.id}: `,response);
         setProducts(response); // Assuming the API response is an array of products
         setRecords(response); // Initialize the records
       } catch (error) {
@@ -145,6 +146,7 @@ const ProductManage = () => {
           <button
             className="bg-yellow-400 text-white px-2 py-1 rounded mr-2"
             onClick={() => setIsEditProductOpen(true)}
+
           >
             Edit
           </button>
@@ -160,12 +162,20 @@ const ProductManage = () => {
   ];
 
   // Button delete
-  const handleDelete = (row) => {
+  const handleDelete = async (row) => {
     const confirm = window.confirm(
-      `Are you sure you want to delete ${row.name}?`
+        `Are you sure you want to delete ${row.name} with id ${row._id}?`
     );
     if (confirm) {
-      alert(`User ${row.name} has been deleted.`);
+      try {
+        const response = await deleteProduct(row._id);
+        console.log(response);
+        alert(response.message);
+        await fetchProducts() // Add this line
+      }
+      catch (error) {
+        console.error("Error deleting product data:", error);
+      }
     }
   };
 
@@ -223,7 +233,9 @@ const ProductManage = () => {
         />
       )}
       {isEditProductOpen && (
-        <EditProduct onClose={() => setIsEditProductOpen(false)} />
+        <EditProduct
+            onClose={() => setIsEditProductOpen(false)}
+        />
       )}
       <ToastContainer />
     </div>
