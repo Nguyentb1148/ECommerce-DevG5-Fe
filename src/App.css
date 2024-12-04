@@ -1,0 +1,16 @@
+.nsm7Bb-HzV7m-LgbsSe{
+    border: none !important;
+    background: linear-gradient(to top left, #1F2937, #2D3748) !important;
+    opacity: 1;
+}
+.nsm7Bb-HzV7m-LgbsSe:hover{
+    opacity: 0.8;
+}
+.nsm7Bb-HzV7m-LgbsSe-BPrWId{
+    color: white;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
