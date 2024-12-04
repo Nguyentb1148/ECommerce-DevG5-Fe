@@ -5,6 +5,7 @@ import { getBrands } from "../../services/api/BrandsApi";
 import { createProduct } from "../../services/api/ProductApi";
 import { uploadImage } from "../../configs/Cloudinary";
 import { toast } from "react-toastify";
+import RichTextEditor from "./RichTextEditor.jsx";
 
 const AddProduct = ({ onClose, refreshProducts }) => {
   const [formData, setFormData] = useState({
@@ -43,16 +44,17 @@ const AddProduct = ({ onClose, refreshProducts }) => {
       case "brand":
         return !value ? "Please select a brand" : null;
 
-      case "description":
-        if (!value.trim()) {
-          return "Description is required";
-        } else if (value.length < 10) {
-          return "Description must be at least 10 characters long";
-        } else if (value.length > 500) {
-          return "Description must not exceed 500 characters";
-        }
-        return null;
-
+      // case "description":
+      //   console.log('description: ',value)
+      //   if (!value.trim()) {
+      //     return "Description is required";
+      //   } else if (value.length < 10) {
+      //     return "Description must be at least 10 characters long";
+      //   }
+      //   // else if (value.length > 500) {
+      //   //   return "Description must not exceed 500 characters";
+      //   // }
+      //   return null;
       default:
         return null;
     }
@@ -395,7 +397,11 @@ const AddProduct = ({ onClose, refreshProducts }) => {
         );
         return uploadedImageUrl.url;
       });
-
+      try{
+        handleUploadClick()
+      }catch(error){
+        console.error("upload docx to cloudinary error: ",error);
+      }
       const uploadedImageUrls = await Promise.all(imageUploadPromises);
 
       // Map the form data to the backend data structure
@@ -417,7 +423,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
           })),
         })),
       };
-
+      console.log('description: ',productData.description);
       // Submit data
       await createProduct(productData);
 
@@ -432,7 +438,17 @@ const AddProduct = ({ onClose, refreshProducts }) => {
       setIsSubmitting(false); // Reset submission state
     }
   };
+  const editorRef = useRef(); // Reference to RichTextEditor
 
+  const handleUploadClick = () => {
+    if (editorRef.current) {
+      editorRef.current.uploadToCloudinary();
+    }
+  };
+  const handleUploadSuccess = (url) => {
+    console.log("Uploaded URL:", url);
+    formData.description= url;
+  };
   return (
     <div className="fixed top-0 inset-0 z-20 bg-black bg-opacity-50 py-6 px-4 sm:px-6 lg:px-8 overflow-auto">
       <div className="w-[50%] mx-auto">
@@ -528,15 +544,25 @@ const AddProduct = ({ onClose, refreshProducts }) => {
             >
               Description <span className="text-red-500 ml-1">*</span>
             </label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              rows="4"
-              className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              aria-label="Description"
+            {/*<textarea*/}
+            {/*  id="description"*/}
+            {/*  name="description"*/}
+            {/*  value={formData.description}*/}
+            {/*  onChange={handleInputChange}*/}
+            {/*  rows="4"*/}
+            {/*  className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"*/}
+            {/*  aria-label="Description"*/}
+            {/*/>*/}
+            <RichTextEditor
+                ref={editorRef}
+                fileName={formData.productName}
+                docxUrl={""}
+                descriptionUrl={formData.description}
+                rows="4"
+                className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                aria-label="Description"
             />
+
             {errors.description && (
               <p className="text-red-500 text-xs mt-1">{errors.description}</p>
             )}
