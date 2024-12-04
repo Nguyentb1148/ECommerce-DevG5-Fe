@@ -1,11 +1,12 @@
 import axios from "axios";
 import Cookies from "js-cookie"; // To get refresh token from cookies
 
-const baseLink = "https://project-2-back-end.onrender.com/api";
-
+// main server
+// const baseLink = "https://project-2-back-end.onrender.com/api";
+//backup server
+const baseLink = "https://dev-g5.vercel.app/api";
 // Create an Axios instance
 const authApi = axios.create({
-
   baseURL: baseLink,
   headers: {
     "Content-Type": "application/json",
@@ -22,7 +23,6 @@ authApi.interceptors.request.use(
     );
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
-
     }
     return config;
   },

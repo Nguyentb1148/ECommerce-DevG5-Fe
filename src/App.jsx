@@ -1,6 +1,7 @@
 import React from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PageNotFound from "./pages/PageNotFound";
 // import Login from "./pages/Auth/Login";
@@ -21,13 +22,11 @@ import CategoryManage from "./pages/admin/category/CategoryManage.jsx";
 import UserManage from "./pages/admin/user/UserManage.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import BrandManage from "./pages/admin/brand/BrandManage.jsx";
-import HomePageSeller from "./pages/seller/HomePageSeller.jsx";
-import ProductSeller from "./pages/seller/ProductSeller.jsx";
-import NewProduct from "./pages/seller/NewProduct.jsx";
+import OrdersManage from "./pages/seller/order/OrderManage.jsx";
+import VoucherManage from "./pages/seller/voucher/VoucherManage.jsx";
 import ShoppingCart from "./pages/cart/ShoppingCart.jsx";
-import ProductDetailSeller from "./pages/seller/ProductDetail.jsx";
-import ProductSlider from "./pages/products/ProductSlider.jsx";
-import EditProductPage from "./pages/seller/ProductDetail.jsx";
+import Seller from "./pages/seller/home/Seller.jsx";
+import ProductManage from "./pages/seller/product/ProductManage.jsx";
 
 function App() {
   React.useEffect(() => {
@@ -57,10 +56,10 @@ function App() {
           <Route path="profile" element={<ProfilePage />} />
           <Route path="change-password" element={<ChangePassword />} />
         </Route>
-        <Route path="/seller" element={<HomePageSeller />}>
-          <Route path="product" element={<ProductSeller />} />
-          <Route path="create-product" element={<NewProduct />} />
-          <Route path="product/:productId" element={<ProductDetailSeller />} />
+        <Route path="/seller" element={<Seller />}>
+          <Route path="product" element={<ProductManage />} />
+          <Route path="voucher" element={<VoucherManage />} />
+          <Route path="orders" element={<OrdersManage />} />
         </Route>
         <Route path="/admin" element={<Admin />}>
           <Route path="" element={<DashboardAdmin />} />
