@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { useNavigate } from 'react-router-dom';
-import { getProducts } from '../../services/api/ProductApi'; // Adjust the import according to your project structure
+import React, { useState, useEffect } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useNavigate } from "react-router-dom";
+import { getProducts } from "../../services/api/ProductApi"; // Adjust the import according to your project structure
 
 const ListProduct = () => {
   const navigate = useNavigate();
@@ -13,21 +13,24 @@ const ListProduct = () => {
     const fetchData = async () => {
       const productData = await getProducts(1, itemsPerPage);
       console.log("Product Data:", productData); // Log the product data to check if it's being retrieved correctly
-      setProductsData(productData);
+      setProductsData(productData.data);
     };
     fetchData();
   }, []);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = productsData.slice(0, indexOfLastItem);
+  const currentProducts = Array.isArray(productsData)
+    ? productsData.slice(0, indexOfLastItem)
+    : [];
+
   const totalPages = Math.ceil(productsData.length / itemsPerPage);
 
   const fetchMoreProducts = async () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       const productData = await getProducts(nextPage, itemsPerPage);
-      setProductsData(prevProducts => [...prevProducts, ...productData]);
+      setProductsData((prevProducts) => [...prevProducts, ...productData]);
       setCurrentPage(nextPage);
     }
   };
@@ -48,17 +51,37 @@ const ListProduct = () => {
         loader={
           <div className="grid gap-3">
             <div className="flex items-center justify-center">
-              <svg className="animate-spin border-indigo-600" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+              <svg
+                className="animate-spin border-indigo-600"
+                xmlns="http://www.w3.org/2000/svg"
+                width="34"
+                height="34"
+                viewBox="0 0 34 34"
+                fill="none"
+              >
                 <g id="Component 2">
-                  <circle id="Ellipse 717" cx="17.0007" cy="17.0001" r="14.2013" stroke="#D1D5DB" stroke-width="4" stroke-dasharray="2 3" />
-                  <path id="Ellipse 715" d="M21.3573 30.5163C24.6694 29.4486 27.4741 27.2019 29.2391 24.2028C31.0041 21.2038 31.6065 17.661 30.9319 14.2471C30.2573 10.8332 28.3528 7.78584 25.5798 5.68345C22.8067 3.58105 19.3583 2.57 15.8891 2.84222" stroke="#4F46E5" stroke-width="4" />
+                  <circle
+                    id="Ellipse 717"
+                    cx="17.0007"
+                    cy="17.0001"
+                    r="14.2013"
+                    stroke="#D1D5DB"
+                    stroke-width="4"
+                    stroke-dasharray="2 3"
+                  />
+                  <path
+                    id="Ellipse 715"
+                    d="M21.3573 30.5163C24.6694 29.4486 27.4741 27.2019 29.2391 24.2028C31.0041 21.2038 31.6065 17.661 30.9319 14.2471C30.2573 10.8332 28.3528 7.78584 25.5798 5.68345C22.8067 3.58105 19.3583 2.57 15.8891 2.84222"
+                    stroke="#4F46E5"
+                    stroke-width="4"
+                  />
                 </g>
               </svg>
             </div>
           </div>
         }
         endMessage={<></>}
-        style={{ overflow: 'unset' }}
+        style={{ overflow: "unset" }}
       >
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 place-items-center">
           {currentProducts.map((data) => (
@@ -92,7 +115,9 @@ const ListProduct = () => {
                 <h2 className="font-bold">{data.price}</h2>
                 <h2 className="font-normal line-through">{data.price}</h2>
               </div>
-              <button className="btn-add my-1 dark:text-white">Add to cart</button>
+              <button className="btn-add my-1 dark:text-white">
+                Add to cart
+              </button>
             </div>
           ))}
         </div>

@@ -5,6 +5,7 @@ import { getBrands } from "../../services/api/BrandsApi";
 import { createProduct } from "../../services/api/ProductApi";
 import { uploadImage } from "../../configs/Cloudinary";
 import { toast } from "react-toastify";
+import RichTextEditor from "./RichTextEditor";
 
 const AddProduct = ({ onClose, refreshProducts }) => {
   const [formData, setFormData] = useState({
@@ -43,16 +44,17 @@ const AddProduct = ({ onClose, refreshProducts }) => {
       case "brand":
         return !value ? "Please select a brand" : null;
 
-      case "description":
-        if (!value.trim()) {
-          return "Description is required";
-        } else if (value.length < 10) {
-          return "Description must be at least 10 characters long";
-        } else if (value.length > 500) {
-          return "Description must not exceed 500 characters";
-        }
-        return null;
-
+      // case "description":
+      //   console.log('description: ',value)
+      //   if (!value.trim()) {
+      //     return "Description is required";
+      //   } else if (value.length < 10) {
+      //     return "Description must be at least 10 characters long";
+      //   }
+      //   // else if (value.length > 500) {
+      //   //   return "Description must not exceed 500 characters";
+      //   // }
+      //   return null;
       default:
         return null;
     }
@@ -66,6 +68,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
   const [invalidImageIndexes, setInvalidImageIndexes] = useState([]); // State for invalid images
   const [mainImage, setMainImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const editorRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -267,6 +270,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
     );
     setFormData({ ...formData, variants: newVariants });
   };
+
   const handleAttributeInputChange = (index, value) => {
     const newAttributeInputValues = [...attributeInputValues];
     newAttributeInputValues[index] = value;
@@ -370,13 +374,11 @@ const AddProduct = ({ onClose, refreshProducts }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prevent multiple submissions by managing a loading state
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    // Validate form
+    // Validate the form
     const isValid = validateForm();
-
     if (!isValid) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       toast.error("Please correct the errors in the form.");
@@ -385,7 +387,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
     }
 
     try {
-      // Upload images to Cloudinary (or your image hosting service)
+      // Upload images
       const imageUploadPromises = images.map(async (image) => {
         const imageId = Math.random().toString(36).substring(2, 8);
         const uploadedImageUrl = await uploadImage(
@@ -396,40 +398,53 @@ const AddProduct = ({ onClose, refreshProducts }) => {
         return uploadedImageUrl.url;
       });
 
+      const descriptionUrl = await new Promise((resolve) => {
+        if (editorRef.current) {
+          console.log("processing url...");
+          editorRef.current.uploadToCloudinary(resolve);
+        } else {
+          resolve(formData.description);
+        }
+      });
+
+      setFormData((prev) => ({
+        ...prev,
+        description: descriptionUrl,
+      }));
+
       const uploadedImageUrls = await Promise.all(imageUploadPromises);
 
-      // Map the form data to the backend data structure
       const productData = {
         name: formData.productName,
-        price: formData.variants[0]?.price || 0, // Default to 0 if no price
-        description: formData.description,
+        price: formData.variants[0]?.price || 0,
+        description: descriptionUrl,
         imageUrls: uploadedImageUrls,
         categoryId: formData.category,
         brandId: formData.brand,
         variants: formData.variants.map((variant) => ({
           price: variant.price,
           stockQuantity: variant.quantity,
-          attributes: variant.attributeCombination.map((combination) => ({
-            option: combination,
-            color: variant.attributeDetails.find(
-              (detail) => detail.name === "color"
-            )?.value,
-          })),
+          attributes: Object.fromEntries(
+            variant.attributeDetails.map((detail) => [
+              detail.name,
+              detail.value,
+            ])
+          ), // Convert attributeDetails to an object
         })),
       };
 
-      // Submit data
+      console.log("data before send", productData);
       await createProduct(productData);
+      console.log("data after send", productData);
 
-      // Call the refresh callback
       refreshProducts();
-      toast.success("Product saved successfully:");
-      onClose(); // Close the form/modal after successful submission
+      toast.success("Product saved successfully");
+      onClose();
     } catch (error) {
       console.error("Error saving product:", error);
       toast.error("Failed to save product. Please try again.");
     } finally {
-      setIsSubmitting(false); // Reset submission state
+      setIsSubmitting(false);
     }
   };
 
@@ -528,15 +543,25 @@ const AddProduct = ({ onClose, refreshProducts }) => {
             >
               Description <span className="text-red-500 ml-1">*</span>
             </label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
+            {/*<textarea*/}
+            {/*  id="description"*/}
+            {/*  name="description"*/}
+            {/*  value={formData.description}*/}
+            {/*  onChange={handleInputChange}*/}
+            {/*  rows="4"*/}
+            {/*  className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"*/}
+            {/*  aria-label="Description"*/}
+            {/*/>*/}
+            <RichTextEditor
+              ref={editorRef}
+              fileName={formData.productName}
+              docxUrl={""}
+              descriptionUrl={formData.description}
               rows="4"
               className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               aria-label="Description"
             />
+
             {errors.description && (
               <p className="text-red-500 text-xs mt-1">{errors.description}</p>
             )}
@@ -806,9 +831,10 @@ const AddProduct = ({ onClose, refreshProducts }) => {
             </button>
             <button
               type="submit"
+              disabled={isSubmitting}
               className="px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Add Product
+              {isSubmitting ? "Saving..." : "Add Product"}
             </button>
           </div>
         </form>
