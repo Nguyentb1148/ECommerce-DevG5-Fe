@@ -3,9 +3,8 @@ import { useParams } from "react-router-dom";
 import ProductSlider from "../../components/products/ProductSlider";
 import Navbar from "../../components/navbar/Navbar";
 import { FaShoppingCart } from "react-icons/fa";
-import { getProductById } from "../../services/api/ProductApi"; // Adjust the import according to your project structure
+import { getProductById } from "../../services/api/ProductApi";
 import { AddToCart } from "../../services/api/CartApi";
-import BackToTop from "../../components/backToTop/BackToTop";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -14,25 +13,19 @@ const ProductDetail = () => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [cart, setCart] = useState([]);
   const [quantity, setQuantity] = useState(1);
-  const [selectedColor, setSelectedColor] = useState("");
-  const [selectedVariant, setSelectedVariant] = useState("");
+  const [selectedVariant, setSelectedVariant] = useState({});
   const [selectedPrice, setSelectedPrice] = useState(0);
+  const [selectedStock, setSelectedStock] = useState(0);
 
   useEffect(() => {
-    console.log("Product ID from URL:", id); // Log the ID to check if it's being retrieved correctly
-
-    if (!id) {
-      console.error("Product ID is undefined");
-      return;
-    }
-
+    if (!id) return;
     const fetchProduct = async () => {
       try {
         const productData = await getProductById(id);
         setProduct(productData);
-        setSelectedColor(productData.variants[0].attributes.color);
-        setSelectedVariant(productData.variants[0].attributes.option);
+        setSelectedVariant(productData.variants[0].attributes); // Set the first variant's attributes by default
         setSelectedPrice(productData.variants[0].price);
+        setSelectedStock(productData.variants[0].stockQuantity); // Set the first variant's stock quantity by default
       } catch (error) {
         console.error("Error fetching product:", error);
       }
@@ -43,39 +36,35 @@ const ProductDetail = () => {
   const toggleModal = () => setIsModalOpen(!isModalOpen);
   const toggleReviewModal = () => setIsReviewModalOpen(!isReviewModalOpen);
 
-  const handleColorClick = (color) => {
-    setSelectedColor(color);
-    updatePrice(color, selectedVariant);
+  const handleVariantClick = (key, value) => {
+    const updatedVariant = { ...selectedVariant, [key]: value };
+    setSelectedVariant(updatedVariant);
+    updateVariantData(updatedVariant);
   };
 
-  const handleVariantClick = (variant) => {
-    setSelectedVariant(variant);
-    updatePrice(selectedColor, variant);
-  };
-
-  const updatePrice = (color, variant) => {
-    const selectedProduct = product.variants.find(
-      (v) => v.attributes.color === color && v.attributes.option === variant
+  const updateVariantData = (updatedVariant) => {
+    const selectedVariantData = product.variants.find((v) =>
+      Object.entries(updatedVariant).every(
+        ([key, value]) => v.attributes[key] === value
+      )
     );
-    if (selectedProduct) {
-      setSelectedPrice(selectedProduct.price);
+    if (selectedVariantData) {
+      setSelectedPrice(selectedVariantData.price);
+      setSelectedStock(selectedVariantData.stockQuantity);
     }
   };
 
   const handleAddToCart = async () => {
-    const selectedVariantData = product.variants.find(
-      (v) =>
-        v.attributes.color === selectedColor &&
-        v.attributes.option === selectedVariant
+    const selectedVariantData = product.variants.find((v) =>
+      Object.entries(selectedVariant).every(
+        ([key, value]) => v.attributes[key] === value
+      )
     );
 
     if (!selectedVariantData || selectedVariantData.stockQuantity < quantity) {
       alert("Not enough stock available!");
       return;
     }
-
-    console.log("Product: --------->", product);
-    console.log("Selected varriant: --------->", selectedVariantData);
 
     const cartData = {
       productId: product._id,
@@ -94,26 +83,12 @@ const ProductDetail = () => {
 
   const handleQuantityChange = (amount) => {
     const newQuantity = Math.max(1, quantity + amount);
-    if (
-      selectedVariantData &&
-      newQuantity <= selectedVariantData.stockQuantity
-    ) {
-      setQuantity(newQuantity);
-    }
+    setQuantity(newQuantity);
   };
+
   const handleQuantityInputChange = (e) => {
     let newQuantity = Number(e.target.value);
-    if (newQuantity === 0) {
-      newQuantity = 0;
-    } else {
-      newQuantity = Math.max(
-        1,
-        Math.min(
-          selectedVariantData ? selectedVariantData.stockQuantity : 1,
-          newQuantity
-        )
-      );
-    }
+    newQuantity = Math.max(1, Math.min(selectedStock || 1, newQuantity));
     setQuantity(newQuantity);
   };
 
@@ -123,24 +98,17 @@ const ProductDetail = () => {
 
   const fallbackImage = "https://via.placeholder.com/150"; // Fallback image URL
 
-  // Get unique colors and variants
-  const uniqueColors = [
-    ...new Set(product.variants.map((variant) => variant.attributes.color)),
+  // Get unique attribute keys
+  const attributeKeys = [
+    ...new Set(
+      product.variants.flatMap((variant) => Object.keys(variant.attributes))
+    ),
   ];
-  const uniqueVariants = [
-    ...new Set(product.variants.map((variant) => variant.attributes.option)),
-  ];
-
-  const selectedVariantData = product.variants.find(
-    (v) => v.attributes.option === selectedVariant
-  );
 
   return (
     <div className="bg-gray-900 min-h-screen">
       <Navbar />
-      <BackToTop />
       <div className="max-w-7xl mx-auto p-4">
-        {/* Main Content */}
         <div className="bg-gray-800 p-6 rounded-lg shadow-sm">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {/* Left Section - Product Images */}
@@ -149,74 +117,59 @@ const ProductDetail = () => {
                 images={product.imageUrls.map((url) => url || fallbackImage)}
               />
             </div>
+
             {/* Right Section - Product Details */}
             <div>
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
                 {product.name}
               </h1>
-              <div className="mt-4">
-                <p className="text-gray-400">
-                  Thương hiệu: {product.brandId.name}
-                </p>
-              </div>
-              <div className="mt-4">
-                <span className="text-gray-400">
-                  Màu sắc:
-                </span>
-                <div className="flex gap-4 mt-2">
-                  {uniqueColors.map((color) => (
-                    <button
-                      key={color}
-                      className={`px-2 sm:px-4 py-1 sm:py-2 border rounded ${
-                        selectedColor === color
-                          ? "bg-gray-800 text-white"
-                          : "bg-gray-700 text-gray-200"
-                      }`}
-                      onClick={() => handleColorClick(color)}
-                    >
-                      {color}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="mt-4">
-                <span className="text-gray-400">
-                  Variant:
-                </span>
-                <div className="flex gap-4 mt-2">
-                  {uniqueVariants.map((variant) => (
-                    <button
-                      key={variant}
-                      className={`px-2 sm:px-4 py-1 sm:py-2 border rounded ${
-                        selectedVariant === variant
-                          ? "bg-gray-800 text-white"
-                          : "bg-gray-700 text-gray-200"
-                      }`}
-                      onClick={() => handleVariantClick(variant)}
-                    >
-                      {variant}
-                    </button>
-                  ))}
-                </div>
-                {selectedVariantData && (
-                  <span className="text-gray-400 mt-1">
-                    Số lượng còn kho: {selectedVariantData.stockQuantity}
+
+              {/* Display dynamic attribute keys */}
+              {attributeKeys.map((key) => (
+                <div key={key} className="mt-4">
+                  <span className="text-gray-400">
+                    {key}:
                   </span>
-                )}
-              </div>
+                  <div className="flex gap-4 mt-2">
+                    {product.variants
+                      .map((variant) => variant.attributes[key])
+                      .filter(
+                        (value, index, self) => self.indexOf(value) === index
+                      ) // Remove duplicates
+                      .map((value) => (
+                        <button
+                          key={value}
+                          className={`px-2 sm:px-4 py-1 sm:py-2 border rounded ${
+                            selectedVariant[key] === value
+                              ? "bg-gray-800 text-white"
+                              : "bg-gray-700 text-gray-200"
+                          }`}
+                          onClick={() => handleVariantClick(key, value)}
+                        >
+                          {value}
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              ))}
+
+              {selectedVariant && (
+                <div className="mt-4">
+                  <span className="text-gray-400">
+                    Số lượng còn kho: {selectedStock || 0}
+                  </span>
+                </div>
+              )}
+
               <div className="mt-4 flex gap-3 items-center">
                 <div className="flex items-center border border-gray-600 rounded overflow-hidden">
                   <input
                     type="number"
                     className="w-13 text-center"
                     value={quantity}
-                    onChange={(e) => handleQuantityInputChange(e)}
+                    onChange={handleQuantityInputChange}
                     min="1"
-                    max={
-                      selectedVariantData
-                        ? selectedVariantData.stockQuantity
-                        : 1
-                    }
+                    max={selectedStock || 1}
                   />
                 </div>
                 <button className="bg-red-500 text-white px-4 sm:px-6 py-2 rounded">
@@ -230,6 +183,7 @@ const ProductDetail = () => {
                   Thêm vào giỏ hàng
                 </button>
               </div>
+
               <div className="mt-4">
                 <p className="text-red-600 text-lg sm:text-2xl lg:text-3xl font-semibold">
                   ${selectedPrice * quantity}
@@ -239,135 +193,18 @@ const ProductDetail = () => {
           </div>
         </div>
 
+        {/* Features Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
-          {/* Features Section */}
           <div className="col-span-1 lg:col-span-3 bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
             <h2 className="text-lg sm:text-xxl font-semibold mb-4 text-white text-center">
               Đặc Điểm Nổi Bật
             </h2>
-            <ul className="list-disc list-inside  text-gray-300">
+            <ul className="list-disc list-inside text-gray-300">
               {product.description &&
                 product.description
                   .split("\n")
                   .map((line, index) => <li key={index}>{line}</li>)}
             </ul>
-          </div>
-        </div>
-        {/* Modal for Review */}
-        {isReviewModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-gray-800 rounded-lg shadow-lg p-6 w-full sm:w-3/4 lg:w-2/3 xl:w-1/2 max-h-[90%] overflow-auto">
-              <h2 className="text-2xl font-bold mb-4 text-white">
-                Đánh giá & nhận xét
-              </h2>
-              <form onSubmit={handleSubmit}>
-                {/* Đánh giá chung */}
-                <h4 className="font-semibold mb-2 text-white">
-                  Đánh giá chung
-                </h4>
-                <div className="flex gap-2 mb-6">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => handleRatingClick(star)}
-                      className={`text-2xl ${
-                        generalRating >= star
-                          ? "text-yellow-500"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      ★
-                    </button>
-                  ))}
-                </div>
-
-                {/* Đánh giá chi tiết */}
-                <h4 className="font-semibold mb-2 text-white">
-                  Theo trải nghiệm
-                </h4>
-                {[
-                  { key: "performance", label: "Hiệu năng" },
-                  { key: "battery", label: "Thời lượng pin" },
-                  { key: "camera", label: "Chất lượng camera" },
-                ].map((item) => (
-                  <div className="mb-4" key={item.key}>
-                    <p className="text-gray-300">{item.label}</p>
-                    <div className="flex gap-2">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          onClick={() => handleExperienceRating(item.key, star)}
-                          type="button"
-                          className={`text-xl ${
-                            experienceRatings[item.key] >= star
-                              ? "text-yellow-500"
-                              : "text-gray-600"
-                          }`}
-                        >
-                          ★
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-
-                {/* Bình luận */}
-                <textarea
-                  className="w-full mt-4 p-2 border rounded bg-gray-700 text-gray-300"
-                  placeholder="Nhập nhận xét (tối thiểu 15 ký tự)"
-                  rows="4"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                ></textarea>
-
-                {/* Gửi đánh giá */}
-                <div className="mt-6 flex justify-end gap-2">
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                    type="submit"
-                  >
-                    Gửi đánh giá
-                  </button>
-                  <button
-                    onClick={toggleReviewModal}
-                    className="bg-gray-600 text-white px-4 py-2 rounded"
-                    type="button"
-                  >
-                    Đóng
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* Related Products */}
-        <div className="mt-12">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4 text-white">
-            Related Products
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
-            {Array(12)
-              .fill(null)
-              .map((_, index) => (
-                <div
-                  key={index}
-                  className="bg-gray-800 rounded-lg shadow-sm p-2 sm:p-4"
-                >
-                  <img
-                    src="https://via.placeholder.com/200"
-                    alt={`Product ${index + 1}`}
-                    className="w-full rounded"
-                  />
-                  <p className="text-gray-300 mt-2 text-sm">
-                    Laptop Model {index + 1}
-                  </p>
-                  <p className="text-red-600 text-lg font-semibold">
-                    $1,999.99
-                  </p>
-                </div>
-              ))}
           </div>
         </div>
       </div>

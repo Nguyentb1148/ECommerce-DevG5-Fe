@@ -17,7 +17,10 @@ const Products = () => {
   const itemsPerPage = 4;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = ProductsData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentProducts = Array.isArray(ProductsData)
+    ? ProductsData.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
+
   const totalPages = Math.ceil(ProductsData.length / itemsPerPage);
   return (
     <div className="w-[90%] mx-auto">

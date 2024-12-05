@@ -6,8 +6,6 @@ export default {
     "./node_modules/flowbite/**/*.js",
     "./node_modules/@tiptap/core/dist/index.esm.js"
   ],
-  darkMode: "class",
-
   theme: {
     extend: {
       colors: {
