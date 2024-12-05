@@ -91,3 +91,29 @@ input[type="number"]::-webkit-inner-spin-button {
 .fr-desktop .fr-command:hover:not(.fr-table-cell), .fr-desktop .fr-command:focus:not(.fr-table-cell), .fr-desktop .fr-command.fr-btn-hover:not(.fr-table-cell), .fr-desktop .fr-command.fr-expanded:not(.fr-table-cell) {
     background: #4b5563;
 }
+/* Description */
+.description p img {
+    display: block; 
+    margin-left: auto;
+    margin-right: auto;
+}
+.description ul {
+    padding: 0 17px;
+    list-style-type: disc; 
+}
+.description table {
+    border-collapse: collapse;
+    width: 100%; 
+    margin: 0 auto; 
+    font-size: 16px; 
+    text-align: left; 
+}
+.description table th,
+.description table td {
+    border: 1px solid #ddd; 
+    padding: 8px; 
+}
+.description table th {
+    background-color: #f2f2f2;
+    font-weight: bold; 
+}
