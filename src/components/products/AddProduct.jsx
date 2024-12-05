@@ -389,15 +389,23 @@ const AddProduct = ({ onClose, refreshProducts }) => {
 
     try {
       // Upload images
-      const imageUploadPromises = images.map(async (image) => {
+      const imageUploadPromises = images.map((image) => {
         const imageId = Math.random().toString(36).substring(2, 8);
-        const uploadedImageUrl = await uploadImage(
-          image.file,
-          formData.productName,
-          imageId
-        );
-        return uploadedImageUrl.url;
+        return uploadImage(image.file, formData.productName, imageId)
+            .then(uploadedImageUrl => uploadedImageUrl.url);
       });
+
+// Use Promise.all to run all image uploads concurrently
+      Promise.all(imageUploadPromises)
+          .then((uploadedImageUrls) => {
+            // Handle the array of uploaded image URLs here
+            console.log("Uploaded Image URLs:", uploadedImageUrls);
+            // You can now proceed with other actions that depend on the image URLs
+          })
+          .catch((error) => {
+            console.error("Error uploading images:", error);
+          });
+
 
       const descriptionUrl = await new Promise((resolve) => {
         if (editorRef.current) {
