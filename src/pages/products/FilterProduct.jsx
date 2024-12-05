@@ -1,8 +1,7 @@
-import React from 'react'
-import Navbar from '../../components/navbar/Navbar'
-import ListFilter from '../../components/filter/ListFilter'
-import ListProduct from '../../components/products/ListProduct'
-
+import React from "react";
+import Navbar from "../../components/navbar/Navbar";
+import ListFilter from "../../components/filter/ListFilter";
+import ListProduct from "../../components/products/ListProduct";
 
 const FilterProduct = () => {
   return (
@@ -13,7 +12,7 @@ const FilterProduct = () => {
         <ListProduct />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FilterProduct
+export default FilterProduct;

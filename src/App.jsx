@@ -40,7 +40,7 @@ function App() {
         <Route path="/user/profile" element={<Profile />} />
         <Route path="/productFilter" element={<FilterProduct />} />
         <Route path="/shoppingCart" element={<ShoppingCart />} />
-        <Route path="/productDetail" element={<ProductDetail />} />
+        <Route path="/productDetail/:id" element={<ProductDetail />} />
         <Route path="/authentication" element={<Authentication />} />
         <Route path="/reset-password" element={<ResetPassword />} />{" "}
         {/* Adjusted to match query param handling */}
