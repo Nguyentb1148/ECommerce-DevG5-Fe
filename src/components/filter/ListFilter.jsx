@@ -1,36 +1,42 @@
 import React, { useState } from "react";
 import { FaChevronUp, FaChevronDown, FaFilter } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
+import { FaSearch } from "react-icons/fa";
 import PriceRange from "./PriceRange";
 import RatingFilter from "./RatingFilter";
 import CategoryFilter from "./CategoryFilter";
 import BrandFilter from "./BrandFilter";
-
 const ListFilter = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false); 
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [openSection, setOpenSection] = useState({
         category: true,
         brand: true,
         price: true,
         rating: true,
     });
-
     const handleToggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
     const handleToggleSection = (section) => {
         setOpenSection({ ...openSection, [section]: !openSection[section] });
     };
-
     return (
         <>
-            <div className="md:hidden fixed bottom-4 right-2 z-50">
+            {/* Search Box */}
+            <div className="md:hidden flex items-center rounded-md px-2 mb-4 bg-gray-800">
+                <FaSearch className="flex items-center justify-center w-10 text-white" />
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    className="bg-transparent  border-none outline-none text-white focus:ring-0"
+                />
+            </div>
+            <div className="md:hidden fixed bottom-10 left-2 z-50">
                 <button
-                    className="p-[14px] bg-green-500 rounded-full text-white shadow-lg"
+                    className="p-[12px] bg-green-500 rounded-full text-white shadow-lg"
                     onClick={handleToggleModal}
                 >
-                    <FaFilter size={20} />
+                    <FaFilter size={22} />
                 </button>
             </div>
             {/* Modal hiển thị ListFilter */}
@@ -57,7 +63,6 @@ const ListFilter = () => {
                                 </div>
                                 {openSection.category && <CategoryFilter />}
                             </div>
-
                             <div className="mb-4">
                                 <div
                                     className="flex justify-between items-center cursor-pointer"
@@ -70,11 +75,9 @@ const ListFilter = () => {
                                 </div>
                                 {openSection.brand && <BrandFilter />}
                             </div>
-
                             <div className="mb-4">
                                 <PriceRange />
                             </div>
-
                             <div className="mb-4">
                                 <div
                                     className="flex justify-between items-center cursor-pointer"
@@ -87,7 +90,6 @@ const ListFilter = () => {
                                 </div>
                                 {openSection.rating && <RatingFilter />}
                             </div>
-
                             <div className="flex justify-between mt-6">
                                 <button className="px-4 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300">
                                     Clear Filter
@@ -100,7 +102,16 @@ const ListFilter = () => {
                     </div>
                 </div>
             )}
-            <div className="max-md:hidden md:w-[40%] lg:w-[30%] xl:w-[20%] p-4 rounded-lg shadown-left">
+            <div className="max-md:hidden md:w-[40%] lg:w-[30%] xl:w-[20%] p-4 rounded-lg shadown-left ">
+                {/* Search Box */}
+                <div className=" md:w-48 lg:w-52 xl:w-60 flex items-center rounded-md px-2 bg-gray-800">
+                    <FaSearch className="flex items-center justify-center w-10 text-white" />
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        className="bg-transparent md:w-36 lg:w-40 xl:w-44 border-none outline-none text-white focus:ring-0"
+                    />
+                </div>
                 {/* Categories */}
                 <div className="mb-4">
                     <div
@@ -155,5 +166,4 @@ const ListFilter = () => {
         </>
     );
 };
-
 export default ListFilter;

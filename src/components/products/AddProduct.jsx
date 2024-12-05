@@ -389,15 +389,23 @@ const AddProduct = ({ onClose, refreshProducts }) => {
 
     try {
       // Upload images
-      const imageUploadPromises = images.map(async (image) => {
+      const imageUploadPromises = images.map((image) => {
         const imageId = Math.random().toString(36).substring(2, 8);
-        const uploadedImageUrl = await uploadImage(
-          image.file,
-          formData.productName,
-          imageId
+        return uploadImage(image.file, formData.productName, imageId).then(
+          (uploadedImageUrl) => uploadedImageUrl.url
         );
-        return uploadedImageUrl.url;
       });
+
+      // Use Promise.all to run all image uploads concurrently
+      Promise.all(imageUploadPromises)
+        .then((uploadedImageUrls) => {
+          // Handle the array of uploaded image URLs here
+          console.log("Uploaded Image URLs:", uploadedImageUrls);
+          // You can now proceed with other actions that depend on the image URLs
+        })
+        .catch((error) => {
+          console.error("Error uploading images:", error);
+        });
 
       const descriptionUrl = await new Promise((resolve) => {
         if (editorRef.current) {
@@ -574,8 +582,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 bg-gray-700 rounded-md">
               <div className="space-y-1 text-center">
                 {mainImage ? (
-                  <>
-                  </>
+                  <></>
                 ) : (
                   <div className="flex flex-col items-center">
                     <FiUpload className="mx-auto h-9 w-9 text-gray-200" />
@@ -602,10 +609,11 @@ const AddProduct = ({ onClose, refreshProducts }) => {
                             <img
                               src={URL.createObjectURL(image.file)}
                               alt="Thumbnail"
-                              className={`w-20 h-20 md:w-28 md:h-28 border border-gray-300 rounded-md cursor-pointer object-cover ${invalidImageIndexes.includes(index)
-                                ? "border-red-500"
-                                : ""
-                                }`}
+                              className={`w-20 h-20 md:w-28 md:h-28 border border-gray-300 rounded-md cursor-pointer object-cover ${
+                                invalidImageIndexes.includes(index)
+                                  ? "border-red-500"
+                                  : ""
+                              }`}
                               onClick={() => handleThumbnailClick(image)}
                             />
                             <button

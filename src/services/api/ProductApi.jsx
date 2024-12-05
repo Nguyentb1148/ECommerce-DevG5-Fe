@@ -107,3 +107,18 @@ export const deleteProduct = async (id) => {
     throw err; // Propagate error for further handling if necessary
   }
 };
+
+export const fetchVariantDetails = async (variantId) => {
+  try {
+    const response = await authApi.get(`/products/variant/${variantId}`);
+    return response.data.variant; // Assuming the variant data is in response.data.variant
+  } catch (err) {
+    if (err.response) {
+      const errorMessage = err.response.data.message || "Something went wrong!";
+      toast.error(errorMessage);
+    } else {
+      toast.error("Network error, please try again later.");
+    }
+    throw err;
+  }
+};

@@ -5,10 +5,10 @@ import Image from "../../../assets/robot-assistant.png";
 import AddProduct from "../../../components/products/AddProduct";
 import EditProduct from "../../../components/products/EditProduct";
 import {
-  getProducts,
+  deleteProduct,
   getProductsByUserId,
 } from "../../../services/api/ProductApi";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 createTheme(
   "dark",
@@ -37,15 +37,13 @@ createTheme(
 );
 
 const ProductManage = () => {
-  // Open Modal
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
   const [isEditProductOpen, setIsEditProductOpen] = useState(false);
   const [products, setProducts] = useState([]);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Responsive Table
   const [scrollHeight, setScrollHeight] = useState("430px");
+
   const updateScrollHeight = () => {
     if (window.innerWidth < 768) {
       setScrollHeight("400px");
@@ -63,8 +61,8 @@ const ProductManage = () => {
       setLoading(true);
       const user = JSON.parse(localStorage.getItem("user"));
       const response = await getProductsByUserId(user.id);
-      setProducts(response); // Assuming the API response is an array of products
-      setRecords(response); // Initialize the records
+      setProducts(response);
+      setRecords(response);
     } catch (error) {
       console.error("Error fetching product data:", error);
     } finally {
@@ -73,27 +71,13 @@ const ProductManage = () => {
   };
 
   useEffect(() => {
-    updateScrollHeight(); // Cập nhật ngay khi component render lần đầu
-    window.addEventListener("resize", updateScrollHeight); // Lắng nghe sự kiện thay đổi kích thước
-    return () => window.removeEventListener("resize", updateScrollHeight); // Cleanup
+    updateScrollHeight();
+    window.addEventListener("resize", updateScrollHeight);
+    return () => window.removeEventListener("resize", updateScrollHeight);
   }, []);
 
-  // Fetch product data from API
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const user = JSON.parse(localStorage.getItem("user"));
-        const response = await getProductsByUserId(user.id);
-        setProducts(response); // Assuming the API response is an array of products
-        setRecords(response); // Initialize the records
-      } catch (error) {
-        console.error("Error fetching product data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    fetchProducts();
   }, []);
 
   const handleFilter = (event) => {
@@ -104,7 +88,6 @@ const ProductManage = () => {
     setRecords(filteredProducts);
   };
 
-  // Fetch data
   const columns = [
     {
       name: "Name",
@@ -159,53 +142,61 @@ const ProductManage = () => {
     },
   ];
 
-  // Button delete
-  const handleDelete = (row) => {
+  const handleDelete = async (row) => {
     const confirm = window.confirm(
-      `Are you sure you want to delete ${row.name}?`
+      `Are you sure you want to delete ${row.name} with id ${row._id}?`
     );
     if (confirm) {
-      alert(`User ${row.name} has been deleted.`);
+      try {
+        const response = await deleteProduct(row._id);
+        console.log(response);
+        toast.success(response.message);
+        // Filter out the deleted product from both products and records
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product._id !== row._id)
+        );
+        setRecords((prevRecords) =>
+          prevRecords.filter((record) => record._id !== row._id)
+        );
+      } catch (error) {
+        toast.error("Error deleting product data:", error);
+      }
     }
   };
 
-  const handleFiter = (event) => {
-    const newData = data.filter((row) => {
-      return row.name.toLowerCase().includes(event.target.value.toLowerCase());
-    });
-    setRecords(newData);
-  };
   if (loading) {
-    return <div className="grid mt-12 gap-3">
-      <div className="flex items-center justify-center">
-        <svg
-          className="animate-spin border-indigo-600"
-          xmlns="http://www.w3.org/2000/svg"
-          width="40"
-          height="40"
-          viewBox="0 0 34 34"
-          fill="none"
-        >
-          <g id="Component 2">
-            <circle
-              id="Ellipse 717"
-              cx="17.0007"
-              cy="17.0001"
-              r="14.2013"
-              stroke="#D1D5DB"
-              stroke-width="4"
-              stroke-dasharray="2 3"
-            />
-            <path
-              id="Ellipse 715"
-              d="M21.3573 30.5163C24.6694 29.4486 27.4741 27.2019 29.2391 24.2028C31.0041 21.2038 31.6065 17.661 30.9319 14.2471C30.2573 10.8332 28.3528 7.78584 25.5798 5.68345C22.8067 3.58105 19.3583 2.57 15.8891 2.84222"
-              stroke="#4F46E5"
-              stroke-width="4"
-            />
-          </g>
-        </svg>
+    return (
+      <div className="grid mt-12 gap-3">
+        <div className="flex items-center justify-center">
+          <svg
+            className="animate-spin border-indigo-600"
+            xmlns="http://www.w3.org/2000/svg"
+            width="40"
+            height="40"
+            viewBox="0 0 34 34"
+            fill="none"
+          >
+            <g id="Component 2">
+              <circle
+                id="Ellipse 717"
+                cx="17.0007"
+                cy="17.0001"
+                r="14.2013"
+                stroke="#D1D5DB"
+                strokeWidth="4"
+                strokeDasharray="2 3"
+              />
+              <path
+                id="Ellipse 715"
+                d="M21.3573 30.5163C24.6694 29.4486 27.4741 27.2019 29.2391 24.2028C31.0041 21.2038 31.6065 17.661 30.9319 14.2471C30.2573 10.8332 28.3528 7.78584 25.5798 5.68345C22.8067 3.58105 19.3583 2.57 15.8891 2.84222"
+                stroke="#4F46E5"
+                strokeWidth="4"
+              />
+            </g>
+          </svg>
+        </div>
       </div>
-    </div>;
+    );
   }
 
   return (
@@ -221,12 +212,11 @@ const ProductManage = () => {
           >
             Add product
           </button>
-          {/* Search Box */}
           <div className="w-48 md:w-64 flex items-center rounded-md px-2 bg-gray-800">
             <FaSearch className="flex items-center justify-center w-10 text-white" />
             <input
               type="text"
-              onChange={handleFiter}
+              onChange={handleFilter}
               placeholder="Search..."
               className="bg-transparent w-44 border-none outline-none text-white focus:ring-0"
             />
@@ -244,11 +234,10 @@ const ProductManage = () => {
           />
         </div>
       </div>
-      {/* Modal */}
       {isAddProductOpen && (
         <AddProduct
           onClose={() => setIsAddProductOpen(false)}
-          refreshProducts={fetchProducts} // Add this line
+          refreshProducts={fetchProducts}
         />
       )}
       {isEditProductOpen && (

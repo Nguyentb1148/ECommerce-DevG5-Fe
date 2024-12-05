@@ -33,7 +33,6 @@ const Profile = () => {
               <div className="flex space-x-4 border-b">
                 <button
                   onClick={() => setActiveTab("profile")}
-                  l
                   className={`pb-2 px-4 ${
                     activeTab === "profile"
                       ? "border-b-2 border-blue-500 text-blue-500"

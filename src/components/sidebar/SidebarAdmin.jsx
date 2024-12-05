@@ -44,7 +44,7 @@ const SidebarAdmin = () => {
       Cookies.remove("refreshToken"); // Remove refresh token if stored in cookies
 
       // Redirect the user to the login page
-      window.location.href = "/login"; // Adjust to wherever you want to send the user
+      window.location.href = "/authentication"; // Adjust to wherever you want to send the user
     } catch (error) {
       console.error("Logout failed", error);
       window.location.href = "/login"; // If an error occurs, redirect to login

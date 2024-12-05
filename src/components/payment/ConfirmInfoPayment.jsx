@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ShippingInformation from "../shipping/ShippingInformation";
 import PaymentOptions from "../payment/PaymentOption";
 import PaymentCardForm from "../payment/PaymentCardForm";
@@ -17,7 +17,18 @@ const ConfirmInfoPayment = () => {
   const [errors, setErrors] = useState({});
   const city = ["Đà Nẵng"];
   const district = ["Thanh Khê"];
-  const ward = ["An Khê", "Chính Gián", "Hòa Khê", "Tam Thuận", "Vĩnh Trung","Xuân Hà", "Tân Chính", "Thạc Gián", "Thanh Khê Đông", "Thanh Khê Tây"];
+  const ward = [
+    "An Khê",
+    "Chính Gián",
+    "Hòa Khê",
+    "Tam Thuận",
+    "Vĩnh Trung",
+    "Xuân Hà",
+    "Tân Chính",
+    "Thạc Gián",
+    "Thanh Khê Đông",
+    "Thanh Khê Tây",
+  ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -57,13 +68,19 @@ const ConfirmInfoPayment = () => {
             district={district}
             ward={ward}
           />
-          <PaymentOptions selectedPayment={selectedPayment} setSelectedPayment={setSelectedPayment} />
-          <PaymentCardForm formData={formData} handleInputChange={handleInputChange} errors={errors} />
-
+          <PaymentOptions
+            selectedPayment={selectedPayment}
+            setSelectedPayment={setSelectedPayment}
+          />
+          <PaymentCardForm
+            formData={formData}
+            handleInputChange={handleInputChange}
+            errors={errors}
+          />
         </form>
       </div>
     </div>
   );
-}
+};
 
-export default ConfirmInfoPayment
+export default ConfirmInfoPayment;
