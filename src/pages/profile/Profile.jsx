@@ -3,7 +3,6 @@ import Navbar from "../../components/navbar/Navbar";
 import UpdateProfile from "../../components/profile/UpdateProfile";
 import ChangePassword from "../../components/password/ChangePassword";
 import OrderHistory from "../../components/orders/OrderHistory";
-import Sidebar from "../../components/sidebar/Sidebar";
 import ListVoucher from "../../components/voucher/ListVoucher";
 
 const Profile = () => {
@@ -26,10 +25,9 @@ const Profile = () => {
   return (
     <div>
       <Navbar />
-      <Sidebar />
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 ">
+      <div className="min-h-screen bg-gray-900 ">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+          <div className="bg-gray-800 rounded-xl shadow-lg">
             {/* Tab Navigation */}
             <div className="flex justify-center items-center py-4 ">
               <div className="flex space-x-4 border-b">

@@ -45,13 +45,13 @@ const ProductSlider = ({ images }) => {
                 </Swiper>
                 <button
                     onClick={handlePrev}
-                    className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-300 dark:bg-gray-600 text-black dark:text-white p-2 rounded-full z-10"
+                    className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-600 text-white p-2 rounded-full z-10"
                 >
                     <FaArrowLeft />
                 </button>
                 <button
                     onClick={handleNext}
-                    className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-300 dark:bg-gray-600 text-black dark:text-white p-2 rounded-full z-10"
+                    className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-600 text-white p-2 rounded-full z-10"
                 >
                     <FaArrowRight />
                 </button>

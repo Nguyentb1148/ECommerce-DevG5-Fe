@@ -87,7 +87,7 @@ const ListProduct = () => {
           {currentProducts.map((data) => (
             <div
               data-aos="fade-up"
-              className="px-4 md:px-12 xl:px-14 py-3 rounded-3xl grid place-items-center border-2 border-[#00000040] dark:border-[#ffffff40]"
+              className="px-4 md:px-12 xl:px-14 py-3 rounded-3xl grid place-items-center border-2 border-[#ffffff40]"
               key={data._id}
               onClick={() => handleProductClick(data._id)}
             >
@@ -108,16 +108,13 @@ const ListProduct = () => {
                   style={{ backgroundColor: data.variants[0].attributes.color }}
                 ></div>
               </div>
-              <div className="border-solid border-[1px] border-black dark:border-[#ffffff70] px-2 rounded-md">
+              <div className="border-solid border-[1px] border-[#ffffff70] px-2 rounded-md">
                 {data.variants[0].attributes.option}
               </div>
               <div className="flex justify-around w-full py-1">
                 <h2 className="font-bold">{data.price}</h2>
                 <h2 className="font-normal line-through">{data.price}</h2>
               </div>
-              <button className="btn-add my-1 dark:text-white">
-                Add to cart
-              </button>
             </div>
           ))}
         </div>

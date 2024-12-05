@@ -1,7 +1,7 @@
 import React from "react";
 import { FaEnvelope, FaUser } from "react-icons/fa";
-import InputPassword from "./InputPassword";
-import StrengthMeterPassword from "./calculateStrength";
+import InputPassword from "../password/InputPassword";
+import StrengthMeterPassword from "../password/StrengthMeterPassword";
 
 const Register = ({
   formData,

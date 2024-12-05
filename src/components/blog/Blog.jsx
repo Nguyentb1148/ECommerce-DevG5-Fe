@@ -40,14 +40,14 @@ const Blog = () => {
                             <div
                                 data-aos="fade-up"
                                 data-aos-delay={data.aosDelay}
-                                key={data.title} className="bg-white dark:bg-gray-900">
+                                key={data.title} className="bg-gray-900">
                                 <div className="overflow-hidden rounded-2xl mb-2">
                                     <img src={data.image} alt="" className="w-full h-[220px] object-cover rounded-2xl hover:scale-105 duration-500" />
                                 </div>
                                 <div className="space-y-2">
                                     <p className="text-xs text-gray-500">{data.published}</p>
                                     <p className="font-bold line-clamp-1">{data.title}</p>
-                                    <p className="line-clamp-2 text-sm text-gray-600 dark:text-gray-400">{data.subtitle}</p>
+                                    <p className="line-clamp-2 text-sm text-gray-400">{data.subtitle}</p>
                                 </div>
                             </div>
                         ))
@@ -59,4 +59,3 @@ const Blog = () => {
 }
 
 export default Blog;
-

@@ -2,11 +2,11 @@ import React from "react";
 import { BiErrorCircle } from "react-icons/bi";
 
 const ShippingInformation = ({ formData, handleInputChange, errors, city, district, ward }) => (
-  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
-    <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Shipping Information</h2>
+  <div className="bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+    <h2 className="text-2xl font-bold mb-4 text-white">Shipping Information</h2>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-800 dark:text-gray-400">
+        <label htmlFor="name" className="block text-sm font-medium text-gray-400">
           Full Name
         </label>
         <input
@@ -15,13 +15,13 @@ const ShippingInformation = ({ formData, handleInputChange, errors, city, distri
           name="name"
           value={formData.name}
           onChange={handleInputChange}
-          className={`mt-1 block w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white border ${errors.name ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500`}
+          className={`mt-1 block w-full px-4 py-2 bg-gray-700 text-white border ${errors.name ? "border-red-500" : "border-gray-600"} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500`}
           placeholder="Enter your full name"
         />
         {errors.name && <ErrorMessage message={errors.name} />}
       </div>
       <div>
-        <label htmlFor="city" className="block text-sm font-medium text-gray-800 dark:text-gray-400">
+        <label htmlFor="city" className="block text-sm font-medium text-gray-400">
           City
         </label>
         <select
@@ -29,7 +29,7 @@ const ShippingInformation = ({ formData, handleInputChange, errors, city, distri
           name="city"
           value={formData.city}
           onChange={handleInputChange}
-          className={`mt-1 block w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white border ${errors.city ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500`}
+          className={`mt-1 block w-full px-4 py-2 bg-gray-700 text-white border ${errors.city ? "border-red-500" : "border-gray-600"} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500`}
         >
           <option value="">Select City</option>
           {city.map((city) => (
@@ -41,7 +41,7 @@ const ShippingInformation = ({ formData, handleInputChange, errors, city, distri
         {errors.city && <ErrorMessage message={errors.city} />}
       </div>
       <div>
-        <label htmlFor="district" className="block text-sm font-medium text-gray-800 dark:text-gray-400">
+        <label htmlFor="district" className="block text-sm font-medium text-gray-400">
           District
         </label>
         <select
@@ -49,7 +49,7 @@ const ShippingInformation = ({ formData, handleInputChange, errors, city, distri
           name="district"
           value={formData.district}
           onChange={handleInputChange}
-          className={`mt-1 block w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white border ${errors.district ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500`}
+          className={`mt-1 block w-full px-4 py-2 bg-gray-700 text-white border ${errors.district ? "border-red-500" : "border-gray-600"} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500`}
         >
           <option value="">Select District</option>
           {district.map((district) => (
@@ -61,7 +61,7 @@ const ShippingInformation = ({ formData, handleInputChange, errors, city, distri
         {errors.district && <ErrorMessage message={errors.district} />}
       </div>
       <div>
-        <label htmlFor="ward" className="block text-sm font-medium text-gray-800 dark:text-gray-400">
+        <label htmlFor="ward" className="block text-sm font-medium text-gray-400">
           Ward
         </label>
         <select
@@ -69,7 +69,7 @@ const ShippingInformation = ({ formData, handleInputChange, errors, city, distri
           name="ward"
           value={formData.ward}
           onChange={handleInputChange}
-          className={`mt-1 block w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white border ${errors.ward ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500`}
+          className={`mt-1 block w-full px-4 py-2 bg-gray-700 text-white border ${errors.ward ? "border-red-500" : "border-gray-600"} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500`}
         >
           <option value="">Select Ward</option>
           {ward.map((ward) => (
@@ -81,7 +81,7 @@ const ShippingInformation = ({ formData, handleInputChange, errors, city, distri
         {errors.ward && <ErrorMessage message={errors.ward} />}
       </div>
       <div className="md:col-span-2">
-        <label htmlFor="address" className="block text-sm font-medium text-gray-800 dark:text-gray-400">
+        <label htmlFor="address" className="block text-sm font-medium text-gray-400">
           Address
         </label>
         <input
@@ -90,7 +90,7 @@ const ShippingInformation = ({ formData, handleInputChange, errors, city, distri
           name="address"
           value={formData.address}
           onChange={handleInputChange}
-          className={`mt-1 block w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white border ${errors.address ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500`}
+          className={`mt-1 block w-full px-4 py-2 bg-gray-700 text-white border ${errors.address ? "border-red-500" : "border-gray-600"} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500`}
           placeholder="Enter your address"
         />
         {errors.address && <ErrorMessage message={errors.address} />}

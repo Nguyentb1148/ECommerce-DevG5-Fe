@@ -4,15 +4,6 @@ import Pagination from "../pagination/Pagination";
 import { Link } from "react-router-dom";
 import { getProducts } from "../../services/api/ProductApi.jsx";
 
-/*
-id:_id
-img:imageUrls[0],
-title:name,
-option:variants[0].attributes.option,
-price:price,
-color:variants[0].attributes.color
-* */
-
 const Products = () => {
   const [ProductsData, setProductData] = useState([]);
   useEffect(() => {
@@ -39,7 +30,7 @@ const Products = () => {
             <div
               data-aos="fade-up"
               data-aos-delay="200"
-              className="px-16 py-5 rounded-3xl grid place-items-center border-2 border-[#00000040] dark:border-[#ffffff40]"
+              className="px-16 py-5 rounded-3xl grid place-items-center border-2 border-[#ffffff40]"
               key={data.id}
             >
               <Link to="/productDetail">
@@ -60,7 +51,7 @@ const Products = () => {
                 ></div>
               </div>
 
-              <div className="border-solid border-[1px] border-black dark:border-[#ffffff70] px-2 rounded-md">
+              <div className="border-solid border-[1px] border-[#ffffff70] px-2 rounded-md">
                 {data.variants[0].attributes.option}
               </div>
               <div className="flex justify-around w-full py-1">
@@ -105,7 +96,7 @@ const Products = () => {
                   <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                 </svg>
                 <svg
-                  className="w-4 h-4 ms-1 text-gray-300 dark:text-gray-500"
+                  className="w-4 h-4 ms-1 text-gray-500"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"

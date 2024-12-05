@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { MdLogout } from "react-icons/md";
-import { RiLockPasswordFill } from "react-icons/ri"; // Ensure this import exists
 import { Link } from "react-router-dom";
 
 const User = () => {
@@ -33,10 +31,6 @@ const User = () => {
                             <CgProfile className="h-6 w-6 mr-2" />
                             <Link to="/user/profile">Profile</Link>
                         </li>
-                        <li className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300">
-                            <RiLockPasswordFill className="h-6 w-6 mr-2" />
-                            <Link to="/user/change-password">Change Password</Link>
-                        </li>
                         <li
                             onClick={logout}
                             className="py-2 px-6 flex items-center hover:bg-gray-700 hover:text-white duration-300 cursor-pointer"
@@ -48,8 +42,6 @@ const User = () => {
                 )}
             </div>
 
-            {/* Render nested routes */}
-            <Outlet />
         </div>
     );
 };

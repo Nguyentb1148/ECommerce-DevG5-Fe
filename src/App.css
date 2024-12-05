@@ -1,3 +1,4 @@
+/* Login Google */
 .nsm7Bb-HzV7m-LgbsSe{
     border: none !important;
     background: linear-gradient(to top left, #1F2937, #2D3748) !important;
@@ -9,8 +10,84 @@
 .nsm7Bb-HzV7m-LgbsSe-BPrWId{
     color: white;
 }
+/* Input */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+/* TextEditor */
+.fr-wrapper, .fr-second-toolbar, .fr-toolbar, .fr-more-toolbar, .fr-popup {
+    background: #374151 !important;
+}
+.fr-wrapper p{
+    color: white !important;
+}
+.fr-toolbar{
+    border: 1px solid #6B7280 !important;
+    border-bottom: none !important;
+    color: white !important;
+    display: block !important;
+}
+.fr-command.fr-btn .fr-dropdown-menu {
+    background: #374151 !important;
+}
+.fr-wrapper{
+    border: 1px solid #6B7280 !important;
+}
+.fr-wrapper .fr-element h1, .fr-wrapper .fr-element h2, 
+.fr-wrapper .fr-element h3, .fr-wrapper .fr-element h4, 
+.fr-wrapper .fr-element h5, .fr-wrapper .fr-element span,
+.fr-wrapper .fr-element p, .fr-wrapper .fr-element strong,
+.fr-wrapper .fr-element ul, .fr-wrapper .fr-element li,
+.fr-wrapper .fr-element img, .fr-wrapper .fr-element div
+{
+    background: none !important ;
+    color: white !important;
+
+}
+.fr-wrapper .fr-element table{
+    background-color: #374151 !important;
+}
+.fr-tooltip{
+    display: none !important;
+}
+.fr-second-toolbar{
+    border: 1px solid #6B7280 !important;
+}
+.fr-placeholder{
+    color: #9ca3af !important;
+}
+.fr-btn-grp .fr-svg{
+    color: white !important;
+}
+.fr-quick-insert{
+    display: none;
+}
+.fr-toolbar .fr-btn-grp button .fr-svg path{
+    fill: #d1d5db;
+}
+.fr-toolbar .fr-more-toolbar button .fr-svg path{
+    fill: #d1d5db;
+}
+.fr-toolbar .fr-command.fr-btn.fr-open:not(:hover):not(:focus):not(:active){
+    background: #ebebeb30;
+}
+.fr-toolbar .fr-command.fr-btn.fr-dropdown.fr-active{
+    background: #ebebeb30;
+}
+.fr-toolbar .fr-command.fr-btn.fr-dropdown.fr-active:hover{
+    background: #ebebeb30;
+}
+.fr-toolbar .fr-command.fr-btn.fr-dropdown:after{
+    border-top: 4px solid #d1d5db;
+}
+.fr-desktop .fr-command:hover:not(.fr-table-cell){
+    background: #ebebeb30;
+}
+.fr-command.fr-btn+.fr-dropdown-menu .fr-dropdown-wrapper .fr-dropdown-content ul.fr-dropdown-list li a.fr-active{
+    background: #ebebeb30;
+}
+.fr-desktop .fr-command:hover:not(.fr-table-cell), .fr-desktop .fr-command:focus:not(.fr-table-cell), .fr-desktop .fr-command.fr-btn-hover:not(.fr-table-cell), .fr-desktop .fr-command.fr-expanded:not(.fr-table-cell) {
+    background: #4b5563;
 }

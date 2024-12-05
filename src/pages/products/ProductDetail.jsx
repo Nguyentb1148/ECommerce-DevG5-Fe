@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import ProductSlider from "./ProductSlider";
+import ProductSlider from "../../components/products/ProductSlider";
 import Navbar from "../../components/navbar/Navbar";
-import Sidebar from "../../components/sidebar/Sidebar";
 import { FaShoppingCart } from "react-icons/fa";
 import { getProductById } from "../../services/api/ProductApi"; // Adjust the import according to your project structure
 import { AddToCart } from "../../services/api/CartApi";
+import BackToTop from "../../components/backToTop/BackToTop";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -136,12 +136,12 @@ const ProductDetail = () => {
   );
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="bg-gray-900 min-h-screen">
       <Navbar />
-      <Sidebar />
+      <BackToTop />
       <div className="max-w-7xl mx-auto p-4">
         {/* Main Content */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+        <div className="bg-gray-800 p-6 rounded-lg shadow-sm">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {/* Left Section - Product Images */}
             <div>
@@ -151,16 +151,16 @@ const ProductDetail = () => {
             </div>
             {/* Right Section - Product Details */}
             <div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold dark:text-white">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
                 {product.name}
               </h1>
               <div className="mt-4">
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-gray-400">
                   Thương hiệu: {product.brandId.name}
                 </p>
               </div>
               <div className="mt-4">
-                <span className="text-gray-600 dark:text-gray-400">
+                <span className="text-gray-400">
                   Màu sắc:
                 </span>
                 <div className="flex gap-4 mt-2">
@@ -170,7 +170,7 @@ const ProductDetail = () => {
                       className={`px-2 sm:px-4 py-1 sm:py-2 border rounded ${
                         selectedColor === color
                           ? "bg-gray-800 text-white"
-                          : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                          : "bg-gray-700 text-gray-200"
                       }`}
                       onClick={() => handleColorClick(color)}
                     >
@@ -180,7 +180,7 @@ const ProductDetail = () => {
                 </div>
               </div>
               <div className="mt-4">
-                <span className="text-gray-600 dark:text-gray-400">
+                <span className="text-gray-400">
                   Variant:
                 </span>
                 <div className="flex gap-4 mt-2">
@@ -190,7 +190,7 @@ const ProductDetail = () => {
                       className={`px-2 sm:px-4 py-1 sm:py-2 border rounded ${
                         selectedVariant === variant
                           ? "bg-gray-800 text-white"
-                          : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                          : "bg-gray-700 text-gray-200"
                       }`}
                       onClick={() => handleVariantClick(variant)}
                     >
@@ -199,13 +199,13 @@ const ProductDetail = () => {
                   ))}
                 </div>
                 {selectedVariantData && (
-                  <span className="text-gray-600 dark:text-gray-400 mt-1">
+                  <span className="text-gray-400 mt-1">
                     Số lượng còn kho: {selectedVariantData.stockQuantity}
                   </span>
                 )}
               </div>
               <div className="mt-4 flex gap-3 items-center">
-                <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded overflow-hidden">
+                <div className="flex items-center border border-gray-600 rounded overflow-hidden">
                   <input
                     type="number"
                     className="w-13 text-center"
@@ -241,11 +241,11 @@ const ProductDetail = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
           {/* Features Section */}
-          <div className="col-span-1 lg:col-span-3 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
-            <h2 className="text-lg sm:text-xxl font-semibold mb-4 dark:text-white text-center">
+          <div className="col-span-1 lg:col-span-3 bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
+            <h2 className="text-lg sm:text-xxl font-semibold mb-4 text-white text-center">
               Đặc Điểm Nổi Bật
             </h2>
-            <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+            <ul className="list-disc list-inside  text-gray-300">
               {product.description &&
                 product.description
                   .split("\n")
@@ -256,13 +256,13 @@ const ProductDetail = () => {
         {/* Modal for Review */}
         {isReviewModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full sm:w-3/4 lg:w-2/3 xl:w-1/2 max-h-[90%] overflow-auto">
-              <h2 className="text-2xl font-bold mb-4 dark:text-white">
+            <div className="bg-gray-800 rounded-lg shadow-lg p-6 w-full sm:w-3/4 lg:w-2/3 xl:w-1/2 max-h-[90%] overflow-auto">
+              <h2 className="text-2xl font-bold mb-4 text-white">
                 Đánh giá & nhận xét
               </h2>
               <form onSubmit={handleSubmit}>
                 {/* Đánh giá chung */}
-                <h4 className="font-semibold mb-2 dark:text-white">
+                <h4 className="font-semibold mb-2 text-white">
                   Đánh giá chung
                 </h4>
                 <div className="flex gap-2 mb-6">
@@ -274,7 +274,7 @@ const ProductDetail = () => {
                       className={`text-2xl ${
                         generalRating >= star
                           ? "text-yellow-500"
-                          : "text-gray-300 dark:text-gray-600"
+                          : "text-gray-600"
                       }`}
                     >
                       ★
@@ -283,7 +283,7 @@ const ProductDetail = () => {
                 </div>
 
                 {/* Đánh giá chi tiết */}
-                <h4 className="font-semibold mb-2 dark:text-white">
+                <h4 className="font-semibold mb-2 text-white">
                   Theo trải nghiệm
                 </h4>
                 {[
@@ -292,7 +292,7 @@ const ProductDetail = () => {
                   { key: "camera", label: "Chất lượng camera" },
                 ].map((item) => (
                   <div className="mb-4" key={item.key}>
-                    <p className="dark:text-gray-300">{item.label}</p>
+                    <p className="text-gray-300">{item.label}</p>
                     <div className="flex gap-2">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
@@ -302,7 +302,7 @@ const ProductDetail = () => {
                           className={`text-xl ${
                             experienceRatings[item.key] >= star
                               ? "text-yellow-500"
-                              : "text-gray-300 dark:text-gray-600"
+                              : "text-gray-600"
                           }`}
                         >
                           ★
@@ -314,7 +314,7 @@ const ProductDetail = () => {
 
                 {/* Bình luận */}
                 <textarea
-                  className="w-full mt-4 p-2 border rounded dark:bg-gray-700 dark:text-gray-300"
+                  className="w-full mt-4 p-2 border rounded bg-gray-700 text-gray-300"
                   placeholder="Nhập nhận xét (tối thiểu 15 ký tự)"
                   rows="4"
                   value={comment}
@@ -331,7 +331,7 @@ const ProductDetail = () => {
                   </button>
                   <button
                     onClick={toggleReviewModal}
-                    className="bg-gray-300 dark:bg-gray-600 text-black dark:text-white px-4 py-2 rounded"
+                    className="bg-gray-600 text-white px-4 py-2 rounded"
                     type="button"
                   >
                     Đóng
@@ -344,7 +344,7 @@ const ProductDetail = () => {
 
         {/* Related Products */}
         <div className="mt-12">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4 dark:text-white">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 text-white">
             Related Products
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
@@ -353,14 +353,14 @@ const ProductDetail = () => {
               .map((_, index) => (
                 <div
                   key={index}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-2 sm:p-4"
+                  className="bg-gray-800 rounded-lg shadow-sm p-2 sm:p-4"
                 >
                   <img
                     src="https://via.placeholder.com/200"
                     alt={`Product ${index + 1}`}
                     className="w-full rounded"
                   />
-                  <p className="text-gray-700 dark:text-gray-300 mt-2 text-sm">
+                  <p className="text-gray-300 mt-2 text-sm">
                     Laptop Model {index + 1}
                   </p>
                   <p className="text-red-600 text-lg font-semibold">

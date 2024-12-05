@@ -56,14 +56,14 @@ const OrderHistory = () => {
         setShowOrderDetails(true);
     };
     return (
-        <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div className="p-6 bg-gray-800 rounded-lg shadow-md">
             <div className="relative mb-6">
                 <input
                     type="text"
                     placeholder="Search orders..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-600 bg-gray-700 text-white focus:ring-blue-500 focus:border-blue-500"
                 />
                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
@@ -72,17 +72,17 @@ const OrderHistory = () => {
                 {filterOrders.map((order) => (
                     <div
                         key={order.id}
-                        className="border rounded-lg p-4 hover:shadow-md transition-shadow dark:border-gray-600"
+                        className="border rounded-lg p-4 hover:shadow-md transition-shadow border-gray-600"
                     >
                         <div className="flex justify-between items-start mb-4">
                             <div>
-                                <h3 className="font-semibold dark:text-white">Order #{order.orderNumber}</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">{order.date}</p>
+                                <h3 className="font-semibold text-white">Order #{order.orderNumber}</h3>
+                                <p className="text-sm text-gray-400">{order.date}</p>
                             </div>
                             <span
                                 className={`px-3 py-1 rounded-full text-sm ${order.status === "Delivered"
-                                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                                    : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                    ? "bg-green-900 text-green-200"
+                                    : "bg-yellow-900 text-yellow-200"
                                     }`}
                             >
                                 {order.status}
@@ -92,16 +92,16 @@ const OrderHistory = () => {
                         <div className="space-y-2">
                             {order.items.map((item, index) => (
                                 <div key={index} className="flex justify-between text-sm">
-                                    <span className="dark:text-gray-300">
+                                    <span className="text-gray-300">
                                         {item.name} x{item.quantity}
                                     </span>
-                                    <span className="dark:text-gray-300">${item.price.toFixed(2)}</span>
+                                    <span className="text-gray-300">${item.price.toFixed(2)}</span>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="mt-4 pt-4 border-t dark:border-gray-700 flex justify-between items-center">
-                            <span className="font-semibold dark:text-white">
+                        <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between items-center">
+                            <span className="font-semibold text-white">
                                 Total: ${order.total.toFixed(2)}
                             </span>
                             <button

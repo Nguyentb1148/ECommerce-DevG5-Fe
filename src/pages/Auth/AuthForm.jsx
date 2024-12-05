@@ -1,10 +1,9 @@
-// 1. All your imports at the top
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import Login from "../../components/background/Login";
-import Register from "../../components/background/Register";
-import ForgotPassword from "../../components/background/ForgotPassword";
+import Login from "../../components/login/Login";
+import Register from "../../components/register/Register";
+import ForgotPassword from "../../components/password/ForgotPassword";
 import AnimatedBackground from "../../components/background/AnimatedBackGround";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";

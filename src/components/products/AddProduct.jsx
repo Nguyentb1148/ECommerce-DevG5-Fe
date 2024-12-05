@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { FaX } from "react-icons/fa6";
 import { FiUpload, FiPlus, FiTrash2, FiX } from "react-icons/fi";
 import { getCategories } from "../../services/api/CategoryApi";
 import { getBrands } from "../../services/api/BrandsApi";
@@ -455,9 +456,17 @@ const AddProduct = ({ onClose, refreshProducts }) => {
           onSubmit={handleSubmit}
           className="bg-gray-900 shadow-md rounded-lg px-8 pt-4 pb-4"
         >
-          <h2 className="text-2xl font-bold mb-2 text-white">
-            Add New Product
-          </h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold mb-2 text-white">
+              Add New Product
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-200"
+            >
+              <FaX />
+            </button>
+          </div>
           {/* Name */}
           <div className="mb-3">
             <label
@@ -543,15 +552,6 @@ const AddProduct = ({ onClose, refreshProducts }) => {
             >
               Description <span className="text-red-500 ml-1">*</span>
             </label>
-            {/*<textarea*/}
-            {/*  id="description"*/}
-            {/*  name="description"*/}
-            {/*  value={formData.description}*/}
-            {/*  onChange={handleInputChange}*/}
-            {/*  rows="4"*/}
-            {/*  className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"*/}
-            {/*  aria-label="Description"*/}
-            {/*/>*/}
             <RichTextEditor
               ref={editorRef}
               fileName={formData.productName}
@@ -574,23 +574,8 @@ const AddProduct = ({ onClose, refreshProducts }) => {
             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 bg-gray-700 rounded-md">
               <div className="space-y-1 text-center">
                 {mainImage ? (
-                  <div className="relative">
-                    <img
-                      src={mainImage}
-                      alt="Preview"
-                      className="mx-auto h-32 w-32 object-cover rounded-md"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        // setPreview("");
-                        setFormData({ ...formData, image: null });
-                      }}
-                      className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white rounded-full p-1"
-                    >
-                      <FiTrash2 size={16} />
-                    </button>
-                  </div>
+                  <>
+                  </>
                 ) : (
                   <div className="flex flex-col items-center">
                     <FiUpload className="mx-auto h-9 w-9 text-gray-200" />
@@ -599,47 +584,49 @@ const AddProduct = ({ onClose, refreshProducts }) => {
                     </p>
                   </div>
                 )}
+                <div className="grid grid-cols-3 gap-4">
+                  {/* List of images */}
+                  {images.map((image, index) => {
+                    // Check if the image object exists
+                    if (!image || !image.file) {
+                      return null; // Skip this image if it's invalid
+                    }
 
-                {/* List of images */}
-                {images.map((image, index) => {
-                  // Check if the image object exists
-                  if (!image || !image.file) {
-                    return null; // Skip this image if it's invalid
-                  }
+                    // Get image size in MB for display (rounded to 2 decimal places)
+                    const imageSize = (image.file.size / 1048576).toFixed(2); // Size in MB
 
-                  // Get image size in MB for display (rounded to 2 decimal places)
-                  const imageSize = (image.file.size / 1048576).toFixed(2); // Size in MB
-
-                  return (
-                    <div key={index} className="flex items-center space-x-2">
-                      <div className="relative">
-                        <img
-                          src={URL.createObjectURL(image.file)}
-                          alt="Thumbnail"
-                          className={`w-full h-28 border border-gray-300 rounded-md cursor-pointer object-contain ${
-                            invalidImageIndexes.includes(index)
-                              ? "border-red-500"
-                              : ""
-                          }`}
-                          onClick={() => handleThumbnailClick(image)}
-                        />
-                        <button
-                          onClick={() => handleImageDelete(index)}
-                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                        >
-                          ×
-                        </button>
+                    return (
+                      <div className="">
+                        <div key={index} className="">
+                          <div className="relative">
+                            <img
+                              src={URL.createObjectURL(image.file)}
+                              alt="Thumbnail"
+                              className={`w-20 h-20 md:w-28 md:h-28 border border-gray-300 rounded-md cursor-pointer object-cover ${invalidImageIndexes.includes(index)
+                                ? "border-red-500"
+                                : ""
+                                }`}
+                              onClick={() => handleThumbnailClick(image)}
+                            />
+                            <button
+                              onClick={() => handleImageDelete(index)}
+                              className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                            >
+                              ×
+                            </button>
+                          </div>
+                          {/* Image size display next to the thumbnail in MB */}
+                          <span className="text-sm text-gray-500">
+                            {imageSize} MB{" "}
+                            {image.isLarge && (
+                              <span className="text-red-500">(Too large)</span>
+                            )}
+                          </span>
+                        </div>
                       </div>
-                      {/* Image size display next to the thumbnail in MB */}
-                      <span className="text-sm text-gray-500">
-                        {imageSize} MB{" "}
-                        {image.isLarge && (
-                          <span className="text-red-500">(Too large)</span>
-                        )}
-                      </span>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
 
                 <input
                   type="file"
@@ -664,7 +651,6 @@ const AddProduct = ({ onClose, refreshProducts }) => {
               <p className="text-red-500 text-xs mt-1">{errors.image}</p>
             )}
           </div>
-
           {/* Attribute */}
           <div className="mb-3">
             <div className="flex justify-between items-center mb-4">
@@ -820,7 +806,6 @@ const AddProduct = ({ onClose, refreshProducts }) => {
               )}
             </div>
           )}
-
           {/* Button */}
           <div className="flex justify-end">
             <button

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { FaSearch } from "react-icons/fa";
+import AddVoucher from '../../../components/voucher/AddVoucher';
+import EditVoucher from '../../../components/voucher/EditVoucher';
 import DataTable, { createTheme } from 'react-data-table-component';
 
 createTheme('dark', {
@@ -25,7 +27,8 @@ createTheme('dark', {
 }, 'dark');
 
 const VoucherManage = () => {
-
+  const [isAddVoucherOpen, setIsAddVoucherOpen] = useState(false);
+  const [isEditVoucherOpen, setIsEditVoucherOpen] = useState(false);
   // Responsive Table
   const [scrollHeight, setScrollHeight] = useState("430px");
   const updateScrollHeight = () => {
@@ -82,12 +85,12 @@ const VoucherManage = () => {
         <div className="max-md:flex max-md:w-56">
           <button
             className="bg-yellow-400 text-white px-2 py-1 rounded mr-2"
+            onClick={() => setIsEditVoucherOpen(true)}
           >
             Edit
           </button>
           <button
             className="bg-red-500 text-white px-2 py-1 rounded"
-          // onClick={() => handleDelete(row)}
           >
             Delete
           </button>
@@ -152,6 +155,7 @@ const VoucherManage = () => {
         <div className="flex justify-between my-2">
           <button
             className="btn-add bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => setIsAddVoucherOpen(true)}
           >
             Add voucher
           </button>
@@ -178,7 +182,13 @@ const VoucherManage = () => {
           />
         </div>
       </div>
-
+      {/* Modal */}
+      {isAddVoucherOpen && (
+        <AddVoucher onClose={() => setIsAddVoucherOpen(false)} />
+      )}
+      {isEditVoucherOpen && (
+        <EditVoucher onClose={() => setIsEditVoucherOpen(false)} />
+      )}
     </div>
   )
 }

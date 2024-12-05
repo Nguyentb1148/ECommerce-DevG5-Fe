@@ -13,8 +13,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                             onPageChange(i);
                         }}
                         className={`flex items-center justify-center px-3 h-8 leading-tight ${currentPage === i
-                                ? 'text-blue-600 border border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white'
-                                : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+                                ? 'border hover:bg-blue-100 hover:text-blue-700 border-gray-700 bg-gray-700 text-white'
+                                : 'border bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white'
                             }`}
                         aria-current={currentPage === i ? 'page' : undefined}
                     >
@@ -40,7 +40,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                                 e.preventDefault();
                                 onPageChange(currentPage - 1);
                             }}
-                            className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                            className="flex items-center justify-center px-3 h-8 ms-0 leading-tight border border-e-0 rounded-s-lg bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white"
                         >
                             <span className="sr-only">Previous</span>
                             <svg
@@ -70,7 +70,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                                 e.preventDefault();
                                 onPageChange(currentPage + 1);
                             }}
-                            className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                            className="flex items-center justify-center px-3 h-8 leading-tight border rounded-e-lg bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white"
                         >
                             <span className="sr-only">Next</span>
                             <svg

@@ -3,7 +3,6 @@ import { FaChevronUp, FaChevronDown, FaFilter } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 import PriceRange from "./PriceRange";
 import RatingFilter from "./RatingFilter";
-import ColorFilter from "./ColorFilter";
 import CategoryFilter from "./CategoryFilter";
 import BrandFilter from "./BrandFilter";
 
@@ -15,7 +14,6 @@ const ListFilter = () => {
         brand: true,
         price: true,
         rating: true,
-        color: true,
     });
 
     const handleToggleModal = () => {
@@ -38,9 +36,9 @@ const ListFilter = () => {
             {/* Modal hiển thị ListFilter */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                    <div className="bg-white dark:bg-gray-900 w-full fixed p-6 rounded-lg top-10 h-90v overflow-y-auto">
+                    <div className="bg-gray-900 w-full fixed p-6 rounded-lg top-10 h-90v overflow-y-auto">
                         <button
-                            className="absolute top-4 right-6 text-black dark:text-white text-2xl"
+                            className="absolute top-4 right-6 text-white text-2xl"
                             onClick={handleToggleModal}
                         >
                             <IoCloseSharp />
@@ -71,19 +69,6 @@ const ListFilter = () => {
                                     </span>
                                 </div>
                                 {openSection.brand && <BrandFilter />}
-                            </div>
-
-                            <div className="mb-4">
-                                <div
-                                    className="flex justify-between items-center cursor-pointer"
-                                    onClick={() => handleToggleSection("color")}
-                                >
-                                    <h3 className="font-semibold text-lg py-2">Color</h3>
-                                    <span>
-                                        {openSection.color ? <FaChevronDown /> : <FaChevronUp />}
-                                    </span>
-                                </div>
-                                {openSection.color && <ColorFilter />}
                             </div>
 
                             <div className="mb-4">
@@ -140,17 +125,6 @@ const ListFilter = () => {
                     </div>
                     {openSection.brand && (
                         <BrandFilter />
-                    )}
-                </div>
-                {/* Colors */}
-                <div className="mb-4">
-                    <div className="flex justify-between items-center cursor-pointer"
-                        onClick={() => handleToggleSection("color")}>
-                        <h3 className="font-semibold text-lg py-2">Color</h3>
-                        <span>{openSection.rating ? <><FaChevronDown /></> : <><FaChevronUp /></>}</span>
-                    </div>
-                    {openSection.color && (
-                        <ColorFilter />
                     )}
                 </div>
                 {/* Price */}

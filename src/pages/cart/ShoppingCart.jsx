@@ -4,7 +4,6 @@ import CartItem from "../../components/cart/CartItem";
 import CartSummary from "../../components/cart/CartSummary";
 import VoucherApply from "../../components/voucher/VoucherApply";
 import Navbar from "../../components/navbar/Navbar";
-import Sidebar from "../../components/sidebar/Sidebar";
 import ConfirmInfoPayment from "../../components/payment/ConfirmInfoPayment";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -14,6 +13,7 @@ import {
   RemoveFromCart,
   UpdateCart,
 } from "../../services/api/CartApi";
+import BackToTop from "../../components/backToTop/BackToTop";
 
 const ShoppingCart = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -81,10 +81,10 @@ const ShoppingCart = () => {
   return (
     <div className="w-full h-screen">
       <Navbar backgroundClass="bg-gray-100" />
-      <Sidebar />
+      <BackToTop />
       {currentStep === 2 && (
         <>
-          <div className="h-83v grid place-items-center bg-gray-100 dark:bg-gray-900 dark:text-gray-300 ">
+          <div className="h-83v grid place-items-center bg-gray-900 text-gray-300 ">
             <div className="grid place-items-center">
               <FaCheckCircle className="text-[120px] text-emerald-500 " />
               <h1 className="text-4xl font-semibold">Payment Successful!</h1>
@@ -96,11 +96,11 @@ const ShoppingCart = () => {
           </div>
         </>
       )}
-      <div className="bg-gray-100 dark:bg-gray-900 py-6 px-4 sm:px-6 lg:px-8">
+      <div className="bg-gray-900 py-6 px-4 sm:px-6 lg:px-8">
         <div className=" max-w-7xl mx-auto">
           {(currentStep === 0 || currentStep === 1) && (
             <>
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">
+              <h1 className="text-3xl font-bold text-white mb-8">
                 Shopping Cart
               </h1>
               <Stepper currentStep={currentStep} />
