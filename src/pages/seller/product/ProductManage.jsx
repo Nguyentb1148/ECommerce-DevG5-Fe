@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
-import DataTable, { createTheme } from "react-data-table-component";
-import Image from "../../../assets/robot-assistant.png";
 import AddProduct from "../../../components/products/AddProduct";
 import EditProduct from "../../../components/products/EditProduct";
 import {
@@ -9,32 +7,8 @@ import {
   getProductsByUserId,
 } from "../../../services/api/ProductApi";
 import { toast, ToastContainer } from "react-toastify";
+import CustomDataTable from "../../../components/datatable/CustomDataTable";
 
-createTheme(
-  "dark",
-  {
-    text: {
-      primary: "#e5e7eb",
-      secondary: "#9ca3af",
-    },
-    background: {
-      default: "#1f2937",
-    },
-    context: {
-      background: "#374151",
-      text: "#ffffff",
-    },
-    divider: {
-      default: "#4b5563",
-    },
-    action: {
-      button: "#4f46e5",
-      hover: "rgba(255, 255, 255, 0.1)",
-      disabled: "rgba(255, 255, 255, 0.3)",
-    },
-  },
-  "dark"
-);
 
 const ProductManage = () => {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -42,19 +16,6 @@ const ProductManage = () => {
   const [products, setProducts] = useState([]);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [scrollHeight, setScrollHeight] = useState("430px");
-
-  const updateScrollHeight = () => {
-    if (window.innerWidth < 768) {
-      setScrollHeight("400px");
-    } else if (window.innerWidth < 1024) {
-      setScrollHeight("440px");
-    } else if (window.innerWidth < 1280) {
-      setScrollHeight("460px");
-    } else {
-      setScrollHeight("650px");
-    }
-  };
 
   const fetchProducts = async () => {
     try {
@@ -70,11 +31,6 @@ const ProductManage = () => {
     }
   };
 
-  useEffect(() => {
-    updateScrollHeight();
-    window.addEventListener("resize", updateScrollHeight);
-    return () => window.removeEventListener("resize", updateScrollHeight);
-  }, []);
 
   useEffect(() => {
     fetchProducts();
@@ -166,36 +122,7 @@ const ProductManage = () => {
 
   if (loading) {
     return (
-      <div className="grid mt-12 gap-3">
-        <div className="flex items-center justify-center">
-          <svg
-            className="animate-spin border-indigo-600"
-            xmlns="http://www.w3.org/2000/svg"
-            width="40"
-            height="40"
-            viewBox="0 0 34 34"
-            fill="none"
-          >
-            <g id="Component 2">
-              <circle
-                id="Ellipse 717"
-                cx="17.0007"
-                cy="17.0001"
-                r="14.2013"
-                stroke="#D1D5DB"
-                strokeWidth="4"
-                strokeDasharray="2 3"
-              />
-              <path
-                id="Ellipse 715"
-                d="M21.3573 30.5163C24.6694 29.4486 27.4741 27.2019 29.2391 24.2028C31.0041 21.2038 31.6065 17.661 30.9319 14.2471C30.2573 10.8332 28.3528 7.78584 25.5798 5.68345C22.8067 3.58105 19.3583 2.57 15.8891 2.84222"
-                stroke="#4F46E5"
-                strokeWidth="4"
-              />
-            </g>
-          </svg>
-        </div>
-      </div>
+      <></>
     );
   }
 
@@ -222,28 +149,18 @@ const ProductManage = () => {
             />
           </div>
         </div>
-        <div className="overflow-hidden">
-          <DataTable
-            theme="dark"
-            columns={columns}
-            data={records}
-            fixedHeader
-            pagination
-            fixedHeaderScrollHeight={scrollHeight}
-            paginationPosition="bottom"
+        <CustomDataTable columns={columns} records={records} />
+        {isAddProductOpen && (
+          <AddProduct
+            onClose={() => setIsAddProductOpen(false)}
+            refreshProducts={fetchProducts}
           />
-        </div>
+        )}
+        {isEditProductOpen && (
+          <EditProduct onClose={() => setIsEditProductOpen(false)} />
+        )}
+        <ToastContainer />
       </div>
-      {isAddProductOpen && (
-        <AddProduct
-          onClose={() => setIsAddProductOpen(false)}
-          refreshProducts={fetchProducts}
-        />
-      )}
-      {isEditProductOpen && (
-        <EditProduct onClose={() => setIsEditProductOpen(false)} />
-      )}
-      <ToastContainer />
     </div>
   );
 };

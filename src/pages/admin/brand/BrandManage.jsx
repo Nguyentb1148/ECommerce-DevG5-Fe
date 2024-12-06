@@ -1,64 +1,19 @@
 import { useState, useEffect } from "react";
-import DataTable, { createTheme } from "react-data-table-component";
-
 import { deleteBrand, getBrands } from "../../../services/api/BrandsApi.jsx";
 import AddBrand from "../../../components/brand/AddBrand.jsx";
 import EditBrand from "../../../components/brand/EditBrand.jsx";
 import { toast, ToastContainer } from "react-toastify";
+import CustomDataTable from "../../../components/datatable/CustomDataTable.jsx";
 
-createTheme(
-  "dark",
-  {
-    text: {
-      primary: "#e5e7eb",
-      secondary: "#9ca3af",
-    },
-    background: {
-      default: "#1f2937",
-    },
-    context: {
-      background: "#374151",
-      text: "#ffffff",
-    },
-    divider: {
-      default: "#4b5563",
-    },
-    action: {
-      button: "#4f46e5",
-      hover: "rgba(255, 255, 255, 0.1)",
-      disabled: "rgba(255, 255, 255, 0.3)",
-    },
-  },
-  "dark"
-);
 
 const BrandManage = () => {
   const [isAddBranchOpen, setIsAddBranchOpen] = useState(false);
   const [isEditBranchOpen, setIsEditBranchOpen] = useState(false);
-  const [scrollHeight, setScrollHeight] = useState("430px");
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [reFetchBrand, setReFetchBrand] = useState(false);
-
-  const updateScrollHeight = () => {
-    if (window.innerWidth < 768) {
-      setScrollHeight("400px");
-    } else if (window.innerWidth < 1024) {
-      setScrollHeight("440px");
-    } else if (window.innerWidth < 1280) {
-      setScrollHeight("800px");
-    } else {
-      setScrollHeight("800px");
-    }
-  };
-
-  useEffect(() => {
-    updateScrollHeight();
-    window.addEventListener("resize", updateScrollHeight);
-    return () => window.removeEventListener("resize", updateScrollHeight);
-  }, []);
 
   useEffect(() => {
     const fetchBranches = async () => {
@@ -208,15 +163,7 @@ const BrandManage = () => {
         ) : errorMessage ? (
           <div className="text-center text-red-500 p-4">{errorMessage}</div>
         ) : (
-          <DataTable
-            theme="dark"
-            columns={columns}
-            data={branches}
-            fixedHeader
-            pagination
-            fixedHeaderScrollHeight={scrollHeight}
-            paginationPosition="bottom"
-          />
+          <CustomDataTable columns={columns} records={records} />
         )}
       </div>
       {/* Modals */}

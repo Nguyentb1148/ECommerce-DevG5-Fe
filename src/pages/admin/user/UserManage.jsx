@@ -1,7 +1,6 @@
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
-import DataTable, { createTheme } from "react-data-table-component";
 import {
   BanUser,
   GetAllUsers,
@@ -11,32 +10,8 @@ import DetailModal from "../../../components/user/DetailModal";
 import BanModal from "../../../components/user/BanModal";
 import UpdateUserInfoModal from "../../../components/user/UpdateUserInfoModal";
 import { toast, ToastContainer } from "react-toastify";
+import CustomDataTable from "../../../components/datatable/CustomDataTable";
 
-createTheme(
-  "dark",
-  {
-    text: {
-      primary: "#e5e7eb",
-      secondary: "#9ca3af",
-    },
-    background: {
-      default: "#1f2937",
-    },
-    context: {
-      background: "#374151",
-      text: "#ffffff",
-    },
-    divider: {
-      default: "#4b5563",
-    },
-    action: {
-      button: "#4f46e5",
-      hover: "rgba(255, 255, 255, 0.1)",
-      disabled: "rgba(255, 255, 255, 0.3)",
-    },
-  },
-  "dark"
-);
 
 const UserManage = () => {
   const [users, setUsers] = useState([]);
@@ -73,26 +48,9 @@ const UserManage = () => {
     setModalType(null);
   };
 
-  // Responsive Table
-  const [scrollHeight, setScrollHeight] = useState("430px");
-  const updateScrollHeight = () => {
-    if (window.innerWidth < 768) {
-      setScrollHeight("430px");
-    } else if (window.innerWidth < 1024) {
-      setScrollHeight("450px");
-    } else if (window.innerWidth < 1280) {
-      setScrollHeight("500px");
-    } else {
-      setScrollHeight("650px");
-    }
-  };
-
   // Fetch data
   useEffect(() => {
     fetchUsers(); // Fetch user data on component load
-    updateScrollHeight();
-    window.addEventListener("resize", updateScrollHeight);
-    return () => window.removeEventListener("resize", updateScrollHeight);
   }, []);
 
   const columns = [
@@ -144,9 +102,8 @@ const UserManage = () => {
             Details
           </button>
           <button
-            className={`${
-              row.isBanned ? "bg-green-500" : "bg-red-500"
-            } text-white px-2 py-1 rounded`}
+            className={`${row.isBanned ? "bg-green-500" : "bg-red-500"
+              } text-white px-2 py-1 rounded`}
             onClick={() => handleOpenModal(row, "ban")}
           >
             {row.isBanned ? "Unban" : "Ban"}
@@ -162,17 +119,7 @@ const UserManage = () => {
         User Management
       </h1>
       <div className="md:w-[650px] lg:w-[850px] xl:w-[90%] mx-auto rounded-md shadow-md">
-        <div className="overflow-hidden">
-          <DataTable
-            theme="dark"
-            columns={columns}
-            data={users}
-            fixedHeader
-            pagination
-            fixedHeaderScrollHeight={scrollHeight}
-            paginationPosition="bottom"
-          />
-        </div>
+        <CustomDataTable columns={columns} records={records} />
       </div>
 
       {/* Modal for Details */}

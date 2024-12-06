@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { FaX } from "react-icons/fa6";
-import { FiUpload, FiPlus, FiTrash2, FiX } from "react-icons/fi";
 import { getCategories } from "../../services/api/CategoryApi";
 import { getBrands } from "../../services/api/BrandsApi";
 import { createProduct } from "../../services/api/ProductApi";
 import { uploadImage } from "../../configs/Cloudinary";
 import { toast } from "react-toastify";
 import RichTextEditor from "./RichTextEditor";
+import AttributeSection from "../section/AttributeSection";
+import VariantSection from "../section/VariantSection";
+import InputSection from "../section/InputSection";
+import SelectSection from "../section/SelectSection";
+import ImageSection from "../section/ImageSection";
 
 const AddProduct = ({ onClose, refreshProducts }) => {
   const [formData, setFormData] = useState({
@@ -44,18 +48,6 @@ const AddProduct = ({ onClose, refreshProducts }) => {
 
       case "brand":
         return !value ? "Please select a brand" : null;
-
-      // case "description":
-      //   console.log('description: ',value)
-      //   if (!value.trim()) {
-      //     return "Description is required";
-      //   } else if (value.length < 10) {
-      //     return "Description must be at least 10 characters long";
-      //   }
-      //   // else if (value.length > 500) {
-      //   //   return "Description must not exceed 500 characters";
-      //   // }
-      //   return null;
       default:
         return null;
     }
@@ -66,8 +58,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
   const [brands, setBrands] = useState([]);
   const [images, setImages] = useState([]);
   const fileInputRef = useRef(null);
-  const [invalidImageIndexes, setInvalidImageIndexes] = useState([]); // State for invalid images
-  const [mainImage, setMainImage] = useState(null);
+  const [invalidImageIndexes, setInvalidImageIndexes] = useState([]); 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const editorRef = useRef();
 
@@ -173,29 +164,13 @@ const AddProduct = ({ onClose, refreshProducts }) => {
     }));
   }, [formData.variants]);
 
-  const handleThumbnailClick = (image) => {
-    if (image && image.file) {
-      setMainImage(URL.createObjectURL(image.file));
-    }
-  };
 
   const handleImageDelete = (index) => {
-    // Remove the image from the list
     setImages((prevImages) => {
       const updatedImages = prevImages.filter((_, i) => i !== index);
-
-      // Check if there are any remaining images to set a new main image
-      if (updatedImages.length === 0) {
-        setMainImage(null); // If no images are left, set main image to null
-      } else {
-        // Set the new main image to the first image in the updated list
-        setMainImage(URL.createObjectURL(updatedImages[0].file));
-      }
-
       return updatedImages;
     });
 
-    // Remove from invalid image indexes as well
     setInvalidImageIndexes((prevIndexes) =>
       prevIndexes.filter((i) => i !== index)
     );
@@ -208,40 +183,27 @@ const AddProduct = ({ onClose, refreshProducts }) => {
 
     selectedFiles.forEach((file) => {
       if (file.size > 2 * 1024 * 1024) {
-        // If the file exceeds 2MB
-        invalidIndexes.push(newImages.length); // Mark the index of the invalid image
-        newImages.push({ file, name: file.name, isLarge: true }); // Indicate that the image is large
+        invalidIndexes.push(newImages.length);
+        newImages.push({ file, name: file.name, isLarge: true });
       } else {
         newImages.push({ file, name: file.name, isLarge: false });
       }
     });
 
-    // Limit the number of images to 6 and warn if more than 6 are uploaded
     if (newImages.length + images.length > 6) {
       toast.warning("You can only upload a maximum of 6 images.");
-      return; // Prevent adding more images
+      return;
     }
 
     setImages((prevImages) => {
       const updatedImages = [...prevImages, ...newImages];
-      // Only set the main image if the first image is valid
-      if (
-        updatedImages.length > 0 &&
-        updatedImages[0].file.size <= 2 * 1024 * 1024
-      ) {
-        setMainImage(URL.createObjectURL(updatedImages[0].file));
-      } else {
-        setMainImage(null); // Clear main image if not valid
-      }
-      return updatedImages.filter(
-        (_, index) => !invalidIndexes.includes(index)
-      );
+      return updatedImages.filter((_, index) => !invalidIndexes.includes(index));
     });
 
     if (invalidIndexes.length > 0) {
-      setInvalidImageIndexes(invalidIndexes); // Store invalid image indexes for warning
+      setInvalidImageIndexes(invalidIndexes);
     } else {
-      setInvalidImageIndexes([]); // Clear invalid indexes if all images are valid
+      setInvalidImageIndexes([]);
     }
   };
 
@@ -460,97 +422,43 @@ const AddProduct = ({ onClose, refreshProducts }) => {
   return (
     <div className="fixed top-0 inset-0 z-20 bg-black bg-opacity-50 py-6 px-4 sm:px-6 lg:px-8 overflow-auto">
       <div className="w-[50%] mx-auto">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-gray-900 shadow-md rounded-lg px-8 pt-4 pb-4"
-        >
+        <form onSubmit={handleSubmit} className="bg-gray-900 shadow-md rounded-lg px-8 pt-4 pb-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold mb-2 text-white">
-              Add New Product
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-200"
-            >
+            <h2 className="text-2xl font-bold mb-2 text-white"> Add New Product </h2>
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-200">
               <FaX />
             </button>
           </div>
           {/* Name */}
-          <div className="mb-3">
-            <label
-              htmlFor="productName"
-              className="block text-gray-400 text-sm font-bold mb-2"
-            >
-              Product Name <span className="text-red-500 ml-1">*</span>
-            </label>
-            <input
-              type="text"
-              id="productName"
-              name="productName"
-              value={formData.productName}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              aria-label="Product Name"
-            />
-            {errors.productName && (
-              <p className="text-red-500 text-xs mt-1">{errors.productName}</p>
-            )}
-          </div>
+          <InputSection
+            label="Product Name"
+            name="productName"
+            value={formData.productName}
+            onChange={handleInputChange}
+            onBlur={handleBlur}
+            error={errors.productName}
+            placeholder="Enter product name"
+          />
           {/* Category & Brand */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-3">
-            <div>
-              <label
-                htmlFor="category"
-                className="block text-gray-400 text-sm font-bold mb-2"
-              >
-                Category <span className="text-red-500 ml-1">*</span>
-              </label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                aria-label="Category"
-              >
-                <option value="">Select Category</option>
-                {categories.map((category) => (
-                  <option key={category._id} value={category._id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-              {errors.category && (
-                <p className="text-red-500 text-xs mt-1">{errors.category}</p>
-              )}
-            </div>
-            <div>
-              <label
-                htmlFor="brand"
-                className="block text-gray-400 text-sm font-bold mb-2"
-              >
-                Brand <span className="text-red-500 ml-1">*</span>
-              </label>
-              <select
-                id="brand"
-                name="brand"
-                value={formData.brand}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                aria-label="Brand"
-              >
-                <option value="">Select Brand</option>
-                {brands.map((brand) => (
-                  <option key={brand._id} value={brand._id}>
-                    {brand.name}
-                  </option>
-                ))}
-              </select>
-              {errors.brand && (
-                <p className="text-red-500 text-xs mt-1">{errors.brand}</p>
-              )}
-            </div>
+            <SelectSection
+              label="Category"
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              options={categories}
+              error={errors.category}
+              placeholder="Select Category"
+            />
+            <SelectSection
+              label="Brand"
+              name="brand"
+              value={formData.brand}
+              onChange={handleInputChange}
+              options={brands}
+              error={errors.brand}
+              placeholder="Select Brand"
+            />
           </div>
           {/* Description */}
           <div className="mb-3">
@@ -569,264 +477,45 @@ const AddProduct = ({ onClose, refreshProducts }) => {
               className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               aria-label="Description"
             />
-
             {errors.description && (
               <p className="text-red-500 text-xs mt-1">{errors.description}</p>
             )}
           </div>
           {/* Image */}
-          <div className="mb-3">
-            <label className="block text-gray-400 text-sm font-bold mb-2">
-              Product Image <span className="text-red-500 ml-1">*</span>
-            </label>
-            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 bg-gray-700 rounded-md">
-              <div className="space-y-1 text-center">
-                {mainImage ? (
-                  <></>
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <FiUpload className="mx-auto h-9 w-9 text-gray-200" />
-                    <p className="text-gray-300">
-                      Upload a file or drag and drop
-                    </p>
-                  </div>
-                )}
-                <div className="grid grid-cols-3 gap-4">
-                  {/* List of images */}
-                  {images.map((image, index) => {
-                    // Check if the image object exists
-                    if (!image || !image.file) {
-                      return null; // Skip this image if it's invalid
-                    }
-
-                    // Get image size in MB for display (rounded to 2 decimal places)
-                    const imageSize = (image.file.size / 1048576).toFixed(2); // Size in MB
-
-                    return (
-                      <div className="">
-                        <div key={index} className="">
-                          <div className="relative">
-                            <img
-                              src={URL.createObjectURL(image.file)}
-                              alt="Thumbnail"
-                              className={`w-20 h-20 md:w-28 md:h-28 border border-gray-300 rounded-md cursor-pointer object-cover ${
-                                invalidImageIndexes.includes(index)
-                                  ? "border-red-500"
-                                  : ""
-                              }`}
-                              onClick={() => handleThumbnailClick(image)}
-                            />
-                            <button
-                              onClick={() => handleImageDelete(index)}
-                              className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                            >
-                              ×
-                            </button>
-                          </div>
-                          {/* Image size display next to the thumbnail in MB */}
-                          <span className="text-sm text-gray-500">
-                            {imageSize} MB{" "}
-                            {image.isLarge && (
-                              <span className="text-red-500">(Too large)</span>
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  multiple
-                  id="image"
-                  name="image"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="sr-only"
-                />
-                <label
-                  htmlFor="image"
-                  className="cursor-pointer inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Choose file
-                </label>
-              </div>
-            </div>
-
-            {errors.image && (
-              <p className="text-red-500 text-xs mt-1">{errors.image}</p>
-            )}
-          </div>
-          {/* Attribute */}
-          <div className="mb-3">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-100">Attribute</h3>
-              <button
-                type="button"
-                onClick={addAttribute}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-gray-800"
-              >
-                <FiPlus className="mr-2" /> Add Attribute
-              </button>
-            </div>
-            {formData.attributes.map((attribute, attributeIndex) => (
-              <div
-                key={attributeIndex}
-                className="mb-6 p-4 border border-gray-700 rounded-lg bg-gray-750"
-              >
-                <div className="flex gap-4 mb-4">
-                  <input
-                    type="text"
-                    placeholder="Attribute Name (e.g., Color)"
-                    value={attribute.name}
-                    disabled={attribute.values.length > 0}
-                    onChange={(e) => {
-                      const newAttributes = [...formData.attributes];
-                      newAttributes[attributeIndex].name = e.target.value;
-                      setFormData({ ...formData, attributes: newAttributes });
-                    }}
-                    className="w-48 md:flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-100 placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeAttribute(attributeIndex)}
-                    className="p-2 text-red-400 hover:text-red-300"
-                  >
-                    <FiTrash2 size={20} />
-                  </button>
-                </div>
-
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {attribute.values.map((value, valueIndex) => (
-                    <span
-                      key={valueIndex}
-                      className="inline-flex items-center px-3 py-1 bg-indigo-900 text-indigo-100 rounded-lg text-sm transition-all duration-200 hover:bg-indigo-800"
-                    >
-                      {value}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          removeValueFromAttribute(attributeIndex, valueIndex)
-                        }
-                        className="ml-2 text-indigo-300 hover:text-indigo-200 focus:outline-none"
-                      >
-                        <FiX size={14} />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Add new value"
-                    value={attributeInputValues[attributeIndex] || ""}
-                    onChange={(e) =>
-                      handleAttributeInputChange(attributeIndex, e.target.value)
-                    }
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        addValueToAttribute(attributeIndex);
-                      }
-                    }}
-                    className="w-44 md:flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-100 placeholder-gray-400"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => addValueToAttribute(attributeIndex)}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800"
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            ))}
-            {errors.attributes && (
-              <p className="text-red-500 text-xs mt-1">{errors.attributes}</p>
-            )}
-          </div>
-          {/* Variants */}
-          {formData.variants.length > 0 && (
-            <div className="mb-3">
-              <h3 className="text-lg font-medium mb-4 text-gray-100">
-                Variants
-              </h3>
-              <div className="space-y-4">
-                {formData.variants.map((variant, index) => (
-                  <div
-                    key={index}
-                    className="p-4 bg-gray-750 border border-gray-700 rounded-lg"
-                  >
-                    <div className="md:flex md:justify-between gap-3">
-                      <div className="max-md:mb-4 flex flex-wrap gap-2">
-                        {variant.attributeDetails.map((detail, detailIndex) => (
-                          <span
-                            key={detailIndex}
-                            className="inline-flex items-center px-3 py-1 bg-gray-700 text-gray-200 rounded-md text-sm"
-                          >
-                            <span className="font-medium text-indigo-400">
-                              {detail.name}:
-                            </span>
-                            <span className="ml-2">{detail.value}</span>
-                          </span>
-                        ))}
-                      </div>
-                      <div className="flex gap-4 items-center">
-                        <input
-                          type="number"
-                          placeholder="Price"
-                          value={variant.price}
-                          onChange={(e) => {
-                            const newVariants = [...formData.variants];
-                            newVariants[index].price = e.target.value;
-                            setFormData({ ...formData, variants: newVariants });
-                          }}
-                          className="w-20 px-2 md:w-28 md:px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-100 placeholder-gray-400 appearance-none"
-                        />
-                        <input
-                          type="number"
-                          placeholder="Quantity"
-                          value={variant.quantity}
-                          onChange={(e) => {
-                            const newVariants = [...formData.variants];
-                            newVariants[index].quantity = e.target.value;
-                            setFormData({ ...formData, variants: newVariants });
-                          }}
-                          className="w-20 px-2 md:w-28 md:px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-100 placeholder-gray-400"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeVariant(index)}
-                          className="p-2 text-red-400 hover:text-red-300 focus:outline-none ml-auto"
-                        >
-                          <FiTrash2 size={20} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {errors.variants && (
-                <p className="text-red-500 text-xs mt-1">{errors.variants}</p>
-              )}
-            </div>
-          )}
+          <ImageSection
+            images={images}
+            setImages={setImages}
+            invalidImageIndexes={invalidImageIndexes}
+            setInvalidImageIndexes={setInvalidImageIndexes}
+            errors={errors}
+            fileInputRef={fileInputRef}
+            handleImageDelete={handleImageDelete}
+            handleFileChange={handleFileChange}
+          />
+          {/* Attribute Section */}
+          <AttributeSection
+            formData={formData}
+            setFormData={setFormData}
+            errors={errors}
+            attributeInputValues={attributeInputValues}
+            setAttributeInputValues={setAttributeInputValues}
+            handleAttributeInputChange={handleAttributeInputChange}
+            addValueToAttribute={addValueToAttribute}
+            removeAttribute={removeAttribute}
+            removeValueFromAttribute={removeValueFromAttribute}
+            addAttribute={addAttribute}
+          />
+          {/* Variant Section */}
+          <VariantSection
+            formData={formData}
+            setFormData={setFormData}
+            errors={errors}
+            removeVariant={removeVariant}
+          />
           {/* Button */}
           <div className="flex justify-end">
-            <button
-              onClick={onClose}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded mr-2"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
+            <button onClick={onClose} className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded mr-2"> Cancel </button>
+            <button type="submit" disabled={isSubmitting} className="px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
               {isSubmitting ? "Saving..." : "Add Product"}
             </button>
           </div>

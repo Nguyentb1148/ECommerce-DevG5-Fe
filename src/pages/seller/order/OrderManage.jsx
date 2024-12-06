@@ -1,53 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { FaSearch } from "react-icons/fa";
 import { FiCheck, FiTruck, FiPackage, FiHome } from "react-icons/fi";
-import DataTable, { createTheme } from 'react-data-table-component';
 import OrderDetailsManage from '../../../components/orders/OrderDetailsManage';
-
-createTheme('dark', {
-  text: {
-    primary: '#e5e7eb',
-    secondary: '#9ca3af',
-  },
-  background: {
-    default: '#1f2937',
-  },
-  context: {
-    background: '#374151',
-    text: '#ffffff',
-  },
-  divider: {
-    default: '#4b5563',
-  },
-  action: {
-    button: '#4f46e5',
-    hover: 'rgba(255, 255, 255, 0.1)',
-    disabled: 'rgba(255, 255, 255, 0.3)',
-  },
-}, 'dark');
+import CustomDataTable from '../../../components/datatable/CustomDataTable';
 
 const OrderManage = () => {
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [scrollHeight, setScrollHeight] = useState("430px");
-
-  const updateScrollHeight = () => {
-    if (window.innerWidth < 768) {
-      setScrollHeight("400px");
-    } else if (window.innerWidth < 1024) {
-      setScrollHeight("440px");
-    } else if (window.innerWidth < 1280) {
-      setScrollHeight("460px");
-    } else {
-      setScrollHeight("650px");
-    }
-  };
-
-  useEffect(() => {
-    updateScrollHeight();
-    window.addEventListener("resize", updateScrollHeight);
-    return () => window.removeEventListener("resize", updateScrollHeight);
-  }, []);
 
   const columns = [
     {
@@ -310,17 +269,7 @@ const OrderManage = () => {
             />
           </div>
         </div>
-        <div className="overflow-hidden">
-          <DataTable
-            theme='dark'
-            columns={columns}
-            data={records}
-            fixedHeader
-            pagination
-            fixedHeaderScrollHeight={scrollHeight}
-            paginationPosition="bottom"
-          />
-        </div>
+        <CustomDataTable columns={columns} records={records} />
       </div>
       {/* Modal */}
       {isOrderDetailsOpen && (

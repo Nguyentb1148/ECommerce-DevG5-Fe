@@ -1,4 +1,5 @@
 import { FaCheckCircle } from "react-icons/fa";
+import { BsCartXFill } from "react-icons/bs";
 import Stepper from "../../components/stepper/Stepper";
 import CartItem from "../../components/cart/CartItem";
 import CartSummary from "../../components/cart/CartSummary";
@@ -137,9 +138,12 @@ const ShoppingCart = () => {
                       />
                     ))}
                     {items.length === 0 && (
-                      <div className="text-center py-8 text-gray-400 h-66v">
-                        Your cart is empty
-                      </div>
+                      <div className="flex flex-col justify-center items-center h-full text-center py-8 text-gray-400 ">
+                      <BsCartXFill size={100} />
+                      <h2 className="text-2xl py-2">
+                          Your cart is empty
+                      </h2>
+                  </div>
                     )}
                   </>
                 )}

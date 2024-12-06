@@ -11,6 +11,11 @@ export default {
       colors: {
         primary: '#F5385D',
       },
+      animation: {
+        BounceDelayOne: 'bounce 1s 0.2s infinite',
+        BounceDelayTwo: 'bounce 1s 0.4s infinite',
+        BounceDelayThree: 'bounce 1s 0.6s infinite',
+      },
       height: {
         "10v": "10vh",
         "20v": "20vh",
@@ -30,7 +35,7 @@ export default {
   },
   plugins: [
     require('flowbite/plugin')({
-        charts: true,
+      charts: true,
     }),
     require('@tailwindcss/typography')
   ],
