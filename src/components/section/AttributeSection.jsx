@@ -35,35 +35,35 @@ const AttributeSection = ({
             <div className="w-full p-4 border border-gray-700 rounded-lg">
               <div className="flex gap-4 mb-4">
                 <input
-                  type="text"
-                  placeholder="Attribute Name (e.g., Color)"
-                  value={attribute.name}
-                  disabled={attribute.values.length > 0}
-                  onChange={(e) => {
-                    const newAttributes = [...formData.attributes];
-                    newAttributes[attributeIndex].name = e.target.value;
-                    setFormData({ ...formData, attributes: newAttributes });
-                  }}
-                  className="w-48 md:flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-100 placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                    type="text"
+                    placeholder="Attribute Name (e.g., Color)"
+                    value={attribute.name || ""}
+                    onChange={(e) => {
+                      const newAttributes = [...formData.attributes];
+                      newAttributes[attributeIndex].name = e.target.value.trim();
+                      setFormData({...formData, attributes: newAttributes});
+                    }}
+                    className="w-48 md:flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-100 placeholder-gray-400"
                 />
+
                 <button
-                  type="button"
-                  onClick={() => removeAttribute(attributeIndex)}
-                  className="p-2 text-red-400 hover:text-red-300"
+                    type="button"
+                    onClick={() => removeAttribute(attributeIndex)}
+                    className="p-2 text-red-400 hover:text-red-300"
                 >
-                  <FiTrash2 size={20} />
+                  <FiTrash2 size={20}/>
                 </button>
               </div>
               <div className="flex flex-wrap gap-2 mb-3">
                 {attribute.values.map((value, valueIndex) => (
-                  <span
-                    key={valueIndex}
-                    className="inline-flex items-center px-3 py-1 bg-indigo-900 text-indigo-100 rounded-lg text-sm transition-all duration-200 hover:bg-indigo-800"
-                  >
+                    <span
+                        key={valueIndex}
+                        className="inline-flex items-center px-3 py-1 bg-indigo-900 text-indigo-100 rounded-lg text-sm transition-all duration-200 hover:bg-indigo-800"
+                    >
                     {value}
-                    <button
-                      type="button"
-                      onClick={() =>
+                      <button
+                          type="button"
+                          onClick={() =>
                         removeValueFromAttribute(attributeIndex, valueIndex)
                       }
                       className="ml-2 text-indigo-300 hover:text-indigo-200 focus:outline-none"

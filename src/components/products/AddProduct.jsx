@@ -5,7 +5,7 @@ import { getBrands } from "../../services/api/BrandsApi";
 import { createProduct } from "../../services/api/ProductApi";
 import { uploadImage } from "../../configs/Cloudinary";
 import { toast } from "react-toastify";
-import RichTextEditor from "./RichTextEditor";
+import RichTextEditor from "../section/RichTextEditor.jsx";
 import AttributeSection from "../section/AttributeSection";
 import VariantSection from "../section/VariantSection";
 import InputSection from "../section/InputSection";
@@ -516,7 +516,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
           <div className="flex justify-end">
             <button onClick={onClose} className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded mr-2"> Cancel </button>
             <button type="submit" disabled={isSubmitting} className="px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              {isSubmitting ? "Saving..." : "Add Product"}
+              {isSubmitting ? "Updating..." : "Update Product"}
             </button>
           </div>
         </form>
