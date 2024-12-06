@@ -157,11 +157,11 @@ const AuthForm = () => {
 
   const handleLoginSuccess = async (response) => {
     const decoded = jwtDecode(response.credential);
-    const { email } = decoded;
+    const { email, picture, name } = decoded;
 
     try {
       // Attempt login or registration via Google
-      const res = await googleSignIn(email);
+      const res = await googleSignIn(email, name, picture);
 
       const decodedToken = jwtDecode(res.token.accessToken);
       localStorage.setItem("user", JSON.stringify(decoded));

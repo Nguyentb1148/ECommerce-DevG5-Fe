@@ -68,9 +68,13 @@ const resetPassword = async (token, password) => {
   }
 };
 
-const googleSignIn = async (email) => {
+const googleSignIn = async (email, name, picture) => {
   try {
-    const response = await authApi.post("/auth/signin-with-google", { email });
+    const response = await authApi.post("/auth/signin-with-google", {
+      email,
+      name,
+      picture,
+    });
     // If the login is successful, return the response data (which should contain the token)
     return response.data;
   } catch (err) {

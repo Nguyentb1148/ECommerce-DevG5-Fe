@@ -9,7 +9,6 @@ import {
 import { toast, ToastContainer } from "react-toastify";
 import CustomDataTable from "../../../components/datatable/CustomDataTable";
 
-
 const ProductManage = () => {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
   const [isEditProductOpen, setIsEditProductOpen] = useState(false);
@@ -30,7 +29,6 @@ const ProductManage = () => {
       setLoading(false);
     }
   };
-
 
   useEffect(() => {
     fetchProducts();
@@ -121,9 +119,7 @@ const ProductManage = () => {
   };
 
   if (loading) {
-    return (
-      <></>
-    );
+    return <></>;
   }
 
   return (
