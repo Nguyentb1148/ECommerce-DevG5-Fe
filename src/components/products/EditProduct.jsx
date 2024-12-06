@@ -3,7 +3,7 @@ import { FaX } from "react-icons/fa6";
 import { getProductById } from "../../services/api/ProductApi.jsx";
 import { getCategories } from "../../services/api/CategoryApi";
 import { getBrands } from "../../services/api/BrandsApi";
-import { uploadImage } from "../../configs/Cloudinary";
+import {handleImageUpload, uploadImage} from "../../configs/Cloudinary";
 import { toast } from "react-toastify";
 import RichTextEditor from "../section/RichTextEditor.jsx";
 import AttributeSection from "../section/AttributeSection";
@@ -47,6 +47,17 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
   const prevCategoryRef = useRef(formData.category);  // Ref for category
   const prevBrandRef = useRef(formData.brand);        // Ref for brand
 
+  useEffect(() => {
+    const loadData = async () => {
+      const categoriesData = await getCategories();
+      const brandsData = await getBrands();
+      setCategories(categoriesData);
+      setBrands(brandsData);
+      await fetchData();
+    };
+    loadData();
+  }, [productId]);
+
   const fetchData = async () => {
     try {
       const productData = await getProductById(productId);
@@ -63,16 +74,40 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
         })),
       }));
 
+      // Fetch images from imageUrls array and convert to Blobs
+      const imageBlobs = await Promise.all(
+          productData.imageUrls.map(async (imageUrl) => {
+            try {
+              const response = await fetch(imageUrl, {
+                method: "GET",
+                cache: "force-cache",  // This forces the browser to fetch from the cache
+              });
+
+              if (response.ok) {
+                const imageBlob = await response.blob();
+                return URL.createObjectURL(imageBlob); // Convert blob to URL and return it
+              } else {
+                throw new Error("Image not found or cached");
+              }
+            } catch (err) {
+              console.error("Error fetching image from cache or the image is deleted.", err);
+              return null; // Return null if image fetch fails
+            }
+          })
+      );
+
+      // Set the fetched image URLs into the state (filter out null values)
+      setImages(imageBlobs.filter((url) => url !== null));
+      // Set other form data
       setFormData({
         ...formData,
         productName: productData.name,
-        description:productData.description,
+        description: productData.description,
         category: productData.categoryId._id, // Set category from product data
         brand: productData.brandId._id, // Set brand from product data
         attributes: attributeData, // Add the attributes into the form data
-        variants: variantsData
+        variants: variantsData,
       });
-      setImages(productData.imageUrls || []);
 
     } catch (error) {
       console.error("Error fetching product data:", error);
@@ -105,24 +140,8 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
       }
     });
 
-    console.log("Attributes with name and values:", attributeData);
     return attributeData;
   };
-
-
-
-
-  useEffect(() => {
-    const loadData = async () => {
-      const categoriesData = await getCategories();
-      const brandsData = await getBrands();
-      setCategories(categoriesData);
-      setBrands(brandsData);
-      await fetchData();
-    };
-    loadData();
-  }, [productId]);
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -171,7 +190,6 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
       [name]: fieldError,
     }));
   };
-
   // addVariant function to add new attribute at the beginning
   const addAttribute = () => {
     setFormData({
@@ -266,28 +284,29 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
 
     selectedFiles.forEach((file) => {
       if (file.size > 2 * 1024 * 1024) {
-        invalidIndexes.push(newImages.length);
+        // Flag image as too large, but still add it to the newImages list
         newImages.push({ file, name: file.name, isLarge: true });
+        invalidIndexes.push(newImages.length - 1); // Store the index of the large image
       } else {
+        // Add valid images normally
         newImages.push({ file, name: file.name, isLarge: false });
       }
     });
 
+    // Ensure total number of images does not exceed the limit (6 in this case)
     if (newImages.length + images.length > 6) {
       toast.warning("You can only upload a maximum of 6 images.");
       return;
     }
 
+    // Update images state with all images, including large ones
     setImages((prevImages) => {
       const updatedImages = [...prevImages, ...newImages];
-      return updatedImages.filter((_, index) => !invalidIndexes.includes(index));
+      return updatedImages; // Don't filter out large images
     });
 
-    if (invalidIndexes.length > 0) {
-      setInvalidImageIndexes(invalidIndexes);
-    } else {
-      setInvalidImageIndexes([]);
-    }
+    // Set invalid image indexes for large images, for UI display
+    setInvalidImageIndexes(invalidIndexes);
   };
 
   const validateField = (name, value) => {
@@ -327,7 +346,7 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
       // Upload images
       const imageUploadPromises = images.map((image) => {
         const imageId = Math.random().toString(36).substring(2, 8);
-        return uploadImage(image.file, formData.productName, imageId).then(
+        return handleImageUpload(image.file, formData.productName, imageId).then(
             (uploadedImageUrl) => uploadedImageUrl.url
         );
       });

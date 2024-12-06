@@ -5,7 +5,7 @@ import "froala-editor/js/plugins.pkgd.min.js";
 import { useEffect, forwardRef, useImperativeHandle, useState } from "react";
 import mammoth from "mammoth/mammoth.browser";
 import HTMLtoDOCX from "html-to-docx-lite";
-import { uploadDoc } from "../../configs/Cloudinary.jsx";
+import {handleDocxUpload} from "../../configs/Cloudinary.jsx";
 
 const RichTextEditor = forwardRef(({ docxUrl, fileName, onDescriptionUrlChange }, ref) => {
     const [html, setHtml] = useState(""); // Editor content
@@ -70,7 +70,7 @@ const RichTextEditor = forwardRef(({ docxUrl, fileName, onDescriptionUrlChange }
                 return;
             }
 
-            const response = await uploadDoc(docxFile, "document", fileName || "default_folder");
+            const response = await handleDocxUpload(docxFile, "document", fileName || "default_folder");
 
             // If a callback is provided, use it
             if (callback) {

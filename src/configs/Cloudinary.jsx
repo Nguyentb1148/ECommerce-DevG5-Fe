@@ -194,12 +194,12 @@ export const deleteDocx = async (folderName, publicId) => {
   }
 };
 // Upload DOC file to Cloudinary (if needed)
-export const uploadDoc = async (docFile, folderName, categoryName) => {
+export const uploadDoc = async (docFile, folderName, publicId) => {
   const formData = new FormData();
   formData.append("file", docFile); // Append the DOC file
   formData.append("upload_preset", UPLOAD_PRESET);
   formData.append("folder", folderName); // Specify the folder
-  formData.append("public_id", categoryName); // Set the public_id to categoryName
+  formData.append("public_id", publicId); // Set the public_id to categoryName
   formData.append("resource_type", "raw"); // Specify that it's a raw file (DOCX)
 
   // Use the raw upload endpoint for non-image files (like DOCX)
