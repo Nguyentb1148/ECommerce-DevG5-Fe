@@ -1,9 +1,9 @@
 import  { useEffect, useState, useRef } from "react";
 import { FaX } from "react-icons/fa6";
-import { getProductById } from "../../services/api/ProductApi.jsx";
+import {getProductById, updateProduct} from "../../services/api/ProductApi.jsx";
 import { getCategories } from "../../services/api/CategoryApi";
 import { getBrands } from "../../services/api/BrandsApi";
-import {handleImageUpload, uploadImage} from "../../configs/Cloudinary";
+import {handleImageUpload} from "../../configs/Cloudinary";
 import { toast } from "react-toastify";
 import RichTextEditor from "../section/RichTextEditor.jsx";
 import AttributeSection from "../section/AttributeSection";
@@ -46,6 +46,27 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
   const prevNameRef = useRef(formData.productName); // Ref to track previous name
   const prevCategoryRef = useRef(formData.category);  // Ref for category
   const prevBrandRef = useRef(formData.brand);        // Ref for brand
+
+
+  //alert attribute
+  const [showAttributes, setShowAttributes] = useState(false); // State for controlling visibility of attributes
+
+  const handleShowAttributes = () => {
+    if (showAttributes) {
+      // Hide attribute section
+      setShowAttributes(false);
+    } else {
+      // Show attribute section with confirmation
+      const userConfirmed = window.confirm(
+          "If you change the attributes, all the prices and quantities of the variants will be removed. Do you want to continue?"
+      );
+
+      if (userConfirmed) {
+        setShowAttributes(true); // Show the attributes section if user confirms
+      }
+    }
+  };
+
 
   useEffect(() => {
     const loadData = async () => {
@@ -345,10 +366,17 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
     try {
       // Upload images
       const imageUploadPromises = images.map((image) => {
-        const imageId = Math.random().toString(36).substring(2, 8);
-        return handleImageUpload(image.file, formData.productName, imageId).then(
-            (uploadedImageUrl) => uploadedImageUrl.url
-        );
+        // Check if the image is an object (file object) or a URL (string)
+        if (typeof image === 'object' && image.file) {
+          const imageId = Math.random().toString(36).substring(2, 8);
+          // Upload file using handleImageUpload
+          return handleImageUpload(image.file, formData.productName, imageId).then(
+              (uploadedImageUrl) => uploadedImageUrl.url
+          );
+        } else {
+          // It's a URL, so no need to upload it
+          return Promise.resolve(image); // Just resolve the URL as is
+        }
       });
 
       const uploadedImageUrls = await Promise.all(imageUploadPromises);
@@ -388,9 +416,9 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
 
       console.log("data before send", productData);
 
-      // Call API to update the product
-      // await createProduct(productData);
-      console.log("data after send", productData);
+      //Call API to update the product
+      const response= await updateProduct(productId,productData);
+      console.log("data after send", response);
 
       refreshProducts();
       toast.success("Product saved successfully");
@@ -509,19 +537,33 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
                 handleImageDelete={handleImageDelete}
                 handleFileChange={handleFileChange}
             />
+
+            {/* Button to Show Attribute Section */}
+            <div className="mb-4 text-center">
+              <button
+                  type="button"
+                  className="text-blue-600 hover:text-blue-800"
+                  onClick={handleShowAttributes}
+              >
+                {showAttributes ? "Hide Attribute" : "Show Attribute"}
+              </button>
+            </div>
+
             {/* Attributes Section */}
-            <AttributeSection
-                formData={formData}
-                setFormData={setFormData}
-                errors={errors}
-                attributeInputValues={attributeInputValues}
-                setAttributeInputValues={setAttributeInputValues}
-                handleAttributeInputChange={handleAttributeInputChange}
-                addValueToAttribute={addValueToAttribute}
-                removeAttribute={removeAttribute}
-                removeValueFromAttribute={removeValueFromAttribute}
-                addAttribute={addAttribute}
-            />
+            {showAttributes && (
+                <AttributeSection
+                    formData={formData}
+                    setFormData={setFormData}
+                    errors={errors}
+                    attributeInputValues={attributeInputValues}
+                    setAttributeInputValues={setAttributeInputValues}
+                    handleAttributeInputChange={handleAttributeInputChange}
+                    addValueToAttribute={addValueToAttribute}
+                    removeAttribute={removeAttribute}
+                    removeValueFromAttribute={removeValueFromAttribute}
+                    addAttribute={addAttribute}
+                />
+            )}
             {/* Variants Section */}
             <VariantSection
                 formData={formData}
