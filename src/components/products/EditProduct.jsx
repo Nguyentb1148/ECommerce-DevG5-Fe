@@ -42,6 +42,11 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
   const [attributeInputValues, setAttributeInputValues] = useState([]);
   const [invalidImageIndexes, setInvalidImageIndexes] = useState([]);
 
+  //check value was change or not
+  const prevNameRef = useRef(formData.productName); // Ref to track previous name
+  const prevCategoryRef = useRef(formData.category);  // Ref for category
+  const prevBrandRef = useRef(formData.brand);        // Ref for brand
+
   const fetchData = async () => {
     try {
       const productData = await getProductById(productId);
@@ -68,8 +73,6 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
         variants: variantsData
       });
       setImages(productData.imageUrls || []);
-
-      getAttributesFromVariants(productData.variants);
 
     } catch (error) {
       console.error("Error fetching product data:", error);
@@ -123,6 +126,27 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === "productName" && prevNameRef.current !== value) {
+      console.log(`Product Name Changed:`);
+      console.log(`Old Name: ${prevNameRef.current}`);
+      console.log(`New Name: ${value}`);
+      prevNameRef.current = value; // Update the previous value
+    }
+    // Check for category change
+    if (name === "category" && prevCategoryRef.current !== value) {
+      console.log(`Category Changed:`);
+      console.log(`Old Category: ${prevCategoryRef.current}`);
+      console.log(`New Category: ${value}`);
+      prevCategoryRef.current = value; // Update the previous category value
+    }
+
+    // Check for brand change
+    if (name === "brand" && prevBrandRef.current !== value) {
+      console.log(`Brand Changed:`);
+      console.log(`Old Brand: ${prevBrandRef.current}`);
+      console.log(`New Brand: ${value}`);
+      prevBrandRef.current = value; // Update the previous brand value
+    }
     setFormData({ ...formData, [name]: value });
 
     const fieldError = validateField(name, value);
