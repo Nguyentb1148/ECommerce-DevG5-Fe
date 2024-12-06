@@ -6,7 +6,7 @@ import { ToastContainer } from "react-toastify";
 const ListProduct = () => {
   const navigate = useNavigate();
   const [productsData, setProductsData] = useState([]);
-  console.log("current products: ", productsData);
+  // console.log("current products: ", productsData);
   const [hasMore, setHasMore] = useState(true);
   const itemsPerPage = 8;
 
