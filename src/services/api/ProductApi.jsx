@@ -20,9 +20,9 @@ export const createProduct = async (productData) => {
 };
 
 // Get all products
-export const getProducts = async () => {
+export const getProducts = async (skip, limit) => {
   try {
-    const response = await authApi.get("/products");
+    const response = await authApi.get(`/products?skip=${skip}&limit=${limit}`);
     return response.data;
   } catch (err) {
     if (err.response) {
