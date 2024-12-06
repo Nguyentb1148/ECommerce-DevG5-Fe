@@ -25,6 +25,7 @@ const UpdateProfile = () => {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
         if (user) {
+          console.log("USER ID", user.id);
           const response = await userData(user.id || user._id); // Use user._id if user.id is undefined
           console.log(response.data);
           setProfileData({
@@ -100,12 +101,14 @@ const UpdateProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
+    console.log("processing...");
     setLoading(true); // Disable the button when starting the request
 
     try {

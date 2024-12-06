@@ -75,7 +75,7 @@ export const getProductById = async (id) => {
 // Update a product
 export const updateProduct = async (id, productData) => {
   try {
-    const response = await authApi.put(`/products/${id}`, productData);
+    const response = await authApi.patch(`/products/${id}`, productData);
     return response.data;
   } catch (err) {
     if (err.response) {
