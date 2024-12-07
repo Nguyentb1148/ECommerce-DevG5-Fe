@@ -24,6 +24,7 @@ const ShoppingCart = () => {
   const [items, setItems] = useState([]);
   const [appliedVoucher, setAppliedVoucher] = useState(null);
   const [variants, setVariants] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     console.log("current step: ", currentStep);
   }, [currentStep]);
@@ -32,6 +33,7 @@ const ShoppingCart = () => {
     // Fetch the cart items on component mount
     const fetchCart = async () => {
       try {
+        setIsLoading(true);
         const response = await GetCarts();
         setItems(response.items);
 
@@ -44,11 +46,20 @@ const ShoppingCart = () => {
         setVariants(variantDetails);
       } catch (error) {
         console.error("Error fetching cart data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchCart();
   }, []);
+
+  const handleCheckout = () => {
+    // Only allow checkout if variants are loaded and cart is not empty
+    if (!isLoading && items.length > 0) {
+      setCurrentStep(1);
+    }
+  };
 
   const handleUpdateQuantity = async (id, newQuantity) => {
     if (newQuantity < 1) return;
@@ -139,11 +150,9 @@ const ShoppingCart = () => {
                     ))}
                     {items.length === 0 && (
                       <div className="flex flex-col justify-center items-center h-full text-center py-8 text-gray-400 ">
-                      <BsCartXFill size={100} />
-                      <h2 className="text-2xl py-2">
-                          Your cart is empty
-                      </h2>
-                  </div>
+                        <BsCartXFill size={100} />
+                        <h2 className="text-2xl py-2">Your cart is empty</h2>
+                      </div>
                     )}
                   </>
                 )}
@@ -164,10 +173,15 @@ const ShoppingCart = () => {
                       discountPercentage={appliedVoucher?.discountPercentage}
                     />
                     <button
-                      onClick={() => setCurrentStep(1)}
-                      className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      onClick={handleCheckout}
+                      disabled={isLoading || items.length === 0}
+                      className={`w-full py-3 rounded-lg focus:outline-none focus:ring-2 ${
+                        isLoading || items.length === 0
+                          ? "bg-gray-500 text-gray-300 cursor-not-allowed"
+                          : "bg-blue-600 text-white hover:bg-blue-500 focus:ring-blue-500"
+                      }`}
                     >
-                      Checkout
+                      {isLoading ? "Loading..." : "Checkout"}
                     </button>
                     <button
                       onClick={handleClearCart}

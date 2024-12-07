@@ -1,25 +1,42 @@
 const CartSummary = ({
   currentStep,
   items,
-  variants,
+  variants = {},
   discount,
   discountPercentage,
 }) => {
+  // Defensive programming: check if items is empty
+  if (!items || items.length === 0) {
+    return (
+      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-bold text-white mb-2">Order Summary</h2>
+        <p className="text-gray-400">No items in cart</p>
+      </div>
+    );
+  }
   // Calculate Subtotal
   const subtotal = items.reduce((acc, item) => {
-    const variant = variants[item.variantId];
-    console.log(variants[item.variantId]);
-    const itemPrice = variant ? variant.price : item.product.price; // Ensure variant exists
-    const totalItemPrice = itemPrice * item.count; // Price for this item
-    return acc + totalItemPrice;
+    try {
+      // Comprehensive price determination
+      const itemPrice =
+        variants[item.variantId]?.price || // Try variant price first
+        item.product?.price || // Then try product price
+        0; // Fallback to 0 if no price found
+
+      const totalItemPrice = itemPrice * (item.count || 1);
+      return acc + totalItemPrice;
+    } catch (error) {
+      console.error("Error calculating subtotal for item:", item, error);
+      return acc;
+    }
   }, 0);
 
   // Calculate Discount
   let totalDiscount = 0;
   if (discount) {
-    totalDiscount = discount; // If discount is a fixed amount
+    totalDiscount = discount;
   } else if (discountPercentage) {
-    totalDiscount = (subtotal * discountPercentage) / 100; // If discount is a percentage
+    totalDiscount = (subtotal * discountPercentage) / 100;
   }
 
   // Apply Tax (e.g., 10%)
@@ -39,15 +56,26 @@ const CartSummary = ({
           {items.map((item) => {
             const variant = variants[item.variantId];
             console.log("------------->", variant);
-            const itemPrice = variant ? variant.price : item.product.price; // Ensure variant exists
-            const totalItemPrice = itemPrice * item.count; // Price for this item
+            const itemPrice =
+              variants[item.variantId]?.price || item.product?.price || 0;
+            const totalItemPrice = itemPrice * (item.count || 1);
             return (
-              <div key={item.id} className="flex justify-between text-gray-400">
+              <div
+                key={item._id}
+                className="flex justify-between text-gray-400"
+              >
                 <div>
-                  <p className="font-medium">{item.product.name}</p>
-                  <p className="text-sm">Quantity: {item.count}</p>
+                  <p className="font-medium">
+                    {item.product?.name || "Unknown Product"}
+                  </p>
+                  <p className="text-sm">Quantity: {item.count || 0}</p>
                 </div>
-                <span>{totalItemPrice} VND</span>
+                <span>
+                  {new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(totalItemPrice)}
+                </span>
               </div>
             );
           })}
