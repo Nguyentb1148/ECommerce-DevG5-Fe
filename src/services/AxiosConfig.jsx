@@ -4,7 +4,10 @@ import Cookies from "js-cookie"; // To get refresh token from cookies
 // main server
 // const baseLink = "https://project-2-back-end.onrender.com/api";
 //backup server
-const baseLink = "https://dev-g5.vercel.app/api";
+// const baseLink = "https://dev-g5.vercel.app/api";
+// local server
+const baseLink = "http://localhost:3000/api";
+
 // Create an Axios instance
 const authApi = axios.create({
   baseURL: baseLink,

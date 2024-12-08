@@ -1,30 +1,33 @@
 import { FaCheckCircle } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import { BsCartXFill } from "react-icons/bs";
+import { Link, useNavigate } from "react-router-dom";
 import Stepper from "../../components/stepper/Stepper";
 import CartItem from "../../components/cart/CartItem";
 import CartSummary from "../../components/cart/CartSummary";
 import VoucherApply from "../../components/voucher/VoucherApply";
 import Navbar from "../../components/navbar/Navbar";
 import ConfirmInfoPayment from "../../components/payment/ConfirmInfoPayment";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
 import {
   ClearCart,
   GetCarts,
   RemoveFromCart,
   UpdateCart,
 } from "../../services/api/CartApi";
+import paymentApi from "../../services/api/PaymentApi";
 import BackToTop from "../../components/backToTop/BackToTop";
-import authApi from "../../services/AxiosConfig";
 import { fetchVariantDetails } from "../../services/api/ProductApi";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const ShoppingCart = () => {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0); // Stepper state (0 = Cart, 1 = Address, 2 = Payment Success)
   const [items, setItems] = useState([]);
   const [appliedVoucher, setAppliedVoucher] = useState(null);
   const [variants, setVariants] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [deliveryAddress, setDeliveryAddress] = useState("Russia");
+  const navigate = useNavigate();
+
   useEffect(() => {
     console.log("current step: ", currentStep);
   }, [currentStep]);
@@ -105,6 +108,35 @@ const ShoppingCart = () => {
     setAppliedVoucher(null);
   };
 
+  const handleConfirmPayment = async (selectedPayment) => {
+    if (!deliveryAddress) {
+      console.log("delivery address...", deliveryAddress);
+      toast.error("Please enter a delivery address.");
+      return;
+    }
+
+    if (isLoading || items.length === 0) {
+      toast.error("Your cart is empty.");
+      return;
+    }
+
+    try {
+      let response;
+      if (selectedPayment === "stripe") {
+        response = await paymentApi.createStripeSession({ deliveryAddress });
+      } else if (selectedPayment === "vnpay") {
+        response = await paymentApi.createVNPaySession({ deliveryAddress });
+      }
+
+      if (response?.url) {
+        window.location.href = response.url;
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+      toast.error("Failed to initiate payment. Please try again.");
+    }
+  };
+
   return (
     <>
       <div className="w-full h-screen">
@@ -156,7 +188,13 @@ const ShoppingCart = () => {
                     )}
                   </>
                 )}
-                {currentStep === 1 && <ConfirmInfoPayment />}
+                {currentStep === 1 && (
+                  <ConfirmInfoPayment
+                    deliveryAddress={deliveryAddress}
+                    setDeliveryAddress={setDeliveryAddress}
+                    handleConfirmPayment={handleConfirmPayment}
+                  />
+                )}
               </div>
               <div className="space-y-6">
                 {currentStep === 0 && (
@@ -200,7 +238,7 @@ const ShoppingCart = () => {
                       currentStep={currentStep}
                     />
                     <button
-                      onClick={() => setCurrentStep(2)}
+                      onClick={handleConfirmPayment}
                       className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       Confirm Payment
