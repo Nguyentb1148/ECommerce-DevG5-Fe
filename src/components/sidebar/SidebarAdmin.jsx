@@ -4,9 +4,10 @@ import { MdOutlineHome, MdLogout } from "react-icons/md";
 import { PiUserListBold } from "react-icons/pi";
 import { BiCategory } from "react-icons/bi";
 import { SiBrandfolder } from "react-icons/si";
+import { AiOutlineShoppingCart } from "react-icons/ai"; // Import the product management icon
 import { useNavigate } from "react-router-dom";
 import Image from "../../assets/robot-assistant.png";
-import Cookies from "js-cookie"; //
+import Cookies from "js-cookie";
 import authApi from "../../services/AxiosConfig";
 
 const SidebarAdmin = () => {
@@ -19,6 +20,7 @@ const SidebarAdmin = () => {
     { name: "Category", icon: <BiCategory size={25} />, path: "category" },
     { name: "Brand", icon: <SiBrandfolder size={25} />, path: "brand" },
     { name: "User", icon: <PiUserListBold size={25} />, path: "user" },
+    { name: "Product Management", icon: <AiOutlineShoppingCart size={25} />, path: "product-management" }, // New menu item
     { name: "Logout", icon: <MdLogout size={25} />, path: "logout" },
   ];
 
@@ -44,7 +46,7 @@ const SidebarAdmin = () => {
       Cookies.remove("refreshToken"); // Remove refresh token if stored in cookies
 
       // Redirect the user to the login page
-      window.location.href = "/authentication"; // Adjust to wherever you want to send the user
+      window.location.href = "/login"; // Adjust to wherever you want to send the user
     } catch (error) {
       console.error("Logout failed", error);
       window.location.href = "/login"; // If an error occurs, redirect to login

@@ -20,6 +20,7 @@ import ShoppingCart from "./pages/cart/ShoppingCart.jsx";
 import Seller from "./pages/seller/home/Seller.jsx";
 import ProductManage from "./pages/seller/product/ProductManage.jsx";
 import AuthForm from "./pages/Auth/AuthForm.jsx";
+import ProductManagement from "./pages/admin/product/ProductManage.jsx"; // Import the new ProductManagement page
 
 function App() {
   React.useEffect(() => {
@@ -36,7 +37,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="*" element={<PageNotFound />} />
-        <Route path="/user/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/productFilter" element={<FilterProduct />} />
         <Route path="/shoppingCart" element={<ShoppingCart />} />
         <Route path="/productDetail/:id" element={<ProductDetail />} />
@@ -52,6 +53,7 @@ function App() {
           <Route path="category" element={<CategoryManage />} />
           <Route path="brand" element={<BrandManage />} />
           <Route path="user" element={<UserManage />} />
+          <Route path="product-management" element={<ProductManagement />} /> {/* Add the new route */}
         </Route>
       </Routes>
     </BrowserRouter>
