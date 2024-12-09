@@ -144,3 +144,53 @@ export const fetchVariantDetails = async (variantId) => {
     throw err;
   }
 };
+// Approve product
+export const ApproveProduct = async (productId) => {
+  try {
+    const response = await authApi.put(`/products/${productId}/approve`);
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      const errorMessage = err.response.data.error || "Something went wrong!";
+      toast.error(errorMessage);
+    } else {
+      toast.error("Network error, please try again later.");
+    }
+    throw err;
+  }
+};
+// Reject product
+export const RejectProduct = async (productId, feedback) => {
+  try {
+    const response = await authApi.post(`/products/${productId}/reject`, { feedback });
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      const errorMessage = err.response.data.error || "Something went wrong!";
+      toast.error(errorMessage);
+    } else {
+      toast.error("Network error, please try again later.");
+    }
+    throw err;
+  }
+};
+// Update request status (approve or reject)
+export const UpdateRequest = async (id, result, feedback) => {
+  try {
+    console.log("Sending update request:", { id, result, feedback }); // Log the request data
+    const response = await authApi.put(`/requests/${id}`, { result, feedback });
+    console.log("Update request response:", response.data); // Log the response data
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      const errorMessage = err.response.data.error || 'Something went wrong!';
+      console.error("Error response:", err.response.data); // Log the error response
+      toast.error(errorMessage);
+    } else {
+      console.error("Network error:", err.message); // Log the network error
+      toast.error('Network error, please try again later.');
+    }
+    throw err;
+  }
+};
+

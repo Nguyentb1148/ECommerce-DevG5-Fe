@@ -22,6 +22,9 @@ import ProductManage from "./pages/seller/product/ProductManage.jsx";
 import AuthForm from "./pages/Auth/AuthForm.jsx";
 import PaymentSuccess from "./pages/cart/PaymentSuccess.jsx";
 import VnPayPaymentSuccess from "./pages/cart/VnPayPaymentSuccess.jsx";
+import ProductRequestManage from "./pages/admin/product/ProductRequestManage.jsx";
+import ListProductManage from "./pages/admin/product/ListProductManage.jsx";
+import UserRequestManage from "./pages/admin/user/UserRequestManage.jsx";
 
 function App() {
   React.useEffect(() => {
@@ -59,6 +62,9 @@ function App() {
           <Route path="category" element={<CategoryManage />} />
           <Route path="brand" element={<BrandManage />} />
           <Route path="user" element={<UserManage />} />
+          <Route path="listProductManage" element={<ListProductManage />} />
+          <Route path="productRequest" element={<ProductRequestManage />} />
+          <Route path="userRequest" element={<UserRequestManage />} />
         </Route>
       </Routes>
     </BrowserRouter>

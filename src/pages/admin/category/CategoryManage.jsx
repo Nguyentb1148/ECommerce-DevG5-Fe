@@ -179,7 +179,7 @@ const CategoryManage = () => {
         ) : errorMessage ? (
           <div className="text-center text-red-500 p-4">{errorMessage}</div>
         ) : (
-          <CustomDataTable columns={columns} records={records} />
+          <CustomDataTable columns={columns} records={categories} />
         )}
       </div>
       {/* Modals */}

@@ -119,7 +119,7 @@ const UserManage = () => {
         User Management
       </h1>
       <div className="md:w-[650px] lg:w-[850px] xl:w-[90%] mx-auto rounded-md shadow-md">
-        <CustomDataTable columns={columns} records={records} />
+        <CustomDataTable columns={columns} records={users} />
       </div>
 
       {/* Modal for Details */}
