@@ -62,8 +62,7 @@ const ProductReviews = ({ productId }) => {
             >
               <div className="flex items-start space-x-4">
                 <img
-                  src="https://via.placeholder.com/150" // Use a placeholder image since no user image URL is provided
-                  alt={review.userId.fullName}
+                  src={review.userId.imageUrl} // Use a placeholder image since no user image URL is provided
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div className="flex-1">
