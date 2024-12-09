@@ -19,10 +19,11 @@ export const createProduct = async (productData) => {
   }
 };
 
+
 // Get all products
-export const getProducts = async (skip, limit) => {
+export const getProducts = async () => {
   try {
-    const response = await authApi.get(`/products?skip=${skip}&limit=${limit}`);
+    const response = await authApi.get("/products");
     return response.data;
   } catch (err) {
     if (err.response) {
@@ -36,6 +37,27 @@ export const getProducts = async (skip, limit) => {
     throw err; // Propagate error for further handling if necessary
   }
 };
+
+// Get all products by chunk
+export const getProductsByChunk = async (skip, limit) => {
+  try {
+    const response = await authApi.get(`/productsbychunks?skip=${skip}&limit=${limit}`);
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      // Server responded with an error
+      const errorMessage = err.response.data.error || "Something went wrong!";
+      toast.error(errorMessage); // Show error message using toast
+    } else {
+      // Network or other errors
+      toast.error("Network error, please try again later.");
+    }
+    throw err; // Propagate error for further handling if necessary
+  }
+};
+
+
+
 // Get all products by sellerId
 export const getProductsByUserId = async (userId) => {
   try {

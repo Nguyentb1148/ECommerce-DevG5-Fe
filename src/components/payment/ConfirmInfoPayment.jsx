@@ -19,7 +19,7 @@ const ConfirmInfoPayment = (
     cvv: "",
   });
   const [errors, setErrors] = useState({});
-  const city = ["Đà Nẵng"];
+  const city = ["Đà Nẵng", "Hue", "Ha Noi", "Ho Chi Minh"];
   const district = ["Thanh Khê"];
   const ward = [
     "An Khê",
@@ -43,7 +43,7 @@ const ConfirmInfoPayment = (
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.cỉty) newErrors.city = "City is required";
+    if (!formData.city) newErrors.city = "City is required";
     if (!formData.district) newErrors.district = "District is required";
     if (!formData.ward) newErrors.ward = "Ward is required";
     if (!formData.address) newErrors.address = "Address is required";
@@ -57,7 +57,11 @@ const ConfirmInfoPayment = (
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      handleConfirmPayment(selectedPayment);
+      if (typeof handleConfirmPayment === "function") {
+        handleConfirmPayment(selectedPayment);
+      } else {
+        console.error("handleConfirmPayment is not a function");
+      }
     }
   };
 

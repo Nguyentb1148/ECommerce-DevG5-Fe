@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useNavigate } from "react-router-dom";
-import { getProducts } from "../../services/api/ProductApi"; // Adjust the import according to your project structure
+import { getProductsByChunk } from "../../services/api/ProductApi"; // Adjust the import according to your project structure
 import { ToastContainer } from "react-toastify";
 const ListProduct = () => {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ const ListProduct = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const productData = await getProducts(0, itemsPerPage); // Initial fetch with skip=0
+      const productData = await getProductsByChunk(0, itemsPerPage); // Initial fetch with skip=0
       setProductsData(productData.data);
     };
     fetchData();
@@ -20,7 +20,7 @@ const ListProduct = () => {
 
   const fetchMoreProducts = async () => {
     const skip = productsData.length; // Number of already loaded products
-    const productData = await getProducts(skip, itemsPerPage); // Fetch more products
+    const productData = await getProductsByChunk(skip, itemsPerPage); // Fetch more products
 
     setProductsData((prevProducts) => {
       const updatedProducts = [...prevProducts, ...productData.data]; // Concatenate new products
