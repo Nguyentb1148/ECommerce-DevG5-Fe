@@ -9,6 +9,7 @@ import mammoth from "mammoth"; // Import Mammoth.js
 import { toast, ToastContainer } from "react-toastify";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import ReviewModal from "./ReviewModal"; // Import ReviewModal
+import ProductReviews from "./ProductReviews"; // Import ProductReviews
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -260,6 +261,13 @@ const ProductDetail = () => {
               className="text-gray-300 description"
               dangerouslySetInnerHTML={{ __html: descriptionContent }}
             />
+          </div>
+          {/* Product Reviews Section */}
+          <div className="mt-6 bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-white text-center">
+              Đánh Giá Sản Phẩm
+            </h2>
+            <ProductReviews productId={id} /> {/* Display Product Reviews */}
           </div>
         </div>
       </div>
