@@ -3,36 +3,33 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import paymentApi from "../../services/api/PaymentApi";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
-const PaymentSuccess = () => {
+const VnPayPaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [order, setOrder] = useState(null); // Order details
+  const [orderDetails, setOrderDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const verifyPayment = async () => {
-      const sessionId = searchParams.get("session_id");
-
-      if (!sessionId) {
-        setError("Invalid payment session. Redirecting...");
-        setTimeout(() => navigate("/shoppingCart"), 3000); // Redirect to cart after 3 seconds
-        return;
-      }
+    const verifyVNPayPayment = async () => {
+      const queryParams = Object.fromEntries(
+        new URLSearchParams(window.location.search).entries()
+      );
 
       try {
-        // Verify payment and fetch order details
-        const response = await paymentApi.verifyStripePayment(sessionId);
-        setOrder(response.order);
+        setIsLoading(true);
+
+        const response = await paymentApi.verifyVnPayPayment(queryParams);
+        console.log("VNPay verification success:", response);
       } catch (err) {
-        console.error("Error verifying payment:", err);
+        console.error("Error verifying VNPay payment:", err);
         setError("Payment verification failed. Please contact support.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    verifyPayment();
+    verifyVNPayPayment();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -68,32 +65,29 @@ const PaymentSuccess = () => {
         Thank you for your purchase. Your order has been confirmed.
       </p>
       <div className="mt-6 bg-gray-800 p-4 rounded-lg w-3/4 max-w-2xl">
-        <h2 className="text-lg font-bold">Order Summary</h2>
+        <h2 className="text-lg font-bold">Payment Summary</h2>
         <ul className="mt-4 space-y-2">
-          {order.orderItems.map((item) => (
-            <li key={item.productId} className="flex justify-between">
-              <span>
-                {item.quantity}x {item.productName}
-              </span>
-              <span>${item.price.toFixed(2)}</span>
-            </li>
-          ))}
+          <li>
+            <span className="font-semibold">Amount:</span>{" "}
+            {searchParams.get("vnp_Amount")} VND
+          </li>
+          <li>
+            <span className="font-semibold">Bank Code:</span>{" "}
+            {searchParams.get("vnp_BankCode")}
+          </li>
+          <li>
+            <span className="font-semibold">Transaction No:</span>{" "}
+            {searchParams.get("vnp_TransactionNo")}
+          </li>
+          <li>
+            <span className="font-semibold">Order Info:</span>{" "}
+            {searchParams.get("vnp_OrderInfo")}
+          </li>
+          <li>
+            <span className="font-semibold">Payment Date:</span>{" "}
+            {searchParams.get("vnp_PayDate")}
+          </li>
         </ul>
-        <div className="mt-4 border-t border-gray-700 pt-4">
-          <p className="flex justify-between">
-            <span>Total:</span>
-            <span>${order.totalPrice.toFixed(2)}</span>
-          </p>
-          {order.discountAmount > 0 && (
-            <p className="flex justify-between text-green-400">
-              <span>Discount:</span>
-              <span>-${order.discountAmount.toFixed(2)}</span>
-            </p>
-          )}
-        </div>
-        <p className="mt-4 text-sm text-gray-400">
-          Delivery Address: {order.deliveryAddress}
-        </p>
       </div>
       <button
         className="mt-6 px-6 py-2 bg-blue-600 text-white rounded"
@@ -105,4 +99,4 @@ const PaymentSuccess = () => {
   );
 };
 
-export default PaymentSuccess;
+export default VnPayPaymentSuccess;

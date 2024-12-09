@@ -18,6 +18,8 @@ import paymentApi from "../../services/api/PaymentApi";
 import BackToTop from "../../components/backToTop/BackToTop";
 import { fetchVariantDetails } from "../../services/api/ProductApi";
 import { toast, ToastContainer } from "react-toastify";
+import { applyCoupon } from "../../services/api/CouponApi";
+import ConfirmationModal from "./ConfirmationModal";
 
 const ShoppingCart = () => {
   const [currentStep, setCurrentStep] = useState(0); // Stepper state (0 = Cart, 1 = Address, 2 = Payment Success)
@@ -26,6 +28,10 @@ const ShoppingCart = () => {
   const [variants, setVariants] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [deliveryAddress, setDeliveryAddress] = useState("Russia");
+  const [selectedPayment, setSelectedPayment] = useState("stripe");
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,30 +70,42 @@ const ShoppingCart = () => {
     }
   };
 
-  const handleUpdateQuantity = async (id, newQuantity) => {
-    if (newQuantity < 1) return;
+  const handleUpdateQuantity = async (productId, variantId, newQuantity) => {
+    if (newQuantity < 1) return; // Prevent invalid quantity
 
     try {
       const updatedItem = await UpdateCart({
-        productId: id,
-        quantity: newQuantity,
+        productId,
+        variantId,
+        count: newQuantity,
       });
       setItems((prevItems) =>
         prevItems.map((item) =>
-          item._id === updatedItem._id ? updatedItem : item
+          item.product._id === productId && item.variantId === variantId
+            ? { ...item, count: newQuantity }
+            : item
         )
       );
+      // toast.success("Quantity updated successfully!");
     } catch (error) {
       console.error("Error updating quantity:", error);
+      toast.error("Failed to update quantity. Please try again.");
     }
   };
 
-  const handleRemoveItem = async (id) => {
+  const handleRemoveItem = async (productId, variantId) => {
     try {
-      await RemoveFromCart(id); // Call API to remove item
-      setItems((prevItems) => prevItems.filter((item) => item._id !== id)); // Remove from local state
+      await RemoveFromCart(productId, variantId);
+      setItems((prevItems) =>
+        prevItems.filter(
+          (item) =>
+            item.product._id !== productId || item.variantId !== variantId
+        )
+      );
+      toast.success("Item removed successfully!");
     } catch (error) {
       console.error("Error removing item:", error);
+      toast.error("Failed to remove item. Please try again.");
     }
   };
 
@@ -95,23 +113,40 @@ const ShoppingCart = () => {
     try {
       await ClearCart(); // Call API to clear cart
       setItems([]); // Clear the local cart state
+      toast.success("Cart cleared successfully!");
     } catch (error) {
       console.error("Error clearing cart:", error);
+      toast.error("Failed to clear cart.");
+    } finally {
+      setIsModalOpen(false); // Close modal after action
     }
   };
 
-  const handleApplyVoucher = (voucher) => {
-    setAppliedVoucher(voucher);
+  const handleClearCartClick = () => {
+    setIsModalOpen(true); // Open confirmation modal
+  };
+
+  const handleModalCancel = () => {
+    setIsModalOpen(false); // Close modal
+  };
+
+  const handleApplyVoucher = async (voucher) => {
+    try {
+      const response = await applyCoupon(voucher.code);
+      setAppliedVoucher(response.coupon);
+      toast.success("Coupon applied successfully!");
+    } catch (error) {
+      toast.error(error?.error || "Failed to apply coupon.");
+    }
   };
 
   const handleRemoveVoucher = () => {
     setAppliedVoucher(null);
   };
 
-  const handleConfirmPayment = async (selectedPayment) => {
-    if (!deliveryAddress) {
-      console.log("delivery address...", deliveryAddress);
-      toast.error("Please enter a delivery address.");
+  const handleConfirmPayment = async () => {
+    if (!isFormValid || !deliveryAddress.trim() || !selectedPayment) {
+      toast.error("Please complete the form and select a payment method.");
       return;
     }
 
@@ -120,20 +155,29 @@ const ShoppingCart = () => {
       return;
     }
 
+    setIsProcessing(true);
+
     try {
       let response;
       if (selectedPayment === "stripe") {
         response = await paymentApi.createStripeSession({ deliveryAddress });
       } else if (selectedPayment === "vnpay") {
-        response = await paymentApi.createVNPaySession({ deliveryAddress });
+        response = await paymentApi.createVnPaySession({ deliveryAddress });
       }
 
-      if (response?.url) {
-        window.location.href = response.url;
+      // Redirect to the correct URL
+      if (selectedPayment === "stripe" && response?.url) {
+        window.location.href = response.url; // Stripe redirect URL
+      } else if (selectedPayment === "vnpay" && response?.vnpUrl) {
+        window.location.href = response.vnpUrl; // VNPay redirect URL
+      } else {
+        throw new Error("Invalid response from payment API.");
       }
     } catch (error) {
       console.error("Error creating checkout session:", error);
       toast.error("Failed to initiate payment. Please try again.");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -192,7 +236,9 @@ const ShoppingCart = () => {
                   <ConfirmInfoPayment
                     deliveryAddress={deliveryAddress}
                     setDeliveryAddress={setDeliveryAddress}
-                    handleConfirmPayment={handleConfirmPayment}
+                    setIsFormValid={setIsFormValid}
+                    selectedPayment={selectedPayment} // Pass selectedPayment
+                    setSelectedPayment={setSelectedPayment} // Pass setSelectedPayment
                   />
                 )}
               </div>
@@ -222,11 +268,19 @@ const ShoppingCart = () => {
                       {isLoading ? "Loading..." : "Checkout"}
                     </button>
                     <button
-                      onClick={handleClearCart}
+                      onClick={handleClearCartClick}
                       className="w-full py-3 bg-red-600 text-white rounded-lg hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
                     >
                       Clear Cart
                     </button>
+
+                    <ConfirmationModal
+                      isOpen={isModalOpen}
+                      title="Clear Cart"
+                      message="Are you sure you want to clear all items in your cart? This action cannot be undone."
+                      onConfirm={handleClearCart}
+                      onCancel={handleModalCancel}
+                    />
                   </>
                 )}
                 {currentStep === 1 && (
@@ -239,9 +293,22 @@ const ShoppingCart = () => {
                     />
                     <button
                       onClick={handleConfirmPayment}
-                      className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      disabled={
+                        !isFormValid ||
+                        !deliveryAddress.trim() ||
+                        !selectedPayment ||
+                        isProcessing
+                      }
+                      className={`w-full py-3 rounded-lg focus:outline-none focus:ring-2 ${
+                        !isFormValid ||
+                        !deliveryAddress.trim() ||
+                        !selectedPayment ||
+                        isProcessing
+                          ? "bg-gray-500 text-gray-300 cursor-not-allowed"
+                          : "bg-blue-600 text-white hover:bg-blue-500 focus:ring-blue-500"
+                      }`}
                     >
-                      Confirm Payment
+                      {isProcessing ? "Processing..." : "Confirm Payment"}
                     </button>
                   </>
                 )}

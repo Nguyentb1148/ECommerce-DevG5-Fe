@@ -21,6 +21,7 @@ import Seller from "./pages/seller/home/Seller.jsx";
 import ProductManage from "./pages/seller/product/ProductManage.jsx";
 import AuthForm from "./pages/Auth/AuthForm.jsx";
 import PaymentSuccess from "./pages/cart/PaymentSuccess.jsx";
+import VnPayPaymentSuccess from "./pages/cart/VnPayPaymentSuccess.jsx";
 
 function App() {
   React.useEffect(() => {
@@ -41,6 +42,10 @@ function App() {
         <Route path="/productFilter" element={<FilterProduct />} />
         <Route path="/shoppingCart" element={<ShoppingCart />} />
         <Route path="/payment/stripe-success" element={<PaymentSuccess />} />
+        <Route
+          path="/payment/vnpay_success"
+          element={<VnPayPaymentSuccess />}
+        />
         <Route path="/productDetail/:id" element={<ProductDetail />} />
         <Route path="/authentication" element={<AuthForm />} />
         <Route path="/reset-password" element={<ResetPassword />} />

@@ -37,7 +37,6 @@ export const UpdateCart = async (cartData) => {
 // Remove a product from the cart
 export const RemoveFromCart = async (productId, variantId) => {
   try {
-    console.log("params will be removed", productId, variantId);
     const response = await authApi.delete("/cart/remove", {
       params: { productId, variantId },
     });

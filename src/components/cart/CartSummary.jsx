@@ -1,12 +1,15 @@
+import React from "react";
+
 const CartSummary = ({
   currentStep,
-  items,
+  items = [],
   variants = {},
-  discount,
-  discountPercentage,
+  discount = 0,
+  discountPercentage = 0,
+  taxRate = 0.1, // Default 10% tax
+  shippingCost = 50000, // Default shipping cost
 }) => {
-  // Defensive programming: check if items is empty
-  if (!items || items.length === 0) {
+  if (items.length === 0) {
     return (
       <div className="bg-gray-800 p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-bold text-white mb-2">Order Summary</h2>
@@ -14,48 +17,35 @@ const CartSummary = ({
       </div>
     );
   }
+
   // Calculate Subtotal
   const subtotal = items.reduce((acc, item) => {
     try {
-      // Comprehensive price determination
       const itemPrice =
-        variants[item.variantId]?.price || // Try variant price first
-        item.product?.price || // Then try product price
-        0; // Fallback to 0 if no price found
-
-      const totalItemPrice = itemPrice * (item.count || 1);
-      return acc + totalItemPrice;
+        variants[item.variantId]?.price || item.product?.price || 0; // Fallback to 0 if no price found
+      return acc + itemPrice * (item.count || 1);
     } catch (error) {
-      console.error("Error calculating subtotal for item:", item, error);
+      console.error("Error calculating price for item:", item, error);
       return acc;
     }
   }, 0);
 
   // Calculate Discount
-  let totalDiscount = 0;
-  if (discount) {
-    totalDiscount = discount;
-  } else if (discountPercentage) {
-    totalDiscount = (subtotal * discountPercentage) / 100;
-  }
+  const totalDiscount = discount
+    ? discount
+    : (subtotal * discountPercentage) / 100;
 
-  // Apply Tax (e.g., 10%)
-  const tax = subtotal * 0.1; // 10% tax, you can adjust this as needed
-
-  // Shipping cost (assumed to be a fixed cost for simplicity, can be dynamic)
-  const shipping = 50000; // example shipping cost
-
-  // Calculate Final Total
-  const total = subtotal + tax + shipping - totalDiscount;
+  // Calculate Tax and Total
+  const tax = subtotal * taxRate;
+  const total = subtotal + tax + shippingCost - totalDiscount;
 
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-bold text-white mb-2">Order Summary</h2>
+
       {currentStep === 1 && (
         <div className="space-y-3 mb-3 border-b border-gray-700 pb-4">
           {items.map((item) => {
-            const variant = variants[item.variantId];
-            console.log("------------->", variant);
             const itemPrice =
               variants[item.variantId]?.price || item.product?.price || 0;
             const totalItemPrice = itemPrice * (item.count || 1);
@@ -82,8 +72,8 @@ const CartSummary = ({
         </div>
       )}
 
-      {/* Subtotal */}
       <div className="space-y-3">
+        {/* Subtotal */}
         <div className="flex justify-between text-gray-400">
           <span className="font-medium">Subtotal</span>
           <span>
@@ -96,7 +86,9 @@ const CartSummary = ({
 
         {/* Tax */}
         <div className="flex justify-between text-gray-400">
-          <span className="font-medium">Tax (10%)</span>
+          <span className="font-medium">
+            Tax ({(taxRate * 100).toFixed(0)}%)
+          </span>
           <span>
             {new Intl.NumberFormat("vi-VN", {
               style: "currency",
@@ -112,7 +104,7 @@ const CartSummary = ({
             {new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
-            }).format(shipping)}
+            }).format(shippingCost)}
           </span>
         </div>
 
@@ -129,7 +121,8 @@ const CartSummary = ({
           </div>
         )}
 
-        <div className="border-t :border-gray-700 pt-3">
+        {/* Total */}
+        <div className="border-t border-gray-700 pt-3">
           <div className="flex justify-between text-white font-bold">
             <span>Total</span>
             <span>
