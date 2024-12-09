@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaUpload } from "react-icons/fa";
-import { uploadImage } from "../../configs/Cloudinary";
+import {handleImageUpload, uploadImage} from "../../configs/Cloudinary";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { updateUserProfile, userData } from "../../services/api/UserApi.jsx";
@@ -117,7 +117,7 @@ const UpdateProfile = () => {
 
       // Upload the image file if selected
       if (selectedFile) {
-        const uploadResponse = await uploadImage(
+        const uploadResponse = await handleImageUpload(
           selectedFile,
           "user_profiles",
           user.id
@@ -252,7 +252,7 @@ const UpdateProfile = () => {
               Phone
             </label>
             <input
-              type="tel"
+              type="number"
               name="phone"
               value={profileData.phone}
               onChange={handleChange}

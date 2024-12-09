@@ -5,7 +5,7 @@ import { getBrands } from "../../services/api/BrandsApi";
 import { createProduct } from "../../services/api/ProductApi";
 import { uploadImage } from "../../configs/Cloudinary";
 import { toast } from "react-toastify";
-import RichTextEditor from "./RichTextEditor";
+import RichTextEditor from "../../components/section/RichTextEditor.jsx";
 import AttributeSection from "../section/AttributeSection";
 import VariantSection from "../section/VariantSection";
 import InputSection from "../section/InputSection";
@@ -58,7 +58,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
   const [brands, setBrands] = useState([]);
   const [images, setImages] = useState([]);
   const fileInputRef = useRef(null);
-  const [invalidImageIndexes, setInvalidImageIndexes] = useState([]); 
+  const [invalidImageIndexes, setInvalidImageIndexes] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const editorRef = useRef();
 
@@ -112,7 +112,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
     }
 
     const invalidImages = images.filter(
-      (image) => image.file.size > 2 * 1024 * 1024
+        (image) => image.file.size > 2 * 1024 * 1024
     );
     if (invalidImages.length > 0) {
       return "Some images exceed the 2MB size limit";
@@ -127,7 +127,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
     }
 
     const invalidAttributes = formData.attributes.filter(
-      (attr) => !attr.name.trim() || attr.values.length === 0
+        (attr) => !attr.name.trim() || attr.values.length === 0
     );
 
     if (invalidAttributes.length > 0) {
@@ -143,11 +143,11 @@ const AddProduct = ({ onClose, refreshProducts }) => {
     }
 
     const invalidVariants = formData.variants.filter(
-      (variant) =>
-        !variant.price ||
-        parseFloat(variant.price) <= 0 ||
-        !variant.quantity ||
-        parseInt(variant.quantity) < 0
+        (variant) =>
+            !variant.price ||
+            parseFloat(variant.price) <= 0 ||
+            !variant.quantity ||
+            parseInt(variant.quantity) < 0
     );
 
     if (invalidVariants.length > 0) {
@@ -172,7 +172,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
     });
 
     setInvalidImageIndexes((prevIndexes) =>
-      prevIndexes.filter((i) => i !== index)
+        prevIndexes.filter((i) => i !== index)
     );
   };
 
@@ -183,30 +183,30 @@ const AddProduct = ({ onClose, refreshProducts }) => {
 
     selectedFiles.forEach((file) => {
       if (file.size > 2 * 1024 * 1024) {
-        invalidIndexes.push(newImages.length);
+        // Flag image as too large, but still add it to the newImages list
         newImages.push({ file, name: file.name, isLarge: true });
+        invalidIndexes.push(newImages.length - 1); // Store the index of the large image
       } else {
+        // Add valid images normally
         newImages.push({ file, name: file.name, isLarge: false });
       }
     });
 
+    // Ensure total number of images does not exceed the limit (6 in this case)
     if (newImages.length + images.length > 6) {
       toast.warning("You can only upload a maximum of 6 images.");
       return;
     }
 
+    // Update images state with all images, including large ones
     setImages((prevImages) => {
       const updatedImages = [...prevImages, ...newImages];
-      return updatedImages.filter((_, index) => !invalidIndexes.includes(index));
+      return updatedImages; // Don't filter out large images
     });
 
-    if (invalidIndexes.length > 0) {
-      setInvalidImageIndexes(invalidIndexes);
-    } else {
-      setInvalidImageIndexes([]);
-    }
+    // Set invalid image indexes for large images, for UI display
+    setInvalidImageIndexes(invalidIndexes);
   };
-
   // addVariant function to add new attribute at the beginning
   const addAttribute = () => {
     setFormData({
@@ -220,7 +220,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
   const removeAttribute = (index) => {
     const newAttributes = formData.attributes.filter((_, i) => i !== index);
     const newAttributeInputValues = attributeInputValues.filter(
-      (_, i) => i !== index
+        (_, i) => i !== index
     );
     setFormData({ ...formData, attributes: newAttributes });
     setAttributeInputValues(newAttributeInputValues);
@@ -229,7 +229,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
   // Function to remove a specific variant
   const removeVariant = (indexToRemove) => {
     const newVariants = formData.variants.filter(
-      (_, index) => index !== indexToRemove
+        (_, index) => index !== indexToRemove
     );
     setFormData({ ...formData, variants: newVariants });
   };
@@ -239,8 +239,8 @@ const AddProduct = ({ onClose, refreshProducts }) => {
     newAttributeInputValues[index] = value;
 
     const attributeError = !value.trim()
-      ? "Attribute name cannot be empty"
-      : null;
+        ? "Attribute name cannot be empty"
+        : null;
 
     setAttributeInputValues(newAttributeInputValues);
     setErrors((prev) => ({
@@ -269,8 +269,8 @@ const AddProduct = ({ onClose, refreshProducts }) => {
   const removeValueFromAttribute = (attributeIndex, valueIndex) => {
     const newAttributes = [...formData.attributes];
     newAttributes[attributeIndex].values = newAttributes[
-      attributeIndex
-    ].values.filter((_, i) => i !== valueIndex);
+        attributeIndex
+        ].values.filter((_, i) => i !== valueIndex);
     setFormData({ ...formData, attributes: newAttributes });
   };
 
@@ -288,7 +288,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
 
   useEffect(() => {
     const validAttributes = formData.attributes.filter(
-      (v) => v.name && v.values.length > 0
+        (v) => v.name && v.values.length > 0
     );
     if (validAttributes.length > 0) {
       const attributeArrays = validAttributes.map((v) => v.values);
@@ -354,20 +354,20 @@ const AddProduct = ({ onClose, refreshProducts }) => {
       const imageUploadPromises = images.map((image) => {
         const imageId = Math.random().toString(36).substring(2, 8);
         return uploadImage(image.file, formData.productName, imageId).then(
-          (uploadedImageUrl) => uploadedImageUrl.url
+            (uploadedImageUrl) => uploadedImageUrl.url
         );
       });
 
       // Use Promise.all to run all image uploads concurrently
       Promise.all(imageUploadPromises)
-        .then((uploadedImageUrls) => {
-          // Handle the array of uploaded image URLs here
-          console.log("Uploaded Image URLs:", uploadedImageUrls);
-          // You can now proceed with other actions that depend on the image URLs
-        })
-        .catch((error) => {
-          console.error("Error uploading images:", error);
-        });
+          .then((uploadedImageUrls) => {
+            // Handle the array of uploaded image URLs here
+            console.log("Uploaded Image URLs:", uploadedImageUrls);
+            // You can now proceed with other actions that depend on the image URLs
+          })
+          .catch((error) => {
+            console.error("Error uploading images:", error);
+          });
 
       const descriptionUrl = await new Promise((resolve) => {
         if (editorRef.current) {
@@ -396,10 +396,10 @@ const AddProduct = ({ onClose, refreshProducts }) => {
           price: variant.price,
           stockQuantity: variant.quantity,
           attributes: Object.fromEntries(
-            variant.attributeDetails.map((detail) => [
-              detail.name,
-              detail.value,
-            ])
+              variant.attributeDetails.map((detail) => [
+                detail.name,
+                detail.value,
+              ])
           ), // Convert attributeDetails to an object
         })),
       };
@@ -420,108 +420,108 @@ const AddProduct = ({ onClose, refreshProducts }) => {
   };
 
   return (
-    <div className="fixed top-0 inset-0 z-20 bg-black bg-opacity-50 py-6 px-4 sm:px-6 lg:px-8 overflow-auto">
-      <div className="w-[50%] mx-auto">
-        <form onSubmit={handleSubmit} className="bg-gray-900 shadow-md rounded-lg px-8 pt-4 pb-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold mb-2 text-white"> Add New Product </h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-200">
-              <FaX />
-            </button>
-          </div>
-          {/* Name */}
-          <InputSection
-            label="Product Name"
-            name="productName"
-            value={formData.productName}
-            onChange={handleInputChange}
-            onBlur={handleBlur}
-            error={errors.productName}
-            placeholder="Enter product name"
-          />
-          {/* Category & Brand */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-3">
-            <SelectSection
-              label="Category"
-              name="category"
-              value={formData.category}
-              onChange={handleInputChange}
-              options={categories}
-              error={errors.category}
-              placeholder="Select Category"
+      <div className="fixed top-0 inset-0 z-20 bg-black bg-opacity-50 py-6 px-4 sm:px-6 lg:px-8 overflow-auto">
+        <div className="w-[50%] mx-auto">
+          <form onSubmit={handleSubmit} className="bg-gray-900 shadow-md rounded-lg px-8 pt-4 pb-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold mb-2 text-white"> Add New Product </h2>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-200">
+                <FaX />
+              </button>
+            </div>
+            {/* Name */}
+            <InputSection
+                label="Product Name"
+                name="productName"
+                value={formData.productName}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                error={errors.productName}
+                placeholder="Enter product name"
             />
-            <SelectSection
-              label="Brand"
-              name="brand"
-              value={formData.brand}
-              onChange={handleInputChange}
-              options={brands}
-              error={errors.brand}
-              placeholder="Select Brand"
+            {/* Category & Brand */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-3">
+              <SelectSection
+                  label="Category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  options={categories}
+                  error={errors.category}
+                  placeholder="Select Category"
+              />
+              <SelectSection
+                  label="Brand"
+                  name="brand"
+                  value={formData.brand}
+                  onChange={handleInputChange}
+                  options={brands}
+                  error={errors.brand}
+                  placeholder="Select Brand"
+              />
+            </div>
+            {/* Description */}
+            <div className="mb-3">
+              <label
+                  htmlFor="description"
+                  className="block text-gray-400 text-sm font-bold mb-2"
+              >
+                Description <span className="text-red-500 ml-1">*</span>
+              </label>
+              <RichTextEditor
+                  ref={editorRef}
+                  fileName={formData.productName}
+                  docxUrl={""}
+                  descriptionUrl={formData.description}
+                  rows="4"
+                  className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  aria-label="Description"
+              />
+              {errors.description && (
+                  <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+              )}
+            </div>
+            {/* Image */}
+            <ImageSection
+                images={images}
+                setImages={setImages}
+                invalidImageIndexes={invalidImageIndexes}
+                setInvalidImageIndexes={setInvalidImageIndexes}
+                errors={errors}
+                fileInputRef={fileInputRef}
+                handleImageDelete={handleImageDelete}
+                handleFileChange={handleFileChange}
             />
-          </div>
-          {/* Description */}
-          <div className="mb-3">
-            <label
-              htmlFor="description"
-              className="block text-gray-400 text-sm font-bold mb-2"
-            >
-              Description <span className="text-red-500 ml-1">*</span>
-            </label>
-            <RichTextEditor
-              ref={editorRef}
-              fileName={formData.productName}
-              docxUrl={""}
-              descriptionUrl={formData.description}
-              rows="4"
-              className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              aria-label="Description"
+            {/* Attribute Section */}
+            <AttributeSection
+                formData={formData}
+                setFormData={setFormData}
+                errors={errors}
+                attributeInputValues={attributeInputValues}
+                setAttributeInputValues={setAttributeInputValues}
+                handleAttributeInputChange={handleAttributeInputChange}
+                addValueToAttribute={addValueToAttribute}
+                removeAttribute={removeAttribute}
+                removeValueFromAttribute={removeValueFromAttribute}
+                addAttribute={addAttribute}
             />
-            {errors.description && (
-              <p className="text-red-500 text-xs mt-1">{errors.description}</p>
-            )}
-          </div>
-          {/* Image */}
-          <ImageSection
-            images={images}
-            setImages={setImages}
-            invalidImageIndexes={invalidImageIndexes}
-            setInvalidImageIndexes={setInvalidImageIndexes}
-            errors={errors}
-            fileInputRef={fileInputRef}
-            handleImageDelete={handleImageDelete}
-            handleFileChange={handleFileChange}
-          />
-          {/* Attribute Section */}
-          <AttributeSection
-            formData={formData}
-            setFormData={setFormData}
-            errors={errors}
-            attributeInputValues={attributeInputValues}
-            setAttributeInputValues={setAttributeInputValues}
-            handleAttributeInputChange={handleAttributeInputChange}
-            addValueToAttribute={addValueToAttribute}
-            removeAttribute={removeAttribute}
-            removeValueFromAttribute={removeValueFromAttribute}
-            addAttribute={addAttribute}
-          />
-          {/* Variant Section */}
-          <VariantSection
-            formData={formData}
-            setFormData={setFormData}
-            errors={errors}
-            removeVariant={removeVariant}
-          />
-          {/* Button */}
-          <div className="flex justify-end">
-            <button onClick={onClose} className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded mr-2"> Cancel </button>
-            <button type="submit" disabled={isSubmitting} className="px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              {isSubmitting ? "Saving..." : "Add Product"}
-            </button>
-          </div>
-        </form>
+            {/* Variant Section */}
+            <VariantSection
+                formData={formData}
+                setFormData={setFormData}
+                errors={errors}
+                removeVariant={removeVariant}
+            />
+            {/* Button */}
+            <div className="flex justify-end">
+              <button onClick={onClose} className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded mr-2"> Cancel </button>
+              <button type="submit" disabled={isSubmitting} className="px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                {isSubmitting ? "Saving..." : "Add Product"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
   );
 };
 
