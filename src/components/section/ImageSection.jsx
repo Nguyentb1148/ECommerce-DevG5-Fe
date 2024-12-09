@@ -11,7 +11,6 @@ const ImageSection = ({
                           handleImageDelete,
                           handleFileChange
                       }) => {
-    console.log("list images: ", images);
 
     // Helper function to check if an image is a URL (Blob or HTTP)
     const isUrl = (image) => typeof image === 'string' && (image.startsWith('http') || image.startsWith('blob'));

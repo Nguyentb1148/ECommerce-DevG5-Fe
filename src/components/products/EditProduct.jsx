@@ -67,7 +67,6 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
     }
   };
 
-
   useEffect(() => {
     const loadData = async () => {
       const categoriesData = await getCategories();
@@ -82,7 +81,7 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
   const fetchData = async () => {
     try {
       const productData = await getProductById(productId);
-      console.log("Fetched product data:", productData); // Log the product data
+      console.log("Fetched product data:", productData);
 
       const attributeData = getAttributesFromVariants(productData.variants);
 
@@ -95,41 +94,34 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
         })),
       }));
 
-      // Fetch images from imageUrls array and convert to Blobs
       const imageBlobs = await Promise.all(
           productData.imageUrls.map(async (imageUrl) => {
             try {
-              const response = await fetch(imageUrl, {
-                method: "GET",
-                cache: "force-cache",  // This forces the browser to fetch from the cache
-              });
+              const response = await fetch(imageUrl, { method: "GET", cache: "force-cache" });
 
               if (response.ok) {
                 const imageBlob = await response.blob();
-                return URL.createObjectURL(imageBlob); // Convert blob to URL and return it
+                return URL.createObjectURL(imageBlob);
               } else {
                 throw new Error("Image not found or cached");
               }
             } catch (err) {
               console.error("Error fetching image from cache or the image is deleted.", err);
-              return null; // Return null if image fetch fails
+              return null;
             }
           })
       );
 
-      // Set the fetched image URLs into the state (filter out null values)
       setImages(imageBlobs.filter((url) => url !== null));
-      // Set other form data
       setFormData({
         ...formData,
         productName: productData.name,
         description: productData.description,
-        category: productData.categoryId._id, // Set category from product data
-        brand: productData.brandId._id, // Set brand from product data
-        attributes: attributeData, // Add the attributes into the form data
+        category: productData.categoryId._id,
+        brand: productData.brandId._id,
+        attributes: attributeData,
         variants: variantsData,
       });
-
     } catch (error) {
       console.error("Error fetching product data:", error);
     }
@@ -137,30 +129,22 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
 
   const getAttributesFromVariants = (variants) => {
     const attributeData = [];
-
     variants.forEach(variant => {
       const attributes = variant.attributes;
-
-      // Iterate through each attribute in the variant
       for (let key in attributes) {
-        // Check if the attribute already exists in the array
         let attribute = attributeData.find(attr => attr.name === key);
-
-        // If the attribute doesn't exist, add it
         if (!attribute) {
           attributeData.push({
-            name: key, // Use 'name' instead of 'key'
-            values: [attributes[key]]
+            name: key,
+            values: [attributes[key]],
           });
         } else {
-          // If it exists, add the value if it's not already present
           if (!attribute.values.includes(attributes[key])) {
             attribute.values.push(attributes[key]);
           }
         }
       }
     });
-
     return attributeData;
   };
 
@@ -213,11 +197,36 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
   };
   // addVariant function to add new attribute at the beginning
   const addAttribute = () => {
-    setFormData({
-      ...formData,
-      attributes: [{ name: "", values: [] }, ...formData.attributes],
-    });
-    setAttributeInputValues(["", ...attributeInputValues]);
+    // Step 1: Clear all variants completely
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      variants: [], // Fully clear old variants
+    }));
+
+    // Step 2: Add the new attribute to the attributes list
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      attributes: [{ name: "", values: [] }, ...prevFormData.attributes], // Insert new attribute at the start
+    }));
+
+    // Step 3: Add an empty value for the new attribute input field
+    setAttributeInputValues((prevValues) => ["", ...prevValues]);
+
+    // Step 4: Generate all new combinations of the attributes (including the newly added attribute)
+    const newCombinations = generateCombinations(formData.attributes);
+
+    // Step 5: Generate new variants (empty by default)
+    const newVariants = newCombinations.map((comb) => ({
+      price: 0,       // Default price
+      quantity: 0,    // Default quantity
+      attributeDetails: comb, // New attribute details
+    }));
+
+    // Step 6: Set the new variants in the form data
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      variants: newVariants,  // Set the fully new variants
+    }));
   };
   // Clean up variant input value when removing variant
   const removeAttribute = (index) => {
@@ -236,35 +245,47 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
     setFormData({ ...formData, variants: newVariants });
   };
 
-  const handleAttributeInputChange = (index, value) => {
-    const newAttributeInputValues = [...attributeInputValues];
-    newAttributeInputValues[index] = value;
-
-    const attributeError = !value.trim()
-        ? "Attribute name cannot be empty"
-        : null;
-
-    setAttributeInputValues(newAttributeInputValues);
-    setErrors((prev) => ({
-      ...prev,
-      attributes: attributeError,
-    }));
+  const handleAttributeInputChange = (attributeIndex, value) => {
+    const newInputValues = [...attributeInputValues];
+    newInputValues[attributeIndex] = value;
+    setAttributeInputValues(newInputValues);
   };
   // Add value to specific variant
   const addValueToAttribute = (attributeIndex) => {
-    if (attributeInputValues[attributeIndex]?.trim()) {
-      const newAttributes = [...formData.attributes];
-      newAttributes[attributeIndex].values = [
-        ...newAttributes[attributeIndex].values,
-        attributeInputValues[attributeIndex].trim(),
-      ];
-      setFormData({ ...formData, attributes: newAttributes });
+    const newValue = attributeInputValues[attributeIndex];
+    if (!newValue) return;
 
-      // Clear only the specific variant's input
-      const newAttributeInputValues = [...attributeInputValues];
-      newAttributeInputValues[attributeIndex] = "";
-      setAttributeInputValues(newAttributeInputValues);
+    // Update the attribute values with the new value
+    const newAttributes = [...formData.attributes];
+    newAttributes[attributeIndex].values.push(newValue);
+    setFormData({ ...formData, attributes: newAttributes });
+
+    // Generate new combinations based on the updated attributes
+    const newCombinations = generateCombinations(newAttributes);
+
+    // Only add the new variants that do not already exist in the form data
+    const newVariants = newCombinations.filter((combination) => {
+      return !formData.variants.some((variant) =>
+          isVariantEqual(variant.attributeDetails, combination)
+      );
+    });
+
+    // Add the new variants to the existing variants
+    if (newVariants.length > 0) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        variants: [...prevFormData.variants, ...newVariants.map((comb) => ({
+          price: 0,  // Set a default price
+          quantity: 0, // Set a default quantity
+          attributeDetails: comb
+        }))],
+      }));
     }
+
+    // Clear the input for the added value
+    const newInputValues = [...attributeInputValues];
+    newInputValues[attributeIndex] = ''; // Clear the input field
+    setAttributeInputValues(newInputValues);
   };
 
   const removeValueFromAttribute = (attributeIndex, valueIndex) => {
@@ -275,16 +296,23 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
     setFormData({ ...formData, attributes: newAttributes });
   };
 
-  const generateCombinations = (arrays) => {
-    if (arrays.length === 0) return [[]];
-    const result = [];
-    const restCombinations = generateCombinations(arrays.slice(1));
-    for (const item of arrays[0]) {
-      for (const combination of restCombinations) {
-        result.push([item, ...combination]);
+  const generateCombinations = (attributes) => {
+    if (attributes.length === 0) return [];
+    return attributes.reduce((acc, attribute) => {
+      if (acc.length === 0) {
+        return attribute.values.map((value) => [{ name: attribute.name, value }]);
       }
-    }
-    return result;
+      return acc.flatMap((prevCombination) =>
+          attribute.values.map((value) => [...prevCombination, { name: attribute.name, value }])
+      );
+    }, []);
+  };
+
+  const isVariantEqual = (variantDetails, combinationDetails) => {
+    return variantDetails.every((attribute, index) => {
+      const correspondingCombination = combinationDetails[index];
+      return attribute.name === correspondingCombination.name && attribute.value === correspondingCombination.value;
+    });
   };
 
   const handleImageDelete = (index) => {
@@ -352,9 +380,12 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Prevent form submission if already submitting
     if (isSubmitting) return;
     setIsSubmitting(true);
 
+    // Validate the form before proceeding
     const isValid = validateForm();
     if (!isValid) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -364,69 +395,88 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
     }
 
     try {
-      // Upload images
+      // Log the start of image upload process
+      console.log("Starting image upload...");
+
+      // Upload images - Check if each image is a file or a URL
       const imageUploadPromises = images.map((image) => {
-        // Check if the image is an object (file object) or a URL (string)
         if (typeof image === 'object' && image.file) {
           const imageId = Math.random().toString(36).substring(2, 8);
-          // Upload file using handleImageUpload
+          // Upload the image using handleImageUpload function
+          console.log("Uploading image file:", image.file);
           return handleImageUpload(image.file, formData.productName, imageId).then(
-              (uploadedImageUrl) => uploadedImageUrl.url
+              (uploadedImageUrl) => {
+                console.log("Image uploaded successfully:", uploadedImageUrl);
+                return uploadedImageUrl.url; // Return the uploaded image URL
+              }
           );
         } else {
-          // It's a URL, so no need to upload it
-          return Promise.resolve(image); // Just resolve the URL as is
+          // It's a URL, so just resolve the URL directly
+          console.log("Using existing image URL:", image);
+          return Promise.resolve(image);
         }
       });
 
+      // Wait for all image uploads to finish
       const uploadedImageUrls = await Promise.all(imageUploadPromises);
+      console.log("All images uploaded:", uploadedImageUrls);
 
+      // Handle description URL upload (if applicable)
       const descriptionUrl = await new Promise((resolve) => {
         if (editorRef.current) {
-          console.log("processing url...");
-          editorRef.current.uploadToCloudinary(resolve);
+          console.log("Processing description content...");
+          editorRef.current.uploadToCloudinary(resolve); // Upload description to Cloudinary
         } else {
-          resolve(formData.description);
+          resolve(formData.description); // If no editorRef, use the current description
         }
       });
 
+      // Update the formData description with the uploaded description URL
       setFormData((prev) => ({
         ...prev,
         description: descriptionUrl,
       }));
+      console.log("Updated formData with description URL:", descriptionUrl);
 
+      // Prepare the final product data to be sent to the API
       const productData = {
-        name: formData.productName,
-        price: formData.variants[0]?.price || 0,
-        description: descriptionUrl,
-        imageUrls: uploadedImageUrls,
-        categoryId: formData.category,
-        brandId: formData.brand,
+        name: formData.productName, // Product name
+        price: formData.variants[0]?.price || 0, // First variant price or default to 0
+        description: descriptionUrl, // Description URL (uploaded or original)
+        imageUrls: uploadedImageUrls, // Array of uploaded image URLs
+        categoryId: formData.category, // Category ID
+        brandId: formData.brand, // Brand ID
         variants: formData.variants.map((variant) => ({
-          price: variant.price,
-          stockQuantity: variant.quantity,
-          attributes: Object.fromEntries(
+          price: variant.price, // Variant price
+          stockQuantity: variant.quantity, // Variant stock quantity
+          attributes: Object.fromEntries( // Convert attributeDetails array to object
               variant.attributeDetails.map((detail) => [
-                detail.name,
-                detail.value,
+                detail.name, // Attribute name
+                detail.value, // Attribute value
               ])
-          ), // Convert attributeDetails to an object
+          ),
         })),
       };
 
-      console.log("data before send", productData);
+      // Log the complete product data before sending it
+      console.log("Product data before sending to API:", productData);
 
-      //Call API to update the product
-      const response= await updateProduct(productId,productData);
-      console.log("data after send", response);
+      // Call API to update the product with the prepared data
+      const response = await updateProduct(productId, productData);
+      console.log("API response after product update:", response);
 
+      // Refresh the product list and show success message
       refreshProducts();
       toast.success("Product saved successfully");
+
+      // Close the form or modal after successful update
       onClose();
     } catch (error) {
+      // Log any error encountered during the process
       console.error("Error saving product:", error);
       toast.error("Failed to save product. Please try again.");
     } finally {
+      // Reset the submitting state after process completes
       setIsSubmitting(false);
     }
   };
@@ -475,7 +525,7 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold mb-2 text-white"> Edit Product </h2>
               <button onClick={onClose} className="text-gray-400 hover:text-gray-200">
-                <FaX />
+                <FaX/>
               </button>
             </div>
 
@@ -522,11 +572,13 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
                   fileName={formData.productName}
                   docxUrl={formData.description}
                   descriptionUrl={formData.description}
+                  onDescriptionUrlChange={(url) => setFormData({...formData, description: url})}
+                  errors={errors.description} // Passing the error here
                   rows="4"
                   className="w-full px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
               />
-              {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
             </div>
+
             <ImageSection
                 images={images}
                 setImages={setImages}
