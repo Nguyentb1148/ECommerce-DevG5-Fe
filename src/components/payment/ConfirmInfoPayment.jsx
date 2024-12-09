@@ -1,21 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import ShippingInformation from "../shipping/ShippingInformation";
 import PaymentOptions from "../payment/PaymentOption";
-import PaymentCardForm from "../payment/PaymentCardForm";
-const ConfirmInfoPayment = () => {
-  const [selectedPayment, setSelectedPayment] = useState("stripe");
+
+const ConfirmInfoPayment = ({
+  deliveryAddress,
+  setDeliveryAddress,
+  setIsFormValid,
+  selectedPayment, // Use props
+  setSelectedPayment, // Use props
+}) => {
+  const [touchedFields, setTouchedFields] = useState({});
   const [formData, setFormData] = useState({
     fullname: "",
     city: "",
     district: "",
     ward: "",
     address: "",
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
   });
   const [errors, setErrors] = useState({});
-  const city = ["Đà Nẵng"];
+  const city = ["Đà Nẵng", "Hue", "Ha Noi", "Ho Chi Minh"];
   const district = ["Thanh Khê"];
   const ward = [
     "An Khê",
@@ -32,55 +36,70 @@ const ConfirmInfoPayment = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setTouchedFields((prev) => ({ ...prev, [name]: true }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+
+    setFormData((prev) => {
+      const updatedFormData = { ...prev, [name]: value };
+      const combinedAddress = `${updatedFormData.fullname}, ${updatedFormData.address}, ${updatedFormData.ward}, ${updatedFormData.district}, ${updatedFormData.city}`;
+      setDeliveryAddress(combinedAddress.trim());
+      return updatedFormData;
+    });
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.cỉty) newErrors.city = "City is required";
+
+    // Always validate all fields but show errors only for touched ones
+    if (!formData.fullname) newErrors.fullname = "Full Name is required";
+    if (!formData.city) newErrors.city = "City is required";
     if (!formData.district) newErrors.district = "District is required";
     if (!formData.ward) newErrors.ward = "Ward is required";
     if (!formData.address) newErrors.address = "Address is required";
-    if (!formData.cardNumber) newErrors.cardNumber = "Card number is required";
-    if (!formData.expiryDate) newErrors.expiryDate = "Expiry date is required";
-    if (!formData.cvv) newErrors.cvv = "CVV is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+
+    // Only show errors for touched fields
+    const filteredErrors = Object.keys(newErrors)
+      .filter((key) => touchedFields[key])
+      .reduce((acc, key) => {
+        acc[key] = newErrors[key];
+        return acc;
+      }, {});
+
+    setErrors(filteredErrors); // Update the errors state
+    console.log("error count", Object.keys(newErrors).length);
+    return Object.keys(newErrors).length === 1; // Form is valid if no errors
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      console.log("Payment confirmed!", formData);
-    }
-  };
+  useEffect(() => {
+    const isValid = validateForm(); // Validate the form on changes
+    setIsFormValid(isValid); // Update the form validity state
+  }, [formData, touchedFields, setIsFormValid]); // Include `setIsFormValid` to avoid stale closures
 
   return (
     <div className="bg-gray-900 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <form onSubmit={handleSubmit}>
-          <ShippingInformation
-            formData={formData}
-            handleInputChange={handleInputChange}
-            errors={errors}
-            city={city}
-            district={district}
-            ward={ward}
-          />
-          <PaymentOptions
-            selectedPayment={selectedPayment}
-            setSelectedPayment={setSelectedPayment}
-          />
-          <PaymentCardForm
-            formData={formData}
-            handleInputChange={handleInputChange}
-            errors={errors}
-          />
-        </form>
+        <ShippingInformation
+          formData={formData}
+          handleInputChange={handleInputChange}
+          errors={errors}
+          city={city}
+          district={district}
+          ward={ward}
+        />
+        <PaymentOptions
+          selectedPayment={selectedPayment}
+          setSelectedPayment={setSelectedPayment}
+        />
       </div>
     </div>
   );
+};
+
+ConfirmInfoPayment.propTypes = {
+  deliveryAddress: PropTypes.string.isRequired,
+  setDeliveryAddress: PropTypes.func.isRequired,
+  setIsFormValid: PropTypes.func.isRequired,
 };
 
 export default ConfirmInfoPayment;

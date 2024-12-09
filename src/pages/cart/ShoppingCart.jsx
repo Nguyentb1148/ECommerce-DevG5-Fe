@@ -1,29 +1,39 @@
 import { FaCheckCircle } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import { BsCartXFill } from "react-icons/bs";
+import { Link, useNavigate } from "react-router-dom";
 import Stepper from "../../components/stepper/Stepper";
 import CartItem from "../../components/cart/CartItem";
 import CartSummary from "../../components/cart/CartSummary";
 import VoucherApply from "../../components/voucher/VoucherApply";
 import Navbar from "../../components/navbar/Navbar";
 import ConfirmInfoPayment from "../../components/payment/ConfirmInfoPayment";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
 import {
   ClearCart,
   GetCarts,
   RemoveFromCart,
   UpdateCart,
 } from "../../services/api/CartApi";
+import paymentApi from "../../services/api/PaymentApi";
 import BackToTop from "../../components/backToTop/BackToTop";
-import authApi from "../../services/AxiosConfig";
 import { fetchVariantDetails } from "../../services/api/ProductApi";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import { applyCoupon } from "../../services/api/CouponApi";
+import ConfirmationModal from "./ConfirmationModal";
 
 const ShoppingCart = () => {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0); // Stepper state (0 = Cart, 1 = Address, 2 = Payment Success)
   const [items, setItems] = useState([]);
   const [appliedVoucher, setAppliedVoucher] = useState(null);
   const [variants, setVariants] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [deliveryAddress, setDeliveryAddress] = useState("Russia");
+  const [selectedPayment, setSelectedPayment] = useState("stripe");
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+
   useEffect(() => {
     console.log("current step: ", currentStep);
   }, [currentStep]);
@@ -32,6 +42,7 @@ const ShoppingCart = () => {
     // Fetch the cart items on component mount
     const fetchCart = async () => {
       try {
+        setIsLoading(true);
         const response = await GetCarts();
         setItems(response.items);
 
@@ -44,36 +55,57 @@ const ShoppingCart = () => {
         setVariants(variantDetails);
       } catch (error) {
         console.error("Error fetching cart data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchCart();
   }, []);
 
-  const handleUpdateQuantity = async (id, newQuantity) => {
-    if (newQuantity < 1) return;
-
-    try {
-      const updatedItem = await UpdateCart({
-        productId: id,
-        quantity: newQuantity,
-      });
-      setItems((prevItems) =>
-        prevItems.map((item) =>
-          item._id === updatedItem._id ? updatedItem : item
-        )
-      );
-    } catch (error) {
-      console.error("Error updating quantity:", error);
+  const handleCheckout = () => {
+    // Only allow checkout if variants are loaded and cart is not empty
+    if (!isLoading && items.length > 0) {
+      setCurrentStep(1);
     }
   };
 
-  const handleRemoveItem = async (id) => {
+  const handleUpdateQuantity = async (productId, variantId, newQuantity) => {
+    if (newQuantity < 1) return; // Prevent invalid quantity
+
     try {
-      await RemoveFromCart(id); // Call API to remove item
-      setItems((prevItems) => prevItems.filter((item) => item._id !== id)); // Remove from local state
+      const updatedItem = await UpdateCart({
+        productId,
+        variantId,
+        count: newQuantity,
+      });
+      setItems((prevItems) =>
+        prevItems.map((item) =>
+          item.product._id === productId && item.variantId === variantId
+            ? { ...item, count: newQuantity }
+            : item
+        )
+      );
+      // toast.success("Quantity updated successfully!");
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+      toast.error("Failed to update quantity. Please try again.");
+    }
+  };
+
+  const handleRemoveItem = async (productId, variantId) => {
+    try {
+      await RemoveFromCart(productId, variantId);
+      setItems((prevItems) =>
+        prevItems.filter(
+          (item) =>
+            item.product._id !== productId || item.variantId !== variantId
+        )
+      );
+      toast.success("Item removed successfully!");
     } catch (error) {
       console.error("Error removing item:", error);
+      toast.error("Failed to remove item. Please try again.");
     }
   };
 
@@ -81,17 +113,72 @@ const ShoppingCart = () => {
     try {
       await ClearCart(); // Call API to clear cart
       setItems([]); // Clear the local cart state
+      toast.success("Cart cleared successfully!");
     } catch (error) {
       console.error("Error clearing cart:", error);
+      toast.error("Failed to clear cart.");
+    } finally {
+      setIsModalOpen(false); // Close modal after action
     }
   };
 
-  const handleApplyVoucher = (voucher) => {
-    setAppliedVoucher(voucher);
+  const handleClearCartClick = () => {
+    setIsModalOpen(true); // Open confirmation modal
+  };
+
+  const handleModalCancel = () => {
+    setIsModalOpen(false); // Close modal
+  };
+
+  const handleApplyVoucher = async (voucher) => {
+    try {
+      const response = await applyCoupon(voucher.code);
+      setAppliedVoucher(response.coupon);
+      toast.success("Coupon applied successfully!");
+    } catch (error) {
+      toast.error(error?.error || "Failed to apply coupon.");
+    }
   };
 
   const handleRemoveVoucher = () => {
     setAppliedVoucher(null);
+  };
+
+  const handleConfirmPayment = async () => {
+    if (!isFormValid || !deliveryAddress.trim() || !selectedPayment) {
+      toast.error("Please complete the form and select a payment method.");
+      return;
+    }
+
+    if (isLoading || items.length === 0) {
+      toast.error("Your cart is empty.");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      let response;
+      if (selectedPayment === "stripe") {
+        response = await paymentApi.createStripeSession({ deliveryAddress });
+      } else if (selectedPayment === "vnpay") {
+        response = await paymentApi.createVnPaySession({ deliveryAddress });
+      }
+
+      // Redirect to the correct URL
+      if (selectedPayment === "stripe" && response?.url) {
+        window.location.href = response.url; // Stripe redirect URL
+      } else if (selectedPayment === "vnpay" && response?.vnpUrl) {
+        window.location.href = response.vnpUrl; // VNPay redirect URL
+      } else {
+        throw new Error("Invalid response from payment API.");
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+      toast.error("Failed to initiate payment. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -139,15 +226,21 @@ const ShoppingCart = () => {
                     ))}
                     {items.length === 0 && (
                       <div className="flex flex-col justify-center items-center h-full text-center py-8 text-gray-400 ">
-                      <BsCartXFill size={100} />
-                      <h2 className="text-2xl py-2">
-                          Your cart is empty
-                      </h2>
-                  </div>
+                        <BsCartXFill size={100} />
+                        <h2 className="text-2xl py-2">Your cart is empty</h2>
+                      </div>
                     )}
                   </>
                 )}
-                {currentStep === 1 && <ConfirmInfoPayment />}
+                {currentStep === 1 && (
+                  <ConfirmInfoPayment
+                    deliveryAddress={deliveryAddress}
+                    setDeliveryAddress={setDeliveryAddress}
+                    setIsFormValid={setIsFormValid}
+                    selectedPayment={selectedPayment} // Pass selectedPayment
+                    setSelectedPayment={setSelectedPayment} // Pass setSelectedPayment
+                  />
+                )}
               </div>
               <div className="space-y-6">
                 {currentStep === 0 && (
@@ -164,17 +257,30 @@ const ShoppingCart = () => {
                       discountPercentage={appliedVoucher?.discountPercentage}
                     />
                     <button
-                      onClick={() => setCurrentStep(1)}
-                      className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      onClick={handleCheckout}
+                      disabled={isLoading || items.length === 0}
+                      className={`w-full py-3 rounded-lg focus:outline-none focus:ring-2 ${
+                        isLoading || items.length === 0
+                          ? "bg-gray-500 text-gray-300 cursor-not-allowed"
+                          : "bg-blue-600 text-white hover:bg-blue-500 focus:ring-blue-500"
+                      }`}
                     >
-                      Checkout
+                      {isLoading ? "Loading..." : "Checkout"}
                     </button>
                     <button
-                      onClick={handleClearCart}
+                      onClick={handleClearCartClick}
                       className="w-full py-3 bg-red-600 text-white rounded-lg hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
                     >
                       Clear Cart
                     </button>
+
+                    <ConfirmationModal
+                      isOpen={isModalOpen}
+                      title="Clear Cart"
+                      message="Are you sure you want to clear all items in your cart? This action cannot be undone."
+                      onConfirm={handleClearCart}
+                      onCancel={handleModalCancel}
+                    />
                   </>
                 )}
                 {currentStep === 1 && (
@@ -186,10 +292,23 @@ const ShoppingCart = () => {
                       currentStep={currentStep}
                     />
                     <button
-                      onClick={() => setCurrentStep(2)}
-                      className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      onClick={handleConfirmPayment}
+                      disabled={
+                        !isFormValid ||
+                        !deliveryAddress.trim() ||
+                        !selectedPayment ||
+                        isProcessing
+                      }
+                      className={`w-full py-3 rounded-lg focus:outline-none focus:ring-2 ${
+                        !isFormValid ||
+                        !deliveryAddress.trim() ||
+                        !selectedPayment ||
+                        isProcessing
+                          ? "bg-gray-500 text-gray-300 cursor-not-allowed"
+                          : "bg-blue-600 text-white hover:bg-blue-500 focus:ring-blue-500"
+                      }`}
                     >
-                      Confirm Payment
+                      {isProcessing ? "Processing..." : "Confirm Payment"}
                     </button>
                   </>
                 )}

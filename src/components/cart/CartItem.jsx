@@ -39,7 +39,9 @@ const CartItem = ({ item, variant, onUpdateQuantity, onRemove }) => {
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2 bg-gray-700 rounded-lg p-1">
           <button
-            onClick={() => onUpdateQuantity(item.product._id, item.count - 1)}
+            onClick={() =>
+              onUpdateQuantity(item.product._id, item.variantId, item.count - 1)
+            }
             className="p-1 text-gray-400 hover:text-white"
             disabled={item.count <= 1}
           >
@@ -47,15 +49,17 @@ const CartItem = ({ item, variant, onUpdateQuantity, onRemove }) => {
           </button>
           <span className="text-white px-2">{item.count}</span>
           <button
-            onClick={() => onUpdateQuantity(item.product._id, item.count + 1)}
+            onClick={() =>
+              onUpdateQuantity(item.product._id, item.variantId, item.count + 1)
+            }
             className="p-1 text-gray-400 hover:text-white"
           >
             <FiPlus />
           </button>
         </div>
         <button
-          onClick={() => onRemove(item.product._id)}
-          className=" text-red-500 hover:text-red-400"
+          onClick={() => onRemove(item.product._id, item.variantId)}
+          className="text-red-500 hover:text-red-400"
         >
           <FiTrash2 size={20} />
         </button>

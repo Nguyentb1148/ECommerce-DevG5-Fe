@@ -102,6 +102,7 @@ const AuthForm = () => {
       try {
         const response = await login(loginData);
         const decoded = jwtDecode(response.token.accessToken);
+        console.log(decoded);
         localStorage.setItem("user", JSON.stringify(decoded));
         localStorage.setItem(
           "accessToken",
@@ -157,19 +158,17 @@ const AuthForm = () => {
 
   const handleLoginSuccess = async (response) => {
     const decoded = jwtDecode(response.credential);
-    const { email } = decoded;
+    console.log("decoded from google", decoded);
+    const { email, picture, name } = decoded;
 
     try {
       // Attempt login or registration via Google
-      const res = await googleSignIn(email);
+      const res = await googleSignIn(email, name, picture);
 
-      const decodedToken = jwtDecode(res.token.accessToken);
-      localStorage.setItem("user", JSON.stringify(decoded));
-      localStorage.setItem(
-        "accessToken",
-        JSON.stringify(res.token.accessToken)
-      );
-      Cookies.set("refreshToken", res.token.refreshToken, {
+      const decodedToken = jwtDecode(res.accessToken);
+      localStorage.setItem("user", JSON.stringify(decodedToken));
+      localStorage.setItem("accessToken", JSON.stringify(res.accessToken));
+      Cookies.set("refreshToken", res.refreshToken, {
         expires: 7,
         secure: true,
         sameSite: "Strict",
