@@ -18,7 +18,6 @@ const CategoryManage = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [reFetchCategory, setReFetchCategory] = useState(false);
 
-
   useEffect(() => {
     const fetchCategories = async () => {
       try {

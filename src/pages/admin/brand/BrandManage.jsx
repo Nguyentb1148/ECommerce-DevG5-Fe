@@ -58,39 +58,21 @@ const BrandManage = () => {
     },
     {
       name: "Description",
-      selector: (row) => row.description || "N/A", // Fallback if description is missing
+      selector: (row) => row.description || "N/A", 
       sortable: true,
       center: "true",
     },
     {
-      name: "Image",
+      name: "Image", 
       cell: (row) => (
-        <div
-          style={{
-            width: "120px", // Fixed width
-            height: "40px", // Fixed height
-            overflow: "hidden", // Ensure the image doesn't overflow
-            position: "relative", // Keep the image contained
-          }}
-        >
-          <img
-            src={row.imageUrl}
-            alt={row.name}
-            style={{
-              width: "100%", // Make the image fill the container
-              height: "100%", // Make the image fill the container
-              objectFit: "cover", // Ensures the image is cropped but retains aspect ratio
-              position: "absolute", // Keep the image inside the container
-              top: 0,
-              left: 0,
-            }}
-            className="rounded-md"
-          />
-        </div>
+        <img
+          src={row.imageUrl}
+          alt={row.name}
+          className="w-14 h-10 object-center rounded-md"
+        />
       ),
       center: "true",
     },
-
     {
       name: "Action",
       center: true,

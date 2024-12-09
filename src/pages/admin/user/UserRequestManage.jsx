@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from "react-toastify";
 import CustomDataTable from '../../../components/datatable/CustomDataTable';
 import { GetAllUsers } from "../../../services/api/UserApi";
+import DetailModal from "../../../components/user/DetailModal"
+import ConfirmUserModal from '../../../components/modal/ConfirmUserModal';
 const UserRequestManage = () => {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+    const [isConfirmUserModalOpen, setIsConfirmUserModalOpen] = useState(false);
     const fetchUsers = async () => {
         try {
             const response = await GetAllUsers();
@@ -61,31 +64,39 @@ const UserRequestManage = () => {
             selector: (row) => row.verify?.status,
             sortable: true,
             center: "true", 
+            cell: (row) => (
+                <span className={`text-${row.verify?.status === 'pending' ? 'yellow-300' : 'red-500'}`}>
+                    {row.verify?.status}
+                </span>
+            ),
         },
         {
             name: "Action",
             center: "true", 
             cell: (row) => (
-              <div className="flex space-x-2">
-                <button
-                  className="bg-green-500 text-white px-2 py-1 rounded"
-                  onClick={() => {
-                    setSelectedUser(row);
-                    setIsUserModalOpen(true);
-                }}
-                >
-                  Accept
-                </button>
-                <button
-                  className="bg-red-500 text-white px-2 py-1 rounded"
-                  onClick={() => {
-                    setSelectedUser(row);
-                    setIsUserModalOpen(true);
-                }}
-                >
-                  Decline
-                </button>
-              </div>
+                <div className="max-md:w-56">
+                    {row.verify?.status === 'pending' ? (
+                        <button
+                            className="bg-yellow-400 text-white px-2 py-1 rounded "
+                            onClick={() => {
+                                setSelectedUser(row);
+                                setIsConfirmUserModalOpen(true);
+                            }}
+                        >
+                            Confirm
+                        </button>
+                    ) : (
+                        <button
+                            className="bg-green-500 text-white px-3 py-1 rounded"
+                            onClick={() => {
+                                setSelectedUser(row);
+                                setIsUserModalOpen(true);
+                            }}
+                        >
+                            Details
+                        </button>
+                    )}
+                </div>
             ),
           },
 
@@ -99,9 +110,15 @@ const UserRequestManage = () => {
                 <CustomDataTable columns={columns} records={users} />
             </div>
             {isUserModalOpen && (
-                <UserDetailModal
-                    users={selectedUser}
+                <DetailModal
+                    user={selectedUser}
                     onClose={() => setIsUserModalOpen(false)}
+                />
+            )}
+            {isConfirmUserModalOpen && (
+                <ConfirmUserModal
+                    user={selectedUser}
+                    onClose={() => setIsConfirmUserModalOpen(false)}
                 />
             )}
         </div>

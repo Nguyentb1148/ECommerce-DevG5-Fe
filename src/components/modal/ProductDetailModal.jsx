@@ -72,6 +72,7 @@ const ProductDetailModal = ({ product, onClose }) => {
           </div>
 
           {/* Image Gallery */}
+          <h3 className="text-2xl w-36">Image: </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {product.imageUrls.map((image, index) => (
               <div key={index} className="relative aspect-square overflow-hidden rounded-lg">
@@ -88,11 +89,11 @@ const ProductDetailModal = ({ product, onClose }) => {
           </div>
 
           {/* Description */}
-          <h3 className="text-2xl">Description: </h3>
+          <h3 className="text-2xl w-36">Description: </h3>
           {loading ? (
             <p className="text-gray-400">Loading description...</p>
           ) : (
-            <div dangerouslySetInnerHTML={{ __html: descriptionContent }} />
+            <div className="text-gray-400" dangerouslySetInnerHTML={{ __html: descriptionContent }} />
           )}
 
           {/* Status and Rejection Reason */}

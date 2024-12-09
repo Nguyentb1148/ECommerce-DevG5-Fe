@@ -77,15 +77,15 @@ const EditCategory = ({
   };
 
   return (
-    <div className="fixed inset-0 z-20 bg-black bg-opacity-30 flex items-center justify-center">
+    <div className="fixed inset-0 z-20 bg-black bg-opacity-30 flex items-center justify-center overflow-auto">
       <div className="bg-gray-800 rounded-lg shadow-md p-6 w-[400px]">
         <h2 className="text-xl font-bold mb-4 text-white">Update Category</h2>
-        <div className="w-full  bg-gray-700 rounded-2xl border border-gray-600">
+        <div className="w-full h-full bg-gray-700 rounded-2xl border border-gray-600 grid border-dashed place-items-center">
           {previewUrl && (
             <img
               src={previewUrl}
               alt="Preview"
-              className="w-full h-40 object-cover rounded-md mb-4"
+              className="w-72 h-72 object-center rounded-md my-4"
             />
           )}
           <div className="grid gap-2 py-2">

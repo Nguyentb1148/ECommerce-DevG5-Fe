@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from "react-toastify";
-import ConfirmModal from '../../../components/modal/ConfirmModal';
+import ConfirmProductModal from '../../../components/modal/ConfirmProductModal';
 import ProductDetailModal from '../../../components/modal/ProductDetailModal';
 import CustomDataTable from '../../../components/datatable/CustomDataTable';
 import { getProducts, ApproveProduct, RejectProduct, UpdateRequest, updateProduct } from '../../../services/api/ProductApi';
@@ -139,7 +139,7 @@ const ProductRequestManage = () => {
                 />
             </div>
             {isConfirmModalOpen && (
-                <ConfirmModal
+                <ConfirmProductModal
                     product={selectedProduct}
                     onReject={(rejectionReason) => handleReject(selectedProduct._id, rejectionReason, selectedProduct.requestId)}
                     onApprove={() => handleApprove(selectedProduct._id, selectedProduct.requestId)}

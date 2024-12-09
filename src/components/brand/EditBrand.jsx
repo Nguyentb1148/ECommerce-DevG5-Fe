@@ -81,17 +81,17 @@ const EditBranch = ({ onClose, branch, reFetchBrand, setReFetchBrand }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-20 bg-black bg-opacity-30 flex items-center justify-center">
+    <div className="fixed inset-0 z-20 top-10 bg-black bg-opacity-30 flex items-center justify-center overflow-auto">
       <div className="bg-gray-800 rounded-lg shadow-md p-6 w-[400px]">
         <h2 className="text-xl font-bold mb-4 text-white ">Update Branch</h2>
 
         {/* Image Preview and File Upload */}
-        <div className="w-full py-6 bg-gray-700  rounded-2xl border border-gray-600 gap-3 grid border-dashed">
+        <div className="w-full h-full py-6 bg-gray-700 rounded-2xl border border-gray-600 gap-3 grid border-dashed place-items-center">
           {previewUrl && (
             <img
               src={previewUrl}
               alt="Branch Preview"
-              className="w-full h-40 object-cover rounded-md mb-4"
+              className="w-72 h-72 object-center rounded-md"
             />
           )}
           <div className="grid gap-2">
