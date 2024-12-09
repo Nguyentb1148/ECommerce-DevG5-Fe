@@ -4,6 +4,7 @@ import { MdOutlineHome, MdLogout } from "react-icons/md";
 import { PiUserListBold } from "react-icons/pi";
 import { BiCategory } from "react-icons/bi";
 import { SiBrandfolder } from "react-icons/si";
+import { IoPricetag } from "react-icons/io5";
 import { VscGitPullRequestNewChanges, VscGitPullRequestGoToChanges } from "react-icons/vsc";
 import { FaBoxArchive } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +23,7 @@ const SidebarAdmin = () => {
     { name: "Brand", icon: <SiBrandfolder size={25} />, path: "brand" },
     { name: "User", icon: <PiUserListBold size={25} />, path: "user" },
     { name: "Product", icon: <FaBoxArchive size={25} />, path: "listProductManage" },
+    { name: "Voucher", icon: <IoPricetag size={25} />, path: "voucher" },
     { name: "Product Request", icon: <VscGitPullRequestNewChanges size={25} />, path: "productRequest" },
     { name: "User Request", icon: <VscGitPullRequestGoToChanges size={25} />, path: "userRequest" },
     { name: "Logout", icon: <MdLogout size={25} />, path: "logout" },

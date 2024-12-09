@@ -21,6 +21,7 @@ const UserManage = () => {
   const fetchUsers = async () => {
     try {
       const response = await GetAllUsers();
+      console.log("Response:", response); // Debugging log
       setUsers(response);
     } catch (error) {
       console.error(

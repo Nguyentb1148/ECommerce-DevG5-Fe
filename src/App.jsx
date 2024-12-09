@@ -15,7 +15,7 @@ import UserManage from "./pages/admin/user/UserManage.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import BrandManage from "./pages/admin/brand/BrandManage.jsx";
 import OrdersManage from "./pages/seller/order/OrderManage.jsx";
-import VoucherManage from "./pages/seller/voucher/VoucherManage.jsx";
+import VoucherManage from "./pages/admin/voucher/VoucherManage.jsx";
 import ShoppingCart from "./pages/cart/ShoppingCart.jsx";
 import Seller from "./pages/seller/home/Seller.jsx";
 import ProductManage from "./pages/seller/product/ProductManage.jsx";
@@ -54,7 +54,6 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/seller" element={<Seller />}>
           <Route path="product" element={<ProductManage />} />
-          <Route path="voucher" element={<VoucherManage />} />
           <Route path="orders" element={<OrdersManage />} />
         </Route>
         <Route path="/admin" element={<Admin />}>
@@ -63,6 +62,7 @@ function App() {
           <Route path="brand" element={<BrandManage />} />
           <Route path="user" element={<UserManage />} />
           <Route path="listProductManage" element={<ListProductManage />} />
+          <Route path="voucher" element={<VoucherManage />} />
           <Route path="productRequest" element={<ProductRequestManage />} />
           <Route path="userRequest" element={<UserRequestManage />} />
         </Route>

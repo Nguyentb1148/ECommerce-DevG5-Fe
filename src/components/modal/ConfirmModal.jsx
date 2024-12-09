@@ -1,20 +1,55 @@
 import React, { useState } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
-import { ApproveProduct, RejectProduct } from "../../services/api/ProductApi"; 
+import { ApproveProduct, RejectProduct } from "../../services/api/ProductApi";
 import { toast, ToastContainer } from "react-toastify";
-
+import mammoth from 'mammoth';
 const ConfirmModal = ({ product, onClose }) => {
     const [showRejectionForm, setShowRejectionForm] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [descriptionContent, setDescriptionContent] = useState(''); // State for description content
 
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        const fetchProduct = async () => {
+            setLoading(true); // Set loading to true when fetching starts
+            if (product.description && product.description.startsWith('http')) {
+                const response = await fetch(product.description);
+                if (response.ok) {
+                    const arrayBuffer = await response.arrayBuffer();
+                    try {
+                        const result = await mammoth.convertToHtml({ arrayBuffer });
+                        setDescriptionContent(result.value); // Set the HTML content from the Word document
+                    } catch (error) {
+                        console.error('Error converting .docx file:', error);
+                        setDescriptionContent('<p>Failed to load description content.</p>');
+                    }
+                } else {
+                    console.error('Failed to fetch description content.');
+                    setDescriptionContent('<p>Failed to load description content.</p>');
+                }
+            } else {
+                setDescriptionContent(product.description || '');
+            }
+            setLoading(false); // Set loading to false when fetching is done
+        };
+
+        if (product) {
+            fetchProduct();
+        }
+    }, [product]);
     const handleApprove = async () => {
+        console.log("Approve button clicked");
+        if (!product || !product._id) {
+            console.error("Product ID is missing");
+            toast.error("Product ID is missing. Cannot approve the product.");
+            return;
+        }
         setLoading(true);
         try {
-            await ApproveProduct(product.id);
+            await ApproveProduct(product._id);
             toast.success("Product approved successfully!");
-            onClose(); // Đóng modal sau khi thành công
+            onClose(); // Close modal after success
         } catch (err) {
             console.error("Approval error:", err);
             toast.error("Failed to approve product. Please try again.");
@@ -22,20 +57,25 @@ const ConfirmModal = ({ product, onClose }) => {
             setLoading(false);
         }
     };
-
     const handleReject = async (e) => {
         e.preventDefault();
+        console.log("Reject button clicked");
+        if (!product || !product._id) {
+            console.error("Product ID is missing");
+            toast.error("Product ID is missing. Cannot reject the product.");
+            return;
+        }
         if (!rejectionReason.trim()) {
             toast.error("Please provide a reason for rejection.");
             return;
         }
         setLoading(true);
         try {
-            await RejectProduct(product.id, rejectionReason);
+            await RejectProduct(product._id, rejectionReason);
             toast.success("Product rejected successfully!");
             setRejectionReason("");
             setShowRejectionForm(false);
-            onClose(); // Đóng modal sau khi thành công
+            onClose(); // Close modal after success
         } catch (err) {
             console.error("Rejection error:", err);
             toast.error("Failed to reject product. Please try again.");
@@ -48,8 +88,8 @@ const ConfirmModal = ({ product, onClose }) => {
         <div className="fixed inset-0 z-20 bg-opacity-30 bg-gray-900 p-6 text-white overflow-auto">
             <div className="max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-xl p-8">
                 <div className="space-y-6">
-                   {/* Product Header */}
-                   <div className="flex justify-between items-center">
+                    {/* Product Header */}
+                    <div className="flex justify-between items-center">
                         <h2 className="text-3xl font-bold text-center text-gray-100">Product Details</h2>
                         <button onClick={onClose} className="text-gray-400 hover:text-gray-200">
                             <FaX />
@@ -75,7 +115,7 @@ const ConfirmModal = ({ product, onClose }) => {
                     <div className="flex items-center">
                         <h3 className="text-2xl w-36">Seller: </h3>
                         <p className="text-lg text-gray-400 px-2">
-                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
                         </p>
                     </div>
 
@@ -97,9 +137,11 @@ const ConfirmModal = ({ product, onClose }) => {
 
                     {/* Description */}
                     <h3 className="text-2xl">Description: </h3>
-                    <div className="bg-gray-700 rounded-lg p-6">
-                        <p className="text-gray-300 line-clamp-2">{product.description}</p>
-                    </div>
+                    {loading ? (
+                        <p className="text-gray-400">Loading description...</p>
+                    ) : (
+                        <div dangerouslySetInnerHTML={{ __html: descriptionContent }} />
+                    )}
 
                     {/* Action Buttons */}
                     {!showRejectionForm ? (
@@ -107,22 +149,20 @@ const ConfirmModal = ({ product, onClose }) => {
                             <button
                                 onClick={handleApprove}
                                 disabled={loading}
-                                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
-                                    loading
+                                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${loading
                                         ? "bg-green-300 cursor-not-allowed"
                                         : "bg-green-500 hover:bg-green-600"
-                                }`}
+                                    }`}
                             >
                                 <FaCheck /> {loading ? "Approving..." : "Approve"}
                             </button>
                             <button
                                 onClick={() => setShowRejectionForm(true)}
                                 disabled={loading}
-                                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
-                                    loading
+                                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${loading
                                         ? "bg-red-300 cursor-not-allowed"
                                         : "bg-red-500 hover:bg-red-600"
-                                }`}
+                                    }`}
                             >
                                 <FaTimes /> Reject
                             </button>
@@ -146,11 +186,10 @@ const ConfirmModal = ({ product, onClose }) => {
                                 <button
                                     onClick={handleReject}
                                     disabled={loading || !rejectionReason.trim()}
-                                    className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
-                                        loading
+                                    className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${loading
                                             ? "bg-blue-300 cursor-not-allowed"
                                             : "bg-blue-500 hover:bg-blue-600"
-                                    }`}
+                                        }`}
                                 >
                                     {loading ? "Rejecting..." : "Submit Rejection"}
                                 </button>

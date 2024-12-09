@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { MdOutlineHome, MdLogout } from "react-icons/md";
 import { FaBoxArchive } from "react-icons/fa6";
-import { IoPricetag } from "react-icons/io5";
 import { FiShoppingBag } from "react-icons/fi";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +17,6 @@ const SidebarSeller = () => {
   const menuItems = [
     { name: "Dashboard", icon: <MdOutlineHome size={25} />, path: "" },
     { name: "Product", icon: <FaBoxArchive size={25} />, path: "product" },
-    { name: "Voucher", icon: <IoPricetag size={25} />, path: "voucher" },
     { name: "Orders", icon: <FiShoppingBag size={25} />, path: "orders" },
     { name: "Logout", icon: <MdLogout size={25} />, path: "logout" },
   ];

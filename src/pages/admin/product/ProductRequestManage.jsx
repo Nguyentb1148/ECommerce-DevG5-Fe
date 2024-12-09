@@ -3,15 +3,13 @@ import { toast, ToastContainer } from "react-toastify";
 import ConfirmModal from '../../../components/modal/ConfirmModal';
 import ProductDetailModal from '../../../components/modal/ProductDetailModal';
 import CustomDataTable from '../../../components/datatable/CustomDataTable';
-import { getProducts, ApproveProduct, RejectProduct } from '../../../services/api/ProductApi';
-
+import { getProducts, ApproveProduct, RejectProduct, UpdateRequest, updateProduct } from '../../../services/api/ProductApi';
 const ProductRequestManage = () => {
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [isProductDetailModalOpen, setIsProductDetailModalOpen] = useState(false);
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [rejectionReason, setRejectionReason] = useState("");
-
     const fetchProducts = async () => {
         try {
             const response = await getProducts();
@@ -28,7 +26,6 @@ const ProductRequestManage = () => {
     useEffect(() => {
         fetchProducts();
     }, []);
-
     const handleApprove = async (productId, requestId) => {
         console.log("Approving product with ID:", productId, "and request ID:", requestId);
         try {
@@ -42,7 +39,6 @@ const ProductRequestManage = () => {
             toast.error("Error approving product");
         }
     };
-
     const handleReject = async (productId, rejectionReason, requestId) => {
         console.log("Rejecting product with ID:", productId, "and request ID:", requestId);
         try {
@@ -56,25 +52,24 @@ const ProductRequestManage = () => {
             toast.error("Error rejecting product");
         }
     };
-
     const columns = [
         {
             name: "Name",
             selector: (row) => row.name,
             sortable: true,
-            center: true,
+            center: "true",
         },
         {
             name: "Price",
             selector: (row) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(row.price),
             sortable: true,
-            center: true,
+            center: "true",
         },
         {
             name: "Seller",
             selector: (row) => row.sellerId?.fullName || "N/A",
             sortable: true,
-            center: true,
+            center: "true",
         },
         {
             name: "Created At",
@@ -89,13 +84,13 @@ const ProductRequestManage = () => {
                     second: "2-digit",
                 }).format(new Date(row.createdAt)),
             sortable: true,
-            center: true,
+            center: "true",
         },
         {
             name: "Status",
             selector: row => row.verify?.status,
             sortable: true,
-            center: true,
+            center: "true",
             cell: (row) => (
                 <span className={`text-${row.verify?.status === 'pending' ? 'yellow-300' : 'red-500'}`}>
                     {row.verify?.status}
@@ -104,7 +99,7 @@ const ProductRequestManage = () => {
         },
         {
             name: 'Action',
-            center: true,
+            center: "true",
             cell: (row) => (
                 <div className="max-md:w-56">
                     {row.verify?.status === 'pending' ? (
@@ -131,10 +126,7 @@ const ProductRequestManage = () => {
                 </div>
             ),
         }
-
     ];
-
-
     return (
         <div>
             <h1 className="grid place-items-center text-4xl py-4 text-white">
@@ -149,9 +141,12 @@ const ProductRequestManage = () => {
             {isConfirmModalOpen && (
                 <ConfirmModal
                     product={selectedProduct}
-                    onReject={handleReject}
-                    onApprove={handleApprove}
-                    onClose={() => setIsConfirmModalOpen(false)}
+                    onReject={(rejectionReason) => handleReject(selectedProduct._id, rejectionReason, selectedProduct.requestId)}
+                    onApprove={() => handleApprove(selectedProduct._id, selectedProduct.requestId)}
+                    onClose={() => {
+                        setIsConfirmModalOpen(false);
+                        fetchProducts(); // Refresh the table when the modal is closed
+                    }}
                     rejectionReason={rejectionReason}
                     setRejectionReason={setRejectionReason}
                 />
@@ -166,5 +161,4 @@ const ProductRequestManage = () => {
         </div>
     );
 };
-
 export default ProductRequestManage;
