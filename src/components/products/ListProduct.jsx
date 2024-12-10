@@ -12,20 +12,54 @@ const ListProduct = ({ filters }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const productData = await getProductsByChunk(filters, 0, itemsPerPage);
-      setProductsData(productData.data);
-      setHasMore(productData.data.length < productData.totalProducts);
+      try {
+        const productData = await getProductsByChunk(filters, 0, itemsPerPage);
+        console.log("Page", itemsPerPage);
+        console.log("PRODUCT DATA", productData);
+
+        if (productData.success && productData.data.length > 0) {
+          setProductsData(productData.data);
+          setHasMore(
+            productData.data.length <
+              (productData.totalProducts || productData.data.length)
+          );
+        } else {
+          setProductsData([]);
+          setHasMore(false);
+          console.error("No products available or invalid response.");
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setProductsData([]);
+        setHasMore(false);
+      }
     };
     fetchData();
   }, [filters]);
 
   const fetchMoreProducts = async () => {
     const skip = productsData.length;
-    const productData = await getProductsByChunk(filters, skip, itemsPerPage);
-    setProductsData((prevProducts) => [...prevProducts, ...productData.data]);
-    setHasMore(
-      productsData.length + productData.data.length < productData.totalProducts
-    );
+    try {
+      const productData = await getProductsByChunk(filters, skip, itemsPerPage);
+      console.log("Fetching more products:", productData);
+
+      if (productData.success && productData.data.length > 0) {
+        setProductsData((prevProducts) => [
+          ...prevProducts,
+          ...productData.data,
+        ]);
+        setHasMore(
+          productsData.length + productData.data.length <
+            (productData.totalProducts || productData.data.length)
+        );
+      } else {
+        setHasMore(false);
+        console.error("No more products available or invalid response.");
+      }
+    } catch (error) {
+      console.error("Error fetching more products:", error);
+      setHasMore(false);
+    }
   };
 
   const handleProductClick = (productId) => {

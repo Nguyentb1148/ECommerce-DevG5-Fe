@@ -12,17 +12,12 @@ const VnPayPaymentSuccess = () => {
 
   useEffect(() => {
     const verifyVNPayPayment = async () => {
-      const queryParams = Object.fromEntries(
-        new URLSearchParams(window.location.search).entries()
-      );
-
       try {
         setIsLoading(true);
-
+        const queryParams = Object.fromEntries(searchParams.entries());
         const response = await paymentApi.verifyVnPayPayment(queryParams);
-        console.log("VNPay verification success:", response);
+        setOrderDetails(response); // Store order details from response
       } catch (err) {
-        console.error("Error verifying VNPay payment:", err);
         setError("Payment verification failed. Please contact support.");
       } finally {
         setIsLoading(false);
@@ -30,8 +25,7 @@ const VnPayPaymentSuccess = () => {
     };
 
     verifyVNPayPayment();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
 
   if (isLoading) {
     return (
