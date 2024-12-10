@@ -12,6 +12,7 @@ const AttributeSection = ({
                               removeAttribute,
                               removeValueFromAttribute,
                               addAttribute,
+                              isEdit
                           }) => {
     const [typingTimeouts, setTypingTimeouts] = useState({}); // Store timeouts for each attribute
     const previousNamesRef = useRef({}); // Store previous names for comparison
@@ -21,7 +22,7 @@ const AttributeSection = ({
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-medium text-gray-100">Attribute</h3>
                 {/* Conditionally hide the "Add Attribute" button if attributes already exist */}
-                {formData.attributes.length === 0 && (
+                {!isEdit && (
                     <button
                         type="button"
                         onClick={addAttribute}
