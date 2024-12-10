@@ -504,6 +504,7 @@ const AddProduct = ({ onClose, refreshProducts }) => {
                 removeAttribute={removeAttribute}
                 removeValueFromAttribute={removeValueFromAttribute}
                 addAttribute={addAttribute}
+                isEdit={false}
             />
             {/* Variant Section */}
             <VariantSection

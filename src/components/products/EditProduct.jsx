@@ -614,6 +614,7 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
                     removeAttribute={removeAttribute}
                     removeValueFromAttribute={removeValueFromAttribute}
                     addAttribute={addAttribute}
+                    isEdit={true}
                 />
             )}
             {/* Variants Section */}
@@ -628,6 +629,10 @@ const EditProduct = ({ onClose, refreshProducts, productId }) => {
 
             {/* Submit Button */}
             <div className="mt-5 text-center">
+              <button onClick={onClose}
+                      className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded mr-2"> Cancel
+              </button>
+
               <button
                   type="submit"
                   disabled={isSubmitting}
