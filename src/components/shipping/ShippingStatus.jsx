@@ -51,7 +51,7 @@
 // export default ShippingStatus;
 
 import React from 'react';
-import { FiSearch, FiCheck, FiTruck, FiPackage, FiHome } from "react-icons/fi";
+import { FiCheck, FiTruck, FiPackage, FiHome } from "react-icons/fi";
 
 const ShippingStatus = ({ order }) => {
     // Define the timeline steps

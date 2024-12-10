@@ -7,7 +7,7 @@ import { getProductById } from "../../services/api/ProductApi";
 import { AddToCart } from "../../services/api/CartApi";
 import mammoth from "mammoth";
 import { toast, ToastContainer } from "react-toastify";
-import { FiMinus, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiMinus, FiPlus } from "react-icons/fi";
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);

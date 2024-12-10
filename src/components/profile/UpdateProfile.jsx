@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaUpload } from "react-icons/fa";
-import {handleImageUpload, uploadImage} from "../../configs/Cloudinary";
+import {handleImageUpload} from "../../configs/Cloudinary";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { updateUserProfile, userData } from "../../services/api/UserApi.jsx";

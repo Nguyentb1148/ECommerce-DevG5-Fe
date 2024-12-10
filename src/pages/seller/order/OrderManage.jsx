@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { FaSearch } from "react-icons/fa";
 import { FiCheck, FiTruck, FiPackage, FiHome } from "react-icons/fi";
 import OrderDetailsManage from '../../../components/orders/OrderDetailsManage';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiSearch, FiCheck, FiTruck, FiPackage, FiHome } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import OrderDetails from "./OrderDetails";
 import { orderByUserId } from "../../services/api/OrderApi";
 

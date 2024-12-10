@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import CustomDataTable from '../../../components/datatable/CustomDataTable';
 import { GetAllUsers } from "../../../services/api/UserApi";
 import DetailModal from "../../../components/user/DetailModal"

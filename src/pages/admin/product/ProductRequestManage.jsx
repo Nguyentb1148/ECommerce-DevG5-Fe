@@ -33,7 +33,7 @@ const ProductRequestManage = () => {
             await UpdateRequest(requestId, "approved", "Product approved successfully"); // Update request
             await updateProduct(productId, { verify: { status: "approved" } });
             toast.success("Product approved successfully");
-            fetchProducts();
+            await fetchProducts();
         } catch (error) {
             console.error("Error approving product:", error.response?.data || error.message);
             toast.error("Error approving product");
@@ -46,7 +46,7 @@ const ProductRequestManage = () => {
             await UpdateRequest(requestId, "rejected", rejectionReason); // Update request
             await updateProduct(productId, { verify: { status: "rejected" } });
             toast.success("Product rejected successfully");
-            fetchProducts();
+            await fetchProducts();
         } catch (error) {
             console.error("Error rejecting product:", error.response?.data || error.message);
             toast.error("Error rejecting product");
