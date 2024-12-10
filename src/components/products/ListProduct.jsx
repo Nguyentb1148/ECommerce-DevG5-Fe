@@ -14,8 +14,6 @@ const ListProduct = ({ filters }) => {
     const fetchData = async () => {
       try {
         const productData = await getProductsByChunk(filters, 0, itemsPerPage);
-        console.log("Page", itemsPerPage);
-        console.log("PRODUCT DATA", productData);
 
         if (productData.success && productData.data.length > 0) {
           setProductsData(productData.data);
