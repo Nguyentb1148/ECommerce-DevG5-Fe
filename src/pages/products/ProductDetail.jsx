@@ -8,16 +8,19 @@ import { AddToCart } from "../../services/api/CartApi";
 import mammoth from "mammoth";
 import { toast, ToastContainer } from "react-toastify";
 import { FiMinus, FiPlus } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [cart, setCart] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState({});
   const [selectedPrice, setSelectedPrice] = useState(0);
   const [selectedStock, setSelectedStock] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [descriptionContent, setDescriptionContent] = useState(""); // State for description content
   useEffect(() => {
     if (!id) return;
@@ -93,8 +96,13 @@ const ProductDetail = () => {
       count: quantity,
     };
     try {
+      setIsAnimating(true);
       await AddToCart(cartData);
-      toast.success("Product added to cart!");
+      setTimeout(() => {
+        setIsAnimating(false);
+        setCartCount(prev => prev + quantity);
+        toast.success("Product added to cart!");
+      }, 1000);
     } catch (error) {
       console.error("Error adding to cart:", error);
       toast.error("Failed to add product to cart.");
@@ -149,7 +157,7 @@ const ProductDetail = () => {
   return (
     <>
       <div className="bg-gray-900 min-h-screen">
-        <Navbar />
+        <Navbar cartCount={cartCount} />
         <div className="max-w-7xl mx-auto p-4">
           <div className="bg-gray-800 p-6 rounded-lg shadow-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -220,6 +228,28 @@ const ProductDetail = () => {
                     <FaShoppingCart className="mr-2" />
                     Add to card
                   </button>
+                  <AnimatePresence>
+                    {isAnimating && (
+                      <motion.div
+                        initial={{ scale: 1, x: 0, y: 0 }}
+                        animate={{
+                          scale: 0.5,
+                          x: window.innerWidth - 100,
+                          y: -window.innerHeight + 100,
+                        }}
+                        exit={{ scale: 0 }}
+                        transition={{ duration: 2 }}
+                        className="fixed z-50"
+                        style={{ left: "20%", top: "50%" }}
+                      >
+                        <img
+                          src={product.imageUrls[0]}
+                          alt="Flying product"
+                          className="w-40 h-40 z-50 object-cover rounded-lg"
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
                 <div className="mt-4">
                   <p className="text-white text-lg sm:text-2xl lg:text-3xl font-semibold">
@@ -242,8 +272,8 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
-    </>
+      <ToastContainer className="mt-12" />
+      </>
   );
 };
 export default ProductDetail;
