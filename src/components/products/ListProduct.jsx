@@ -3,7 +3,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useNavigate } from "react-router-dom";
 import { getProductsByChunk } from "../../services/api/ProductApi"; // Adjust the import according to your project structure
 import { ToastContainer } from "react-toastify";
-const ListProduct = () => {
+const ListProduct = ({ filters }) => {
   const navigate = useNavigate();
   const [productsData, setProductsData] = useState([]);
   // console.log("current products: ", productsData);
@@ -12,26 +12,20 @@ const ListProduct = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const productData = await getProductsByChunk(0, itemsPerPage); // Initial fetch with skip=0
+      const productData = await getProductsByChunk(filters, 0, itemsPerPage);
       setProductsData(productData.data);
+      setHasMore(productData.data.length < productData.totalProducts);
     };
     fetchData();
-  }, []);
+  }, [filters]);
 
   const fetchMoreProducts = async () => {
-    const skip = productsData.length; // Number of already loaded products
-    const productData = await getProductsByChunk(skip, itemsPerPage); // Fetch more products
-
-    setProductsData((prevProducts) => {
-      const updatedProducts = [...prevProducts, ...productData.data]; // Concatenate new products
-
-      // Check if we've loaded all products
-      if (updatedProducts.length >= productData.totalProducts) {
-        setHasMore(false); // No more products to load
-      }
-
-      return updatedProducts; // Return the updated product list
-    });
+    const skip = productsData.length;
+    const productData = await getProductsByChunk(filters, skip, itemsPerPage);
+    setProductsData((prevProducts) => [...prevProducts, ...productData.data]);
+    setHasMore(
+      productsData.length + productData.data.length < productData.totalProducts
+    );
   };
 
   const handleProductClick = (productId) => {

@@ -136,6 +136,9 @@ const AuthForm = () => {
         const { confirmPassword, ...dataToSend } = registerData;
         const response = await register(dataToSend);
         if (response) {
+          toast.success(
+            "Signed up successfully!, Now confirm your email before login"
+          );
           navigate("/");
         }
         setFormType("login");

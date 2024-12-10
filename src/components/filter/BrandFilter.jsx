@@ -1,58 +1,68 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { getBrands } from "../../services/api/BrandsApi";
 
-const BrandFilter = () => {
-  const [selectedBrands, setSelectedBrands] = useState([]);
+const BrandFilter = ({ selectedBrands = [], setSelectedBrands }) => {
+  const [brands, setBrands] = useState([]);
 
-  const brands = [
-    { name: "Apple"},
-    { name: "Samsung"},
-    { name: "ASUS"},
-    { name: "Dell"},
-    { name: "Lenovo"},
-    { name: "HP"},
-    { name: "Panasonic"},
-  ];
-
-  const toggleBrand = (brand) => {
-    if (selectedBrands.includes(brand)) {
-      setSelectedBrands(selectedBrands.filter((item) => item !== brand));
+  const toggleBrand = (brandId) => {
+    if (selectedBrands.includes(brandId)) {
+      setSelectedBrands(selectedBrands.filter((item) => item !== brandId));
     } else {
-      setSelectedBrands([...selectedBrands, brand]);
+      setSelectedBrands([...selectedBrands, brandId]);
     }
   };
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const response = await getBrands(); // Adjust the endpoint as needed
+        setBrands(response || []); // Assuming response has a `data` field with brands
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    };
+
+    fetchBrands();
+  }, []);
 
   return (
     <div className="">
       {/* Brand List */}
-      <ul className="space-y-2">
-        {brands.map((brand, index) => (
-          <li
-            key={index}
-            className="flex items-center justify-between cursor-pointer"
-            onClick={() => toggleBrand(brand.name)}
-          >
-            <div className="flex items-center space-x-3">
-              {/* Checkbox */}
-              <input
-                type="checkbox"
-                id={`brand-${index}`}
-                checked={selectedBrands.includes(brand.name)}
-                onChange={() => toggleBrand(brand.name)}
-                className="w-4 h-4 cursor-pointer"
-              />
-              {/* Label */}
-              <label
-                htmlFor={`brand-${index}`}
-                className={`cursor-pointer ${
-                  selectedBrands.includes(brand.name) ? "font-bold " : "font-normal"
-                }`}
-              >
-                {brand.name}
-              </label>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {brands.length > 0 ? (
+        <ul className="space-y-2">
+          {brands.map((brand) => (
+            <li
+              key={brand._id}
+              className="flex items-center justify-between cursor-pointer"
+              onClick={() => toggleBrand(brand._id)}
+            >
+              <div className="flex items-center space-x-3">
+                {/* Checkbox */}
+                <input
+                  type="checkbox"
+                  id={`brand-${brand._id}`}
+                  checked={selectedBrands.includes(brand._id)}
+                  onChange={() => toggleBrand(brand._id)}
+                  className="w-4 h-4 cursor-pointer"
+                />
+                {/* Label */}
+                <label
+                  htmlFor={`brand-${brand._id}`}
+                  className={`cursor-pointer ${
+                    selectedBrands.includes(brand._id)
+                      ? "font-bold "
+                      : "font-normal"
+                  }`}
+                >
+                  {brand.name}
+                </label>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-gray-500">No brands available</p>
+      )}
     </div>
   );
 };

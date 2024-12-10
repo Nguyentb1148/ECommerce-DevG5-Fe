@@ -1,51 +1,70 @@
-import React, { useState } from "react";
 import { Range } from "react-range";
 
-const PriceRange = () => {
-    const [price, setPrice] = useState([30, 800]); 
+const PriceRange = ({ priceRange = [3000000, 100000000], setPriceRange }) => {
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      maximumFractionDigits: 0,
+    }).format(value);
 
-    return (
-        <div className="">
-            <h3 className="font-semibold text-lg">Price</h3>
-            <div className="flex justify-between items-center my-2">
-                <span className="text-sm font-medium">Min: {price[0]}$</span>
-                <span className="text-sm font-medium">Max: {price[1]}$</span>
-            </div>
+  // Ensure priceRange values are within bounds
+  const validPriceRange = [
+    Math.max(priceRange[0], 3000000),
+    Math.min(priceRange[1], 100000000),
+  ];
 
-            <Range
-                step={1}
-                min={10}
-                max={1000}
-                values={price}
-                onChange={(values) => setPrice(values)}
-                renderTrack={({ props, children }) => (
-                    <div
-                        {...props}
-                        className="w-full h-2 bg-gray-200 rounded-lg relative"
-                    >
-                        <div
-                            style={{
-                                position: "absolute",
-                                height: "100%",
-                                background: "limegreen",
-                                borderRadius: "4px",
-                                left: `${((price[0] - 10) / (1000 - 10)) * 100}%`,
-                                width: `${((price[1] - price[0]) / (1000 - 10)) * 100}%`,
-                            }}
-                        />
-                        {children}
-                    </div>
-                )}
-                renderThumb={({ props }) => (
-                    <div
-                        {...props}
-                        className="w-5 h-5 bg-white border-2 border-limegreen rounded-full shadow-lg"
-                    />
-                )}
+  return (
+    <div className="">
+      <h3 className="font-semibold text-lg">Price Range</h3>
+      <div className="flex justify-between items-center my-2">
+        <span className="text-sm font-medium">
+          Min: {formatCurrency(validPriceRange[0])}
+        </span>
+        <span className="text-sm font-medium">
+          Max: {formatCurrency(validPriceRange[1])}
+        </span>
+      </div>
+
+      <Range
+        step={1000000} // Step: 1,000,000 VND
+        min={3000000} // Min: 3,000,000 VND
+        max={100000000} // Max: 10,000,000,000 VND
+        values={validPriceRange}
+        onChange={(values) => setPriceRange(values)}
+        renderTrack={({ props, children }) => (
+          <div
+            {...props}
+            className="w-full h-2 bg-gray-200 rounded-lg relative"
+          >
+            <div
+              style={{
+                position: "absolute",
+                height: "100%",
+                background: "limegreen",
+                borderRadius: "4px",
+                left: `${
+                  ((validPriceRange[0] - 3000000) / (100000000 - 3000000)) * 100
+                }%`,
+                width: `${
+                  ((validPriceRange[1] - validPriceRange[0]) /
+                    (100000000 - 3000000)) *
+                  100
+                }%`,
+              }}
             />
-
-        </div>
-    );
+            {children}
+          </div>
+        )}
+        renderThumb={({ props }) => (
+          <div
+            {...props}
+            className="w-5 h-5 bg-white border-2 border-limegreen rounded-full shadow-lg"
+          />
+        )}
+      />
+    </div>
+  );
 };
 
 export default PriceRange;

@@ -188,6 +188,7 @@ const ShoppingCart = () => {
         <BackToTop />
         {currentStep === 2 && (
           <>
+            <Stepper currentStep={currentStep} />
             <div className="h-83v grid place-items-center bg-gray-900 text-gray-300 ">
               <div className="grid place-items-center">
                 <FaCheckCircle className="text-[120px] text-emerald-500 " />
