@@ -19,8 +19,8 @@ const CartItem = ({ item, variant, onUpdateQuantity, onRemove }) => {
             // e.target.src = item.product.imageUrls;
           }}
         />
-        <div>
-          <h3 className="text-lg font-semibold text-white">
+        <div className="w-80">
+          <h3 className="text-lg font-semibold text-white line-clamp-1">
             {item.product.name}
           </h3>
           {/* <p className="text-gray-400">{itemPrice}VND</p> */}
@@ -30,7 +30,7 @@ const CartItem = ({ item, variant, onUpdateQuantity, onRemove }) => {
               currency: "VND",
             }).format(itemPrice)}
           </p>
-          <p className="text-gray-400">
+          <p className="text-gray-400 line-clamp-1">
             Storage: {variant.attributes?.option}, Color:{" "}
             {variant.attributes?.color}
           </p>

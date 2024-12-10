@@ -225,7 +225,7 @@ const ShoppingCart = () => {
                       />
                     ))}
                     {items.length === 0 && (
-                      <div className="flex flex-col justify-center items-center h-full text-center py-8 text-gray-400 ">
+                      <div className="flex flex-col justify-center items-center h-83v text-center py-8 text-gray-400 ">
                         <BsCartXFill size={100} />
                         <h2 className="text-2xl py-2">Your cart is empty</h2>
                       </div>

@@ -4,6 +4,7 @@ import UpdateProfile from "../../components/profile/UpdateProfile";
 import ChangePassword from "../../components/password/ChangePassword";
 import OrderHistory from "../../components/orders/OrderHistory";
 import ListVoucher from "../../components/voucher/ListVoucher";
+import UserRoleUpdate from "../../components/user/UserRoleUpdate";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -17,6 +18,8 @@ const Profile = () => {
         return <OrderHistory />;
       case "vouchers":
         return <ListVoucher />;
+      case "changeRole":
+        return <UserRoleUpdate />;
       default:
         return <UpdateProfile />;
     }
@@ -33,43 +36,48 @@ const Profile = () => {
               <div className="flex space-x-4 border-b">
                 <button
                   onClick={() => setActiveTab("profile")}
-                  className={`pb-2 px-4 ${
-                    activeTab === "profile"
+                  className={`pb-2 px-4 ${activeTab === "profile"
                       ? "border-b-2 border-blue-500 text-blue-500"
                       : "text-gray-500"
-                  }`}
+                    }`}
                 >
                   Update Profile
                 </button>
                 <button
                   onClick={() => setActiveTab("password")}
-                  className={`pb-2 px-4 ${
-                    activeTab === "password"
+                  className={`pb-2 px-4 ${activeTab === "password"
                       ? "border-b-2 border-blue-500 text-blue-500"
                       : "text-gray-500"
-                  }`}
+                    }`}
                 >
                   Change Password
                 </button>
                 <button
                   onClick={() => setActiveTab("orders")}
-                  className={`pb-2 px-4 ${
-                    activeTab === "orders"
+                  className={`pb-2 px-4 ${activeTab === "orders"
                       ? "border-b-2 border-blue-500 text-blue-500"
                       : "text-gray-500"
-                  }`}
+                    }`}
                 >
                   Order History
                 </button>
                 <button
                   onClick={() => setActiveTab("vouchers")}
-                  className={`pb-2 px-4 ${
-                    activeTab === "vouchers"
+                  className={`pb-2 px-4 ${activeTab === "vouchers"
                       ? "border-b-2 border-blue-500 text-blue-500"
                       : "text-gray-500"
-                  }`}
+                    }`}
                 >
                   List Voucher
+                </button>
+                <button
+                  onClick={() => setActiveTab("changeRole")}
+                  className={`pb-2 px-4 ${activeTab === "changeRole"
+                      ? "border-b-2 border-blue-500 text-blue-500"
+                      : "text-gray-500"
+                    }`}
+                >
+                  Update Role
                 </button>
               </div>
             </div>

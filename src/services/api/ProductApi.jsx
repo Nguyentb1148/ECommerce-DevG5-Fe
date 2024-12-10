@@ -164,10 +164,10 @@ export const ApproveProduct = async (productId) => {
   }
 };
 // Reject product
-export const RejectProduct = async (productId, reason) => {
+export const RejectProduct = async (productId, feedback) => {
   try {
-    console.log(`Rejecting product with ID: ${productId} and reason: ${reason}`);
-    const response = await authApi.patch(`/products/verify/${productId}`, { status: "rejected", reason });
+    console.log(`Rejecting product with ID: ${productId} and feedback: ${feedback}`);
+    const response = await authApi.patch(`/products/verify/${productId}`, { status: "rejected", feedback });
     console.log("Reject response:", response.data);
     return response.data;
   } catch (err) {
