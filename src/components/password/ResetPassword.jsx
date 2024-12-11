@@ -3,7 +3,7 @@ import AnimatedBackground from "../background/AnimatedBackGround";
 import InputPassword from "./InputPassword";
 import StrengthMeterPassword from "./StrengthMeterPassword";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { resetPassword } from "../../services/Api/AuthApi";
+import { resetPassword } from "../../services/api/AuthApi";
 import { toast } from "react-toastify";
 
 const ResetPassword = () => {
