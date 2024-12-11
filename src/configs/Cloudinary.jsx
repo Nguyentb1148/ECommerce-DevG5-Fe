@@ -1,10 +1,10 @@
 import CryptoJS from "crypto-js";
 
-const CLOUD_NAME = "dkffhpyc6";
+const CLOUD_NAME = process.env.CLOUD_NAME;
 const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-const UPLOAD_PRESET = "Dev5G-Image";
-const API_KEY = "341784271881655";
-const API_SECRET = "9YKI8kwjThQ1BGvF99_lYem4Src";
+const UPLOAD_PRESET = process.env.UPLOAD_PRESET;
+const API_KEY = process.env.API_KEY;
+const API_SECRET = process.env.API_SECRET;
 
 // Check if the image exists on Cloudinary
 const checkImageExists = async (folderName, publicId) => {
@@ -169,11 +169,11 @@ export const deleteDocx = async (folderName, publicId) => {
   try {
     // Send the POST request to Cloudinary's destroy endpoint
     const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/destroy`,
-        {
-          method: "POST",
-          body: formData,
-        }
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/destroy`,
+      {
+        method: "POST",
+        body: formData,
+      }
     );
 
     // Parse the response
@@ -231,7 +231,7 @@ export const handleDocxUpload = async (docFile, folderName, publicId) => {
     await deleteDocx(folderName, publicId);
   } catch (error) {
     console.log(
-        "DOCX file not found or error during deletion, uploading new DOCX file..."
+      "DOCX file not found or error during deletion, uploading new DOCX file..."
     );
   }
 
