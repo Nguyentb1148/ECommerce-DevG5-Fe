@@ -159,10 +159,19 @@ const ShoppingCart = () => {
 
     try {
       let response;
+      console.log("Preparing to create a payment session...");
       if (selectedPayment === "stripe") {
-        response = await paymentApi.createStripeSession({ deliveryAddress });
+        console.log("stripe checkout");
+        response = await paymentApi.createStripeSession({
+          deliveryAddress,
+          paymentMethod: selectedPayment,
+        });
       } else if (selectedPayment === "vnpay") {
-        response = await paymentApi.createVnPaySession({ deliveryAddress });
+        console.log("vnpay checkout");
+        response = await paymentApi.createVnPaySession({
+          deliveryAddress,
+          paymentMethod: selectedPayment,
+        });
       }
 
       // Redirect to the correct URL
