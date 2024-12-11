@@ -14,7 +14,7 @@ import {
   googleSignIn,
   login,
   register,
-} from "../../services/Api/AuthApi";
+} from "../../services/api/AuthApi";
 
 const clientId =
   "671407638676-nc6tsp0nscas88kneq1jt9q3itl2l6h8.apps.googleusercontent.com";
