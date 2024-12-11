@@ -8,9 +8,9 @@ const ProductSlider = ({ images }) => {
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
     const [mainSwiper, setMainSwiper] = useState(null);
     return (
-        <div className="flex flex-col items-center gap-4, ml-[50px]">
+        <div className="flex flex-col md:items-center gap-4, md:ml-[50px]">
             {/* Main Slider */}
-            <div className="relative w-[400px] ml-[-90px]">
+            <div className="relative w-[400px] ml-[-50px] md:ml-[-90px]">
                 <Swiper
                     onSwiper={setMainSwiper}
                     modules={[Navigation, Pagination, Thumbs]}
@@ -19,7 +19,7 @@ const ProductSlider = ({ images }) => {
                     slidesPerView={1}
                     thumbs={{ swiper: thumbsSwiper }}
                     loop={true}
-                    className="rounded-lg w-[400px] pb-10"
+                    className="rounded-lg w-[300px] md:w-[400px] pb-10"
                     style={{ '--swiper-pagination-bottom': '-20px' }}
                 >
                     {images.map((src, index) => (
@@ -27,7 +27,7 @@ const ProductSlider = ({ images }) => {
                             <img
                                 src={src}
                                 alt={`Slide ${index + 1}`}
-                                className="w-[400px] h-[300px] object-cover rounded-lg"
+                                className="w-[300px] h-[200px] md:w-[400px] md:h-[300px] object-cover  rounded-lg"
                             />
                         </SwiperSlide>
                     ))}
@@ -41,12 +41,12 @@ const ProductSlider = ({ images }) => {
                 slidesPerView={5}
                 watchSlidesProgress
                 loop={true}
-                className="w-full mt-4"
+                className="w-full mt-4 "
             >
                 {images.map((src, index) => (
                     <SwiperSlide
                         key={index}
-                        className="!w-20 !h-20 flex justify-center items-center"
+                        className="!w-[51px] !h-[51px] md:!w-20 md:!h-20 flex justify-center items-center"
                     >
                         <img
                             src={src}

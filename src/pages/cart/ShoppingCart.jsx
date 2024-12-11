@@ -32,6 +32,7 @@ const ShoppingCart = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,51 +70,122 @@ const ShoppingCart = () => {
       setCurrentStep(1);
     }
   };
-
   const handleUpdateQuantity = async (productId, variantId, newQuantity) => {
     if (newQuantity < 1) return; // Prevent invalid quantity
-
+  
     try {
       const updatedItem = await UpdateCart({
         productId,
         variantId,
         count: newQuantity,
       });
-      setItems((prevItems) =>
-        prevItems.map((item) =>
+      setItems((prevItems) => {
+        const updatedItems = prevItems.map((item) =>
           item.product._id === productId && item.variantId === variantId
             ? { ...item, count: newQuantity }
             : item
-        )
-      );
-      // toast.success("Quantity updated successfully!");
+        );
+  
+        // Tính lại tổng số lượng sản phẩm
+        const totalCount = updatedItems.reduce(
+          (total, item) => total + item.count,
+          0
+        );
+        localStorage.setItem("cartCount", totalCount); // Cập nhật localStorage
+        window.dispatchEvent(new Event("storage"));
+        return updatedItems;
+      });
+      toast.success("Quantity updated successfully!");
     } catch (error) {
       console.error("Error updating quantity:", error);
       toast.error("Failed to update quantity. Please try again.");
     }
   };
+  
+  // const handleUpdateQuantity = async (productId, variantId, newQuantity) => {
+  //   if (newQuantity < 1) return; // Prevent invalid quantity
 
+  //   try {
+  //     const updatedItem = await UpdateCart({
+  //       productId,
+  //       variantId,
+  //       count: newQuantity,
+  //     });
+  //     setItems((prevItems) =>
+  //       prevItems.map((item) =>
+  //         item.product._id === productId && item.variantId === variantId
+  //           ? { ...item, count: newQuantity }
+  //           : item
+  //       )
+  //     );
+  //     // toast.success("Quantity updated successfully!");
+  //   } catch (error) {
+  //     console.error("Error updating quantity:", error);
+  //     toast.error("Failed to update quantity. Please try again.");
+  //   }
+  // };
   const handleRemoveItem = async (productId, variantId) => {
     try {
-      console.log("remove item: ", productId, variantId);
       await RemoveFromCart(productId, variantId);
-      setItems((prevItems) =>
-        prevItems.filter(
+      setItems((prevItems) => {
+        const updatedItems = prevItems.filter(
           (item) =>
             item.product._id !== productId || item.variantId !== variantId
-        )
-      );
+        );
+  
+        // Tính lại tổng số lượng sản phẩm
+        const totalCount = updatedItems.reduce(
+          (total, item) => total + item.count,
+          0
+        );
+        localStorage.setItem("cartCount", totalCount); // Cập nhật localStorage
+        window.dispatchEvent(new Event("storage")); // Phát sự kiện
+        return updatedItems;
+      });
       toast.success("Item removed successfully!");
     } catch (error) {
       console.error("Error removing item:", error);
       toast.error("Failed to remove item. Please try again.");
     }
   };
+  
+
+  // const handleRemoveItem = async (productId, variantId) => {
+  //   try {
+  //     console.log("remove item: ", productId, variantId);
+  //     await RemoveFromCart(productId, variantId);
+  //     setItems((prevItems) =>
+  //       prevItems.filter(
+  //         (item) =>
+  //           item.product._id !== productId || item.variantId !== variantId
+  //       )
+  //     );
+  //     toast.success("Item removed successfully!");
+  //   } catch (error) {
+  //     console.error("Error removing item:", error);
+  //     toast.error("Failed to remove item. Please try again.");
+  //   }
+  // };
+
+  // const handleClearCart = async () => {
+  //   try {
+  //     await ClearCart(); // Call API to clear cart
+  //     setItems([]); // Clear the local cart state
+  //     toast.success("Cart cleared successfully!");
+  //   } catch (error) {
+  //     console.error("Error clearing cart:", error);
+  //     toast.error("Failed to clear cart.");
+  //   } finally {
+  //     setIsModalOpen(false); // Close modal after action
+  //   }
+  // };
 
   const handleClearCart = async () => {
     try {
       await ClearCart(); // Call API to clear cart
       setItems([]); // Clear the local cart state
+      localStorage.setItem("cartCount", 0); // Cập nhật localStorage
+      window.dispatchEvent(new Event("storage")); // Phát sự kiện
       toast.success("Cart cleared successfully!");
     } catch (error) {
       console.error("Error clearing cart:", error);
@@ -122,7 +194,7 @@ const ShoppingCart = () => {
       setIsModalOpen(false); // Close modal after action
     }
   };
-
+  
   const handleClearCartClick = () => {
     setIsModalOpen(true); // Open confirmation modal
   };
@@ -194,7 +266,7 @@ const ShoppingCart = () => {
   return (
     <>
       <div className="w-full h-screen">
-        <Navbar backgroundClass="bg-gray-100" />
+      <Navbar />
         <BackToTop />
         {currentStep === 2 && (
           <>
@@ -211,7 +283,7 @@ const ShoppingCart = () => {
             </div>
           </>
         )}
-        <div className="bg-gray-900 py-6 px-4 sm:px-6 lg:px-8">
+        <div className="bg-gray-900 min-h-screen py-6 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             {(currentStep === 0 || currentStep === 1) && (
               <>
@@ -222,7 +294,7 @@ const ShoppingCart = () => {
               </>
             )}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 ">
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-2 ">
                 {currentStep === 0 && (
                   <>
                     {items.map((item) => (
@@ -236,7 +308,7 @@ const ShoppingCart = () => {
                       />
                     ))}
                     {items.length === 0 && (
-                      <div className="flex flex-col justify-center items-center h-70v text-center py-8 text-gray-400 ">
+                      <div className="flex flex-col justify-center items-center text-center py-8 text-gray-400 ">
                         <BsCartXFill size={100} />
                         <h2 className="text-2xl py-2">Your cart is empty</h2>
                       </div>
@@ -328,7 +400,7 @@ const ShoppingCart = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
+      <ToastContainer className="mt-12" />
     </>
   );
 };

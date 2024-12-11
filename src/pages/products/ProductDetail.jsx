@@ -18,11 +18,10 @@ const ProductDetail = () => {
   const [selectedVariant, setSelectedVariant] = useState({});
   const [selectedPrice, setSelectedPrice] = useState(0);
   const [selectedStock, setSelectedStock] = useState(0);
-  const [cartCount, setCartCount] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [descriptionContent, setDescriptionContent] = useState(""); // State for description content
   const [isExpanded, setIsExpanded] = useState(false); 
-
+  const currentCount = parseInt(localStorage.getItem("cartCount") || "0", 10);
   const handleShowMore = () => {
     setIsExpanded(!isExpanded); 
   };
@@ -99,10 +98,11 @@ const ProductDetail = () => {
     };
     try {
       setIsAnimating(true);
-      await AddToCart(cartData);
+      await AddToCart(cartData);      
+      localStorage.setItem("cartCount", currentCount + 1);
+      window.dispatchEvent(new Event("storage")); // Phát sự kiện
       setTimeout(() => {
         setIsAnimating(false);
-        setCartCount(prev => prev + quantity);
         toast.success("Product added to cart!");
       }, 500);
     } catch (error) {
@@ -130,7 +130,7 @@ const ProductDetail = () => {
   return (
     <>
       <div className="bg-gray-900 min-h-screen">
-        <Navbar cartCount={cartCount} />
+        <Navbar />
         <div className="max-w-7xl mx-auto p-4">
           <div className="bg-gray-800 p-6 rounded-lg shadow-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -149,7 +149,7 @@ const ProductDetail = () => {
                 {attributeKeys.map((key) => (
                   <div key={key} className="mt-4">
                     <span className="text-gray-400 font-medium">{key}:</span>
-                    <div className="flex gap-4 mt-2">
+                    <div className="grid grid-cols-2 lg:flex gap-4 mt-2">
                       {product.variants
                         .map((variant) => variant.attributes[key])
                         .filter(
@@ -182,7 +182,10 @@ const ProductDetail = () => {
                     <button
                       className="p-1 text-gray-400 hover:text-white"
                       disabled={quantity <= 1}
-                      onClick={() => handleQuantityChange(-1)}
+                      onClick={() => handleQuantityChange(-1)
+                        
+                      }
+                      
                     >
                       <FiMinus />
                     </button>
@@ -252,10 +255,7 @@ const ProductDetail = () => {
             </div>
           </div>
           {/* Product Reviews Section */}
-          <div className="mt-6 bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-white text-center">
-              Đánh Giá Sản Phẩm
-            </h2>
+          <div >
             <ProductReviews productId={id} /> 
           </div>
         </div>

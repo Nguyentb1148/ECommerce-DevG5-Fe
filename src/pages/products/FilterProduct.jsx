@@ -5,6 +5,7 @@ import ListProduct from "../../components/products/ListProduct";
 import BackToTop from "../../components/backToTop/BackToTop";
 const FilterProduct = () => {
   const [filters, setFilters] = useState({});
+
   const handleApplyFilters = (appliedFilters) => {
     setFilters(appliedFilters);
   };

@@ -49,7 +49,7 @@ const ListFilter = ({ onApplyFilters }) => {
   return (
     <>
       {/* Search Box */}
-      <div className="md:hidden min-h-screen flex items-center rounded-md px-2 mb-4 bg-gray-800">
+      <div className="md:hidden flex items-center rounded-md px-2 mb-4 bg-gray-800">
         <FaSearch className="flex items-center justify-center w-10 text-white" />
         <input
           type="text"
@@ -135,14 +135,15 @@ const ListFilter = ({ onApplyFilters }) => {
               <div className="flex justify-between mt-6">
                 <button
                   className="px-4 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300"
-                  onClick={() => {
-                    setSelectedCategories([]);
-                    setSelectedBrands([]);
-                    setPriceRange([3000000, 100000000]);
-                    onApplyFilters({}); // Clear filters
-                  }}
+                  onClick={handleResetFilters}
                 >
                   Clear Filter
+                </button>
+                <button
+                  className="px-4 py-2 bg-green-500 rounded-md text-white hover:bg-green-600"
+                  onClick={handleApplyFilters}
+                >
+                  Apply
                 </button>
               </div>
             </div>
