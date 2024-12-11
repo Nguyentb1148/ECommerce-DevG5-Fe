@@ -13,7 +13,7 @@ import {
   GetCarts,
   RemoveFromCart,
   UpdateCart,
-} from "../../services/api/CartApi";
+} from "../../services/api/CartApi.jsx";
 import paymentApi from "../../services/api/PaymentApi";
 import BackToTop from "../../components/backToTop/BackToTop";
 import { fetchVariantDetails } from "../../services/api/ProductApi";

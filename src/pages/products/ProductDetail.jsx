@@ -4,7 +4,7 @@ import ProductSlider from "../../components/products/ProductSlider";
 import Navbar from "../../components/navbar/Navbar";
 import { FaShoppingCart, FaAngleUp, FaAngleDown } from "react-icons/fa";
 import { getProductById } from "../../services/api/ProductApi";
-import { AddToCart } from "../../services/api/CartApi";
+import { AddToCart } from "../../services/api/CartApi.jsx";
 import mammoth from "mammoth";
 import { toast, ToastContainer } from "react-toastify";
 import { FiMinus, FiPlus } from "react-icons/fi";
