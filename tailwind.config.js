@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+import flowbitePlugin from 'flowbite/plugin';
+import typography from '@tailwindcss/typography';
+
 export default {
   content: [
     "./index.html",
@@ -34,9 +37,15 @@ export default {
     },
   },
   plugins: [
-    require('flowbite/plugin')({
+    flowbitePlugin({
       charts: true,
     }),
-    require('@tailwindcss/typography')
+    typography
+  ],
+  safelist: [
+    // Ensure this pattern matches actual classes or remove it if not needed
+    {
+      pattern: /^datatable-.*/,
+    },
   ],
 }

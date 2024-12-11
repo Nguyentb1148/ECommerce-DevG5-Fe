@@ -5,7 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 const ConfirmUserModal = ({ user, onClose }) => {
     const [showRejectionForm, setShowRejectionForm] = useState(false);
-    const [rejectionReason, setRejectionReason] = useState("");
+    const [rejectionfeadback, setRejectionfeadback] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleApprove = ()=>{
@@ -119,22 +119,22 @@ const ConfirmUserModal = ({ user, onClose }) => {
                     ) : (
                         <div className="space-y-4">
                             <div>
-                                <label htmlFor="rejectionReason" className="block text-gray-300 mb-2">
-                                    Rejection Reason
+                                <label htmlFor="rejectionfeadback" className="block text-gray-300 mb-2">
+                                    Rejection feadback
                                 </label>
                                 <textarea
-                                    id="rejectionReason"
-                                    value={rejectionReason}
-                                    onChange={(e) => setRejectionReason(e.target.value)}
+                                    id="rejectionfeadback"
+                                    value={rejectionfeadback}
+                                    onChange={(e) => setRejectionfeadback(e.target.value)}
                                     className="w-full bg-gray-700 border border-gray-600 rounded-lg p-4 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     rows="4"
-                                    placeholder="Please provide a reason for rejection..."
+                                    placeholder="Please provide a feadback for rejection..."
                                 ></textarea>
                             </div>
                             <div className="flex gap-4">
                                 <button
                                     onClick={handleReject}
-                                    disabled={loading || !rejectionReason.trim()}
+                                    disabled={loading || !rejectionfeadback.trim()}
                                     className={`px-6 py-3 rounded-lg font-semibold text-white transition-colors duration-300 ${loading
                                         ? "bg-blue-300 cursor-not-allowed"
                                         : "bg-blue-500 hover:bg-blue-600"
@@ -145,7 +145,7 @@ const ConfirmUserModal = ({ user, onClose }) => {
                                 <button
                                     onClick={() => {
                                         setShowRejectionForm(false);
-                                        setRejectionReason("");
+                                        setRejectionfeadback("");
                                     }}
                                     disabled={loading}
                                     className="px-6 py-3 text-white bg-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition-colors duration-300"
