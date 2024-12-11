@@ -45,24 +45,23 @@ const ProductReviews = ({ productId }) => {
   if (loading) return <p>Loading reviews...</p>;
 
   return (
-    <div className="bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className=" py-8 px-4 sm:px-6 lg:px-8">
+      <div className="w-[90%] mx-auto">
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Customer Reviews</h2>
           <div className="flex justify-center items-center mb-2">
             <RatingStars rating={reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length} />
           </div>
-          <p className="text-gray-300">{reviews.length} reviews</p>
-        </div>
-        <div className="space-y-6">
+        </div>  
+        <div className="space-y-6 w-full">
           {reviews.map((review) => (
             <div
               key={review._id}
-              className="bg-gray-800 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
+              className="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300"
             >
               <div className="flex items-start space-x-4">
                 <img
-                  src={review.userId.imageUrl} // Use a placeholder image since no user image URL is provided
+                  src={review.userId.imageUrl}
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div className="flex-1">

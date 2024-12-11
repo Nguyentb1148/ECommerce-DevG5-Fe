@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FiPercent } from "react-icons/fi";
 import { getListVoucher } from '../../services/api/VoucherApi';
 import { format } from 'date-fns';
-import LoadingDots from "../loading/LoadingDots";  // Giả sử bạn đã có component LoadingDots
+import LoadingDots from "../loading/LoadingDots"; 
 import { Link } from 'react-router-dom';
 
 const ListVoucher = () => {
@@ -11,10 +11,10 @@ const ListVoucher = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Function to fetch voucher data from API
         const fetchVouchers = async () => {
             try {
                 const data = await getListVoucher();
+                console.log(data)
                 setVouchers(data);
                 console.log(data);
             } catch (err) {
@@ -29,7 +29,7 @@ const ListVoucher = () => {
 
     if (loading) return (
         <div className="flex justify-center items-center h-full">
-            <LoadingDots />  {/* Hiển thị loading */}
+            <LoadingDots />  
         </div>
     );
 
@@ -65,7 +65,7 @@ const ListVoucher = () => {
                             <p>
                                 Ngày hết hạn:
                                 <span className="pl-1">
-                                    {format(new Date(voucher.validity), 'dd/MM/yyyy HH:mm')}
+                                    {format(new Date(voucher.endDate), 'dd/MM/yyyy HH:mm')}
                                 </span>
                             </p>
                         </div>

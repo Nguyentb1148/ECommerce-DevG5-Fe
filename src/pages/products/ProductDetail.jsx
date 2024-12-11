@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ProductSlider from "../../components/products/ProductSlider";
 import Navbar from "../../components/navbar/Navbar";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaShoppingCart, FaAngleUp, FaAngleDown } from "react-icons/fa";
 import { getProductById } from "../../services/api/ProductApi";
 import { AddToCart } from "../../services/api/CartApi";
 import mammoth from "mammoth";
@@ -10,12 +10,10 @@ import { toast, ToastContainer } from "react-toastify";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductReviews from "../../components/products/ProductReviews";
-
+import LoadingSpinner from "../../components/loading/LoadingSpinner"
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState({});
   const [selectedPrice, setSelectedPrice] = useState(0);
@@ -23,7 +21,11 @@ const ProductDetail = () => {
   const [cartCount, setCartCount] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [descriptionContent, setDescriptionContent] = useState(""); // State for description content
-  
+  const [isExpanded, setIsExpanded] = useState(false); 
+
+  const handleShowMore = () => {
+    setIsExpanded(!isExpanded); 
+  };
   useEffect(() => {
     if (!id) return;
     const fetchProduct = async () => {
@@ -64,8 +66,6 @@ const ProductDetail = () => {
     };
     fetchProduct();
   }, [id]);
-  const toggleModal = () => setIsModalOpen(!isModalOpen);
-  const toggleReviewModal = () => setIsReviewModalOpen(!isReviewModalOpen);
   const handleVariantClick = (key, value) => {
     const updatedVariant = { ...selectedVariant, [key]: value };
     setSelectedVariant(updatedVariant);
@@ -116,37 +116,8 @@ const ProductDetail = () => {
     setQuantity(newQuantity);
   };
   if (!product) {
-    return <div className="w-full h-screen bg-gray-900">
-      <div className="grid pt-20 gap-3">
-        <div className="flex items-center justify-center">
-          <svg
-            className="animate-spin border-indigo-600"
-            xmlns="http://www.w3.org/2000/svg"
-            width="45"
-            height="45"
-            viewBox="0 0 34 34"
-            fill="none"
-          >
-            <g id="Component 2">
-              <circle
-                id="Ellipse 717"
-                cx="17.0007"
-                cy="17.0001"
-                r="14.2013"
-                stroke="#D1D5DB"
-                strokeWidth="4"
-                strokeDasharray="2 3"
-              />
-              <path
-                id="Ellipse 715"
-                d="M21.3573 30.5163C24.6694 29.4486 27.4741 27.2019 29.2391 24.2028C31.0041 21.2038 31.6065 17.661 30.9319 14.2471C30.2573 10.8332 28.3528 7.78584 25.5798 5.68345C22.8067 3.58105 19.3583 2.57 15.8891 2.84222"
-                stroke="#4F46E5"
-                strokeWidth="4"
-              />
-            </g>
-          </svg>
-        </div>
-      </div>
+    return <div className="w-full h-screen pt-32 bg-gray-900">
+    <LoadingSpinner/>
     </div>;
   }
   const fallbackImage = "https://via.placeholder.com/150"; // Fallback image URL
@@ -263,14 +234,22 @@ const ProductDetail = () => {
           </div>
           {/* Description Section */}
           <div className="mt-6 bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-white text-center">
+            <h2 className="text-lg sm:text-3xl font-semibold mb-4 text-white text-center">
               Mô Tả Sản Phẩm
             </h2>
             {/* Display parsed Word document content */}
             <div
-              className="text-gray-300 description"
+              className={`text-gray-300 description ${isExpanded ? 'h-full' : 'max-h-72'} overflow-hidden`}
               dangerouslySetInnerHTML={{ __html: descriptionContent }}
             />
+            <div className="flex justify-center">
+              <button
+                onClick={handleShowMore}
+                className=" p-2 text-xl font-medium text-gray-100 rounded-md focus:outline-none transition-all"
+              >
+                {isExpanded ? <><FaAngleUp /></> : <><FaAngleDown /></>}
+              </button>
+            </div>
           </div>
           {/* Product Reviews Section */}
           <div className="mt-6 bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
