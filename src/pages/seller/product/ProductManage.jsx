@@ -38,7 +38,9 @@ const ProductManage = () => {
   const handleFilter = (event) => {
     const searchQuery = event.target.value.toLowerCase();
     const filteredProducts = products.filter((product) =>
-        product.name.toLowerCase().includes(searchQuery)
+        product.name.toLowerCase().includes(searchQuery)||
+        product.categoryId.name.toLowerCase().includes(searchQuery) ||
+        product.brandId.name.toString().includes(searchQuery)
     );
     setRecords(filteredProducts);
   };
