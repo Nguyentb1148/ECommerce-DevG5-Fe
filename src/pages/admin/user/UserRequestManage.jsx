@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import CustomDataTable from '../../../components/datatable/CustomDataTable';
 import DetailModal from "../../../components/user/DetailModal";
 import ConfirmUserModal from '../../../components/modal/ConfirmUserModal';
 import { FaSearch } from 'react-icons/fa';
 import { getAllRequest } from "../../../services/api/RequestApi.jsx";
+import LoadingDots from '../../../components/loading/LoadingSpinner'; // Import the LoadingDots component
 
 const UserRequestManage = () => {
     const [requests, setRequests] = useState([]);
@@ -13,8 +14,10 @@ const UserRequestManage = () => {
     const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
     const [isConfirmRequestModalOpen, setIsConfirmRequestModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState(""); // Search query state
+    const [loading, setLoading] = useState(false); // Loading state
 
     const fetchRequests = async () => {
+        setLoading(true); // Set loading to true before fetching
         try {
             const response = await getAllRequest();
 
@@ -32,9 +35,10 @@ const UserRequestManage = () => {
         } catch (error) {
             console.error("Error fetching request data:", error.response?.data || error.message);
             toast.error("Error fetching request data");
+        } finally {
+            setLoading(false); // Set loading to false once fetching is complete
         }
     };
-
 
     const handleSearch = (event) => {
         const query = event.target.value.toLowerCase();
@@ -144,10 +148,19 @@ const UserRequestManage = () => {
                     </div>
                 </div>
 
-                <div className="md:w-[650px] lg:w-[850px] xl:w-[90%] mx-auto rounded-md shadow-md">
-                    {/* Display filtered requests */}
-                    <CustomDataTable columns={columns} records={filteredRequests} />
-                </div>
+                {loading ?
+                    (
+                        <div className="flex justify-center">
+                            <LoadingDots/>
+                        </div>
+                    ) :
+                    (
+                        <div className="md:w-[650px] lg:w-[850px] xl:w-[90%] mx-auto rounded-md shadow-md">
+                        {/* Display filtered requests */}
+                        <CustomDataTable columns={columns} records={filteredRequests}/>
+                    </div>
+                )} {/* Show loading spinner */}
+
             </div>
 
             {isRequestModalOpen && (

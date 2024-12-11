@@ -5,7 +5,7 @@ import ProductDetailModal from '../../../components/modal/ProductDetailModal';
 import CustomDataTable from '../../../components/datatable/CustomDataTable';
 import { getProducts, ApproveProduct, RejectProduct, UpdateRequest, updateProduct } from '../../../services/api/ProductApi';
 import { FaSearch } from 'react-icons/fa';
-
+import LoadingDots from "../../../components/loading/LoadingDots"; // Import LoadingDots
 
 const ProductRequestManage = () => {
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -15,8 +15,10 @@ const ProductRequestManage = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [rejectionReason, setRejectionReason] = useState("");
     const [searchQuery, setSearchQuery] = useState(""); // Store the search query
+    const [loading, setLoading] = useState(false); // State for loading
 
     const fetchProducts = async () => {
+        setLoading(true); // Start loading when fetching products
         try {
             const response = await getProducts();
             console.log("Response:", response.data); // Debugging log
@@ -25,10 +27,11 @@ const ProductRequestManage = () => {
             );
             setProducts(filteredProducts);
             setFilteredProducts(filteredProducts); // Set filtered products initially
-
         } catch (error) {
             console.error("Error fetching product data:", error.response?.data || error.message);
             toast.error("Error fetching product data");
+        } finally {
+            setLoading(false); // End loading after data is fetched or error occurs
         }
     };
 
@@ -57,7 +60,7 @@ const ProductRequestManage = () => {
             await UpdateRequest(requestId, "approved", "Product approved successfully"); // Update request
             await updateProduct(productId, { verify: { status: "approved" } });
             toast.success("Product approved successfully");
-            await fetchProducts();
+            fetchProducts();
         } catch (error) {
             console.error("Error approving product:", error.response?.data || error.message);
             toast.error("Error approving product");
@@ -71,7 +74,7 @@ const ProductRequestManage = () => {
             await UpdateRequest(requestId, "rejected", rejectionReason); // Update request
             await updateProduct(productId, { verify: { status: "rejected" } });
             toast.success("Product rejected successfully");
-            await fetchProducts();
+            fetchProducts();
         } catch (error) {
             console.error("Error rejecting product:", error.response?.data || error.message);
             toast.error("Error rejecting product");
@@ -81,21 +84,21 @@ const ProductRequestManage = () => {
     const columns = [
         {
             name: "Name",
-            selector: (row) => row.additionalData.name,
+            selector: (row) => row.name,
             sortable: true,
-            center: true,
+            center: "true",
         },
         {
             name: "Price",
-            selector: (row) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(row.additionalData.price),
+            selector: (row) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(row.price),
             sortable: true,
-            center: true,
+            center: "true",
         },
         {
             name: "Seller",
-            selector: (row) => row.createdBy?.fullName || "N/A",
+            selector: (row) => row.sellerId?.fullName || "N/A",
             sortable: true,
-            center: true,
+            center: "true",
         },
         {
             name: "Created At",
@@ -110,29 +113,29 @@ const ProductRequestManage = () => {
                     second: "2-digit",
                 }).format(new Date(row.createdAt)),
             sortable: true,
-            center: true,
+            center: "true",
         },
         {
             name: "Status",
-            selector: row => row.result,
+            selector: row => row.verify?.status,
             sortable: true,
-            center: true,
+            center: "true",
             cell: (row) => (
-                <span className={`text-${row.result === 'pending' ? 'yellow-300' : row.result === 'rejected' ? 'red-500' : 'green-500'}`}>
-                    {row.result}
+                <span className={`text-${row.verify?.status === 'pending' ? 'yellow-300' : 'red-500'}`}>
+                    {row.verify?.status}
                 </span>
             ),
         },
         {
             name: 'Action',
-            center: true,
+            center: "true",
             cell: (row) => (
                 <div className="max-md:w-56">
-                    {row.result === 'pending' ? (
+                    {row.verify?.status === 'pending' ? (
                         <button
-                            className="bg-yellow-400 text-white px-2 py-1 rounded"
+                            className="bg-yellow-400 text-white px-2 py-1 rounded "
                             onClick={() => {
-                                setSelectedRequest(row);
+                                setSelectedProduct(row);
                                 setIsConfirmModalOpen(true);
                             }}
                         >
@@ -142,7 +145,7 @@ const ProductRequestManage = () => {
                         <button
                             className="bg-green-500 text-white px-3 py-1 rounded"
                             onClick={() => {
-                                setSelectedRequest(row);
+                                setSelectedProduct(row);
                                 setIsProductDetailModalOpen(true);
                             }}
                         >
@@ -180,27 +183,35 @@ const ProductRequestManage = () => {
                 </div>
 
                 <div className="md:w-[650px] lg:w-[850px] xl:w-[90%] mx-auto rounded-md shadow-md">
-                    <CustomDataTable
-                        columns={columns}
-                        records={filteredProducts} // Use filteredProducts instead of products
-                    />
+                    {/* Show loading animation while fetching data */}
+                    {loading ? (
+                        <LoadingDots />
+                    ) : (
+                        <CustomDataTable
+                            columns={columns}
+                            records={filteredProducts} // Use filteredProducts instead of products
+                        />
+                    )}
                 </div>
             </div>
 
             {isConfirmModalOpen && (
                 <ConfirmProductModal
-                    request={selectedRequest}
+                    product={selectedProduct}
+                    onReject={(rejectionReason) => handleReject(selectedProduct._id, rejectionReason, selectedProduct.requestId)}
+                    onApprove={() => handleApprove(selectedProduct._id, selectedProduct.requestId)}
                     onClose={() => {
                         setIsConfirmModalOpen(false);
                         fetchProducts(); // Refresh the table when the modal is closed
                     }}
-                    fetchProducts={fetchProducts} // Pass fetchProducts as a prop
+                    rejectionReason={rejectionReason}
+                    setRejectionReason={setRejectionReason}
                 />
             )}
 
             {isProductDetailModalOpen && (
                 <ProductDetailModal
-                    request={selectedRequest}
+                    product={selectedProduct}
                     onClose={() => setIsProductDetailModalOpen(false)}
                 />
             )}
@@ -211,4 +222,3 @@ const ProductRequestManage = () => {
 };
 
 export default ProductRequestManage;
-

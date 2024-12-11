@@ -2,12 +2,10 @@ import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import AddProduct from "../../../components/products/AddProduct";
 import EditProduct from "../../../components/products/EditProduct";
-import {
-  deleteProduct,
-  getProductsByUserId,
-} from "../../../services/api/ProductApi";
+import { deleteProduct, getProductsByUserId } from "../../../services/api/ProductApi";
 import { toast, ToastContainer } from "react-toastify";
 import CustomDataTable from "../../../components/datatable/CustomDataTable";
+import LoadingDots from "../../../components/loading/LoadingDots"; // Import LoadingDots component
 
 const ProductManage = () => {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -38,7 +36,7 @@ const ProductManage = () => {
   const handleFilter = (event) => {
     const searchQuery = event.target.value.toLowerCase();
     const filteredProducts = products.filter((product) =>
-        product.name.toLowerCase().includes(searchQuery)||
+        product.name.toLowerCase().includes(searchQuery) ||
         product.categoryId.name.toLowerCase().includes(searchQuery) ||
         product.brandId.name.toString().includes(searchQuery)
     );
@@ -103,13 +101,10 @@ const ProductManage = () => {
   ];
 
   const handleDelete = async (row) => {
-    const confirm = window.confirm(
-        `Are you sure you want to delete ${row.name} with id ${row._id}?`
-    );
+    const confirm = window.confirm(`Are you sure you want to delete ${row.name}?`);
     if (confirm) {
       try {
         const response = await deleteProduct(row._id);
-        console.log(response);
         toast.success(response.message);
         // Filter out the deleted product from both products and records
         setProducts((prevProducts) =>
@@ -126,15 +121,15 @@ const ProductManage = () => {
 
   if (loading) {
     return (
-        <></>
+        <div className="flex justify-center items-center h-screen">
+          <LoadingDots />
+        </div>
     );
   }
 
   return (
       <div className="h-screen">
-        <h1 className="grid place-items-center text-4xl py-4 text-white">
-          Manage Product
-        </h1>
+        <h1 className="grid place-items-center text-4xl py-4 text-white">Manage Product</h1>
         <div className="w-[90%] lg:w-[70%] mx-auto rounded-md shadow-md">
           <div className="flex justify-between my-2">
             <button
@@ -153,7 +148,14 @@ const ProductManage = () => {
               />
             </div>
           </div>
-          <CustomDataTable columns={columns} records={records} />
+
+          {/* Display message if no products found */}
+          {records.length === 0 ? (
+              <p className="text-center text-white mt-4">No products found.</p>
+          ) : (
+              <CustomDataTable columns={columns} records={records} />
+          )}
+
           {isAddProductOpen && (
               <AddProduct
                   onClose={() => setIsAddProductOpen(false)}
@@ -167,6 +169,7 @@ const ProductManage = () => {
                   refreshProducts={fetchProducts}
               />
           )}
+
           <ToastContainer />
         </div>
       </div>
