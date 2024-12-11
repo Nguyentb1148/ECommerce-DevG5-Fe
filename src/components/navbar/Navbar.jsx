@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { MdOutlineShoppingCart } from "react-icons/md";
 import User from '../../pages/profile/User';
 
-const Navbar = () => {
+const Navbar = ({ cartCount }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
 
@@ -59,10 +59,15 @@ const Navbar = () => {
                                 Contact
                             </Link>
                         </li>
-                        <li>
+                        <li className="relative">
                             <Link className="item-navbar" to="/shoppingCart">
                                 <MdOutlineShoppingCart size={25} />
                             </Link>
+                            {cartCount > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                                    {cartCount}
+                                </span>
+                            )}
                         </li>
                         {isLogin ? (
                             <User />
