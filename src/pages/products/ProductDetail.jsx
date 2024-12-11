@@ -104,7 +104,7 @@ const ProductDetail = () => {
         setIsAnimating(false);
         setCartCount(prev => prev + quantity);
         toast.success("Product added to cart!");
-      }, 1000);
+      }, 500);
     } catch (error) {
       console.error("Error adding to cart:", error);
       toast.error("Failed to add product to cart.");
@@ -247,7 +247,7 @@ const ProductDetail = () => {
                         <img
                           src={product.imageUrls[0]}
                           alt="Flying product"
-                          className="w-32 h-32 z-50 object-cover rounded-lg"
+                          className="w-20 h-20 z-50 object-cover rounded-lg"
                         />
                       </motion.div>
                     )}

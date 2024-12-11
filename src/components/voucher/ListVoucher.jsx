@@ -1,32 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiPercent } from "react-icons/fi";
+import { getListVoucher } from '../../services/api/VoucherApi';
+import { format } from 'date-fns';
+import LoadingDots from "../loading/LoadingDots";  // Giả sử bạn đã có component LoadingDots
+import { Link } from 'react-router-dom';
+
 const ListVoucher = () => {
-    const [vouchers] = useState([
-        {
-            id: 1,
-            code: "SUMMER2024",
-            discount: "20%",
-            validUntil: "2024-03-31",
-            minPurchase: 100,
-            description: "Summer season discount"
-        },
-        {
-            id: 2,
-            code: "WELCOME50",
-            discount: "$50",
-            validUntil: "2024-02-28",
-            minPurchase: 200,
-            description: "New customer welcome discount"
-        },
-        {
-            id: 3,
-            code: "FLASH30",
-            discount: "30%",
-            validUntil: "2024-01-31",
-            minPurchase: 150,
-            description: "Flash sale discount"
-        }
-    ]);
+    const [vouchers, setVouchers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        // Function to fetch voucher data from API
+        const fetchVouchers = async () => {
+            try {
+                const data = await getListVoucher();
+                setVouchers(data);
+                console.log(data);
+            } catch (err) {
+                setError('Error fetching vouchers');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchVouchers();
+    }, []);
+
+    if (loading) return (
+        <div className="flex justify-center items-center h-full">
+            <LoadingDots />  {/* Hiển thị loading */}
+        </div>
+    );
+
+    if (error) return <p>{error}</p>;
+
     return (
         <div className="bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4 text-gray-100">Available Vouchers</h2>
@@ -41,15 +49,30 @@ const ListVoucher = () => {
                             <span className="font-bold text-lg text-gray-100">{voucher.code}</span>
                         </div>
                         <div className="text-xl font-bold text-blue-400 mb-2">
-                            {voucher.discount} OFF
+                            {voucher.discount} %
                         </div>
                         <p className="text-gray-300 text-sm mb-2">{voucher.description}</p>
                         <div className="text-sm text-gray-400">
-                            <p>Min. Purchase: ${voucher.minPurchase}</p>
-                            <p>Valid until: {voucher.validUntil}</p>
+                            <p>
+                                Áp dụng cho đơn hàng:
+                                <span className="pl-1">
+                                    {new Intl.NumberFormat("vi-VN", {
+                                        style: "currency",
+                                        currency: "VND",
+                                    }).format(voucher.minCartPrice)}
+                                </span>
+                            </p>
+                            <p>
+                                Ngày hết hạn:
+                                <span className="pl-1">
+                                    {format(new Date(voucher.validity), 'dd/MM/yyyy HH:mm')}
+                                </span>
+                            </p>
                         </div>
-                        <button className="mt-3 w-full bg-blue-900 text-blue-300 py-2 rounded-md hover:bg-blue-800 transition-colors">
-                            Copy Code
+                        <button className="mt-3 w-full bg-blue-900 text-blue-300 py-2 rounded-md hover:bg-blue-800 transition-colors" >
+                        <Link to="/productFilter">
+                            Apply code
+                        </Link>
                         </button>
                     </div>
                 ))}
@@ -57,4 +80,5 @@ const ListVoucher = () => {
         </div>
     );
 };
+
 export default ListVoucher;

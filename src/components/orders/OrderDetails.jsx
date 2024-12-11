@@ -135,7 +135,7 @@ const OrderDetails = ({ order, onClose }) => {
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    </div>  
                     {/* Shipping Status */}
                     <div className="space-y-4">
                         <h2 className="text-xl font-semibold text-gray-100">Shipping Status</h2>
