@@ -43,7 +43,9 @@ export const getProductReviews = async (productId) => {
 // Update a review
 export const updateReview = async (id, reviewData) => {
   try {
-    const response = await authApi.put(`/reviews/${id}`, reviewData, { headers });
+    const response = await authApi.put(`/reviews/${id}`, reviewData, {
+      headers,
+    });
     return response.data;
   } catch (err) {
     if (err.response) {
