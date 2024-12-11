@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from "react-toastify";
 import CustomDataTable from '../../../components/datatable/CustomDataTable';
 import ProductDetailModal from '../../../components/modal/ProductDetailModal';
-
 import { getProducts } from '../../../services/api/ProductApi';
 import { FaSearch } from "react-icons/fa";
+import LoadingDots from "../../../components/loading/LoadingDots"; // Import the LoadingDots component
 
 const ListProductManage = () => {
     const [products, setProducts] = useState([]);
@@ -12,8 +12,10 @@ const ListProductManage = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [isProductDetailModalOpen, setIsProductDetailModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState(""); // Store the search query
+    const [loading, setLoading] = useState(false); // Add a loading state
 
     const fetchProducts = async () => {
+        setLoading(true); // Set loading to true before fetching
         try {
             const response = await getProducts();
             console.log("Response:", response.data);
@@ -25,6 +27,8 @@ const ListProductManage = () => {
         } catch (error) {
             console.error("Error fetching product data:", error.response?.data || error.message);
             toast.error("Error fetching product data");
+        } finally {
+            setLoading(false); // Set loading to false after fetching is done
         }
     };
 
@@ -92,8 +96,8 @@ const ListProductManage = () => {
             center: true,
             cell: (row) => (
                 <span className="text-green-500">
-          {row.verify?.status}
-        </span>
+                    {row.verify?.status}
+                </span>
             ),
         },
         {
@@ -134,12 +138,19 @@ const ListProductManage = () => {
                     </div>
                 </div>
 
-                <div className="md:w-[650px] lg:w-[850px] xl:w-[90%] mx-auto rounded-md shadow-md">
-                    <CustomDataTable
-                        columns={columns}
-                        records={filteredProducts} // Use filteredProducts instead of products
-                    />
-                </div>
+                {/* Show loading animation if the data is being fetched */}
+                {loading ? (
+                    <div className="flex justify-center items-center">
+                        <LoadingDots /> {/* Show the loading animation */}
+                    </div>
+                ) : (
+                    <div className="md:w-[650px] lg:w-[850px] xl:w-[90%] mx-auto rounded-md shadow-md">
+                        <CustomDataTable
+                            columns={columns}
+                            records={filteredProducts} // Use filteredProducts instead of products
+                        />
+                    </div>
+                )}
             </div>
 
             {isProductDetailModalOpen && (

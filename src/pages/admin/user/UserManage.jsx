@@ -1,13 +1,12 @@
 import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
-import {
-  GetAllUsers,
-} from "../../../services/api/UserApi";
+import { GetAllUsers } from "../../../services/api/UserApi";
 import DetailModal from "../../../components/user/DetailModal";
 import BanModal from "../../../components/user/BanModal";
 import { toast, ToastContainer } from "react-toastify";
 import CustomDataTable from "../../../components/datatable/CustomDataTable";
 import { FaSearch } from "react-icons/fa";
+import LoadingDots from "../../../components/loading/LoadingDots.jsx";
 
 const UserManage = () => {
   const [users, setUsers] = useState([]);
@@ -15,8 +14,10 @@ const UserManage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // Store the search query
+  const [loading, setLoading] = useState(false); // Loading state
 
   const fetchUsers = async () => {
+    setLoading(true); // Set loading to true before API call
     try {
       const response = await GetAllUsers();
       console.log("Response:", response); // Debugging log
@@ -28,6 +29,8 @@ const UserManage = () => {
           error.response?.data || error.message
       );
       toast.error("Error fetching user data");
+    } finally {
+      setLoading(false); // Set loading to false after API call
     }
   };
 
@@ -76,23 +79,23 @@ const UserManage = () => {
       name: "Full Name",
       selector: (row) => row.fullName,
       sortable: true,
-      center: "true", // change here
+      center: "true", // Change here
     },
     {
       name: "Email",
       selector: (row) => row.email,
       sortable: true,
-      center: "true", // change here
+      center: "true", // Change here
     },
     {
       name: "Role",
       selector: (row) => row.role,
       sortable: true,
-      center: "true", // change here
+      center: "true", // Change here
     },
     {
       name: "Action",
-      center: "true", // change here
+      center: "true", // Change here
       cell: (row) => (
           <div className="flex space-x-2">
             <button
@@ -102,7 +105,8 @@ const UserManage = () => {
               Details
             </button>
             <button
-                className={`${row.isBanned ? "bg-green-500" : "bg-red-500"
+                className={`${
+                    row.isBanned ? "bg-green-500" : "bg-red-500"
                 } text-white px-2 py-1 rounded`}
                 onClick={() => handleOpenModal(row, "ban")}
             >
@@ -132,9 +136,15 @@ const UserManage = () => {
             </div>
           </div>
 
-          <div className="md:w-[650px] lg:w-[850px] xl:w-[90%] mx-auto rounded-md shadow-md">
-            <CustomDataTable columns={columns} records={users} />
-          </div>
+          {loading ? (
+              <div className="flex justify-center">
+                <LoadingDots />
+              </div>
+          ) : (
+              <div className="md:w-[650px] lg:w-[850px] xl:w-[90%] mx-auto rounded-md shadow-md">
+                <CustomDataTable columns={columns} records={users} />
+              </div>
+          )}
         </div>
 
         {/* Modal for Details */}
