@@ -5,9 +5,8 @@ const CartSummary = ({
   items = [],
   variants = {},
   discount = 0,
-  discountPercentage = 0,
   taxRate = 0.1, // Default 10% tax
-  shippingCost = 50000, // Default shipping cost
+  shippingCost = 0, // Default shipping cost
 }) => {
   if (items.length === 0) {
     return (
@@ -31,9 +30,7 @@ const CartSummary = ({
   }, 0);
 
   // Calculate Discount
-  const totalDiscount = discount
-    ? discount
-    : (subtotal * discountPercentage) / 100;
+  const totalDiscount = (subtotal * discount) / 100;
 
   // Calculate Tax and Total
   const tax = subtotal * taxRate;
@@ -112,12 +109,16 @@ const CartSummary = ({
         {totalDiscount > 0 && (
           <div className="flex justify-between text-green-500">
             <span className="font-medium">Discount</span>
-            <span>
-              {new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              }).format(totalDiscount)}
-            </span>
+            {
+              <span>
+                {" "}
+                -
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(totalDiscount)}
+              </span>
+            }
           </div>
         )}
 

@@ -6,6 +6,7 @@ import CustomDataTable from '../../../components/datatable/CustomDataTable';
 import { getProducts, ApproveProduct, RejectProduct, UpdateRequest, updateProduct } from '../../../services/api/ProductApi';
 import { FaSearch } from 'react-icons/fa';
 
+
 const ProductRequestManage = () => {
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [isProductDetailModalOpen, setIsProductDetailModalOpen] = useState(false);
@@ -24,6 +25,7 @@ const ProductRequestManage = () => {
             );
             setProducts(filteredProducts);
             setFilteredProducts(filteredProducts); // Set filtered products initially
+
         } catch (error) {
             console.error("Error fetching product data:", error.response?.data || error.message);
             toast.error("Error fetching product data");
@@ -55,7 +57,7 @@ const ProductRequestManage = () => {
             await UpdateRequest(requestId, "approved", "Product approved successfully"); // Update request
             await updateProduct(productId, { verify: { status: "approved" } });
             toast.success("Product approved successfully");
-            fetchProducts();
+            await fetchProducts();
         } catch (error) {
             console.error("Error approving product:", error.response?.data || error.message);
             toast.error("Error approving product");
@@ -69,7 +71,7 @@ const ProductRequestManage = () => {
             await UpdateRequest(requestId, "rejected", rejectionReason); // Update request
             await updateProduct(productId, { verify: { status: "rejected" } });
             toast.success("Product rejected successfully");
-            fetchProducts();
+            await fetchProducts();
         } catch (error) {
             console.error("Error rejecting product:", error.response?.data || error.message);
             toast.error("Error rejecting product");
@@ -79,21 +81,21 @@ const ProductRequestManage = () => {
     const columns = [
         {
             name: "Name",
-            selector: (row) => row.name,
+            selector: (row) => row.additionalData.name,
             sortable: true,
-            center: "true",
+            center: true,
         },
         {
             name: "Price",
-            selector: (row) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(row.price),
+            selector: (row) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(row.additionalData.price),
             sortable: true,
-            center: "true",
+            center: true,
         },
         {
             name: "Seller",
-            selector: (row) => row.sellerId?.fullName || "N/A",
+            selector: (row) => row.createdBy?.fullName || "N/A",
             sortable: true,
-            center: "true",
+            center: true,
         },
         {
             name: "Created At",
@@ -108,29 +110,29 @@ const ProductRequestManage = () => {
                     second: "2-digit",
                 }).format(new Date(row.createdAt)),
             sortable: true,
-            center: "true",
+            center: true,
         },
         {
             name: "Status",
-            selector: row => row.verify?.status,
+            selector: row => row.result,
             sortable: true,
-            center: "true",
+            center: true,
             cell: (row) => (
-                <span className={`text-${row.verify?.status === 'pending' ? 'yellow-300' : 'red-500'}`}>
-                    {row.verify?.status}
+                <span className={`text-${row.result === 'pending' ? 'yellow-300' : row.result === 'rejected' ? 'red-500' : 'green-500'}`}>
+                    {row.result}
                 </span>
             ),
         },
         {
             name: 'Action',
-            center: "true",
+            center: true,
             cell: (row) => (
                 <div className="max-md:w-56">
-                    {row.verify?.status === 'pending' ? (
+                    {row.result === 'pending' ? (
                         <button
-                            className="bg-yellow-400 text-white px-2 py-1 rounded "
+                            className="bg-yellow-400 text-white px-2 py-1 rounded"
                             onClick={() => {
-                                setSelectedProduct(row);
+                                setSelectedRequest(row);
                                 setIsConfirmModalOpen(true);
                             }}
                         >
@@ -140,7 +142,7 @@ const ProductRequestManage = () => {
                         <button
                             className="bg-green-500 text-white px-3 py-1 rounded"
                             onClick={() => {
-                                setSelectedProduct(row);
+                                setSelectedRequest(row);
                                 setIsProductDetailModalOpen(true);
                             }}
                         >
@@ -187,21 +189,18 @@ const ProductRequestManage = () => {
 
             {isConfirmModalOpen && (
                 <ConfirmProductModal
-                    product={selectedProduct}
-                    onReject={(rejectionReason) => handleReject(selectedProduct._id, rejectionReason, selectedProduct.requestId)}
-                    onApprove={() => handleApprove(selectedProduct._id, selectedProduct.requestId)}
+                    request={selectedRequest}
                     onClose={() => {
                         setIsConfirmModalOpen(false);
                         fetchProducts(); // Refresh the table when the modal is closed
                     }}
-                    rejectionReason={rejectionReason}
-                    setRejectionReason={setRejectionReason}
+                    fetchProducts={fetchProducts} // Pass fetchProducts as a prop
                 />
             )}
 
             {isProductDetailModalOpen && (
                 <ProductDetailModal
-                    product={selectedProduct}
+                    request={selectedRequest}
                     onClose={() => setIsProductDetailModalOpen(false)}
                 />
             )}
@@ -212,3 +211,4 @@ const ProductRequestManage = () => {
 };
 
 export default ProductRequestManage;
+

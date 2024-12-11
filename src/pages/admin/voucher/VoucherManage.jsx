@@ -119,6 +119,102 @@ const VoucherManage = () => {
     fetchVouchers();
   }, []);
 
+
+  const token = 'your-auth-token'; // Replace with your actual token
+
+  // Fetch vouchers from the API
+  const fetchVouchers = async () => {
+    setLoading(true);
+    try {
+      const fetchedVouchers = await getListVoucher();
+      console.log(fetchedVouchers);
+      setVouchers(fetchedVouchers);
+      setRecords(fetchedVouchers); // Synchronize records for searching
+    } catch (error) {
+      setError('Error fetching vouchers. Please try again later.');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Add new voucher
+  const handleAddVoucher = async (voucherData) => {
+    setLoading(true);
+    try {
+      const newVoucher = await addVoucher(voucherData, token);
+      setVouchers((prevVouchers) => [...prevVouchers, newVoucher]);
+      setRecords((prevRecords) => [...prevRecords, newVoucher]); // Sync records
+      setIsAddVoucherOpen(false);
+    } catch (error) {
+      setError('Error adding voucher. Please try again.');
+      console.error('Error adding voucher:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Edit existing voucher
+  const handleEditVoucher = async (id, updatedData) => {
+    setLoading(true);
+    try {
+      const updatedVoucher = await editVoucher(id, updatedData, token);
+      console.log("Updated Voucher: ", updatedVoucher);
+      
+      // Re-fetch the vouchers after editing
+      fetchVouchers();
+
+      setSelectedVoucher(updatedVoucher); // Update selectedVoucher if necessary
+      setIsEditVoucherOpen(false); // Close the edit modal
+    } catch (error) {
+      setError('Error editing voucher. Please try again.');
+      console.error('Error editing voucher:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete voucher
+  const handleDeleteVoucher = async (id) => {
+    if (!id) {
+      console.error('Voucher ID is missing');
+      setError('Voucher ID is missing');
+      return;
+    }
+
+    const confirmDelete = window.confirm("Are you sure you want to delete this voucher?");
+    if (!confirmDelete) return;
+
+    setLoading(true);
+    try {
+      await deleteVoucher(id, token);
+
+      // Re-fetch the vouchers after deleting
+      fetchVouchers();
+
+      alert('Voucher deleted successfully!');
+    } catch (error) {
+      setError('Error deleting voucher. Please try again.');
+      console.error('Error deleting voucher:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Search/filter vouchers
+  const handleFilter = (event) => {
+    const query = event.target.value.toLowerCase();
+    const filteredVouchers = vouchers.filter((voucher) =>
+      voucher.code.toLowerCase().includes(query)
+    );
+    setRecords(filteredVouchers);
+  };
+
+  useEffect(() => {
+    fetchVouchers();
+  }, []);
+
+  // Data table columns
   const columns = [
     {
       name: "Code",
@@ -130,6 +226,7 @@ const VoucherManage = () => {
       name: "Start date",
       selector: (row) => row.startDate,
       cell: (row) => format(new Date(row.startDate), 'dd/MM/yyyy'),
+
       sortable: true,
       center: true,
     },
@@ -139,6 +236,7 @@ const VoucherManage = () => {
       cell: (row) => {
         const endDate = new Date(row.endDate);
         return isNaN(endDate) ? 'Invalid date' : format(endDate, 'dd/MM/yyyy');
+
       },
       sortable: true,
       center: true,
@@ -151,6 +249,7 @@ const VoucherManage = () => {
             Đơn hàng có giá trị tối thiểu là{" "}
             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(row.minCartPrice)}
           </div>
+
       ),
       sortable: true,
       center: true,
@@ -195,6 +294,7 @@ const VoucherManage = () => {
               Delete
             </button>
           </div>
+
       ),
     },
   ];
@@ -221,6 +321,7 @@ const VoucherManage = () => {
               />
             </div>
 
+
           </div>
           {error && <div className="text-red-500 text-center">{error}</div>}
           <CustomDataTable columns={columns} records={records} loading={loading}/>
@@ -240,6 +341,7 @@ const VoucherManage = () => {
             />
         )}
       </div>
+
   );
 };
 

@@ -9,6 +9,7 @@ export const getListVoucher = async () => {
         console.error('Error fetching voucher list:', error);
         throw error;
     }
+
 };
 
 // Create a new coupon (voucher)
@@ -24,6 +25,7 @@ export const addVoucher = async (voucherData, token) => {
         console.error('Error adding voucher:', error);
         throw error;
     }
+
 };
 
 // Get a specific coupon by ID
@@ -35,6 +37,7 @@ export const getVoucherById = async (id) => {
         console.error(`Error fetching voucher with ID ${id}:`, error);
         throw error;
     }
+
 };
 
 // Edit an existing voucher
@@ -50,6 +53,7 @@ export const editVoucher = async (id, voucherData, token) => {
         console.error('Error editing voucher:', error);
         throw error;
     }
+
 };
 
 // Delete a coupon (voucher)
@@ -66,3 +70,4 @@ export const deleteVoucher = async (id, token) => {
         throw error;
     }
 };
+

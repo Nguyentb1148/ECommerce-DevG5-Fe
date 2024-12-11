@@ -1,14 +1,10 @@
-import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import {
-  BanUser,
   GetAllUsers,
-  UpdateUserInfo,
 } from "../../../services/api/UserApi";
 import DetailModal from "../../../components/user/DetailModal";
 import BanModal from "../../../components/user/BanModal";
-import UpdateUserInfoModal from "../../../components/user/UpdateUserInfoModal";
 import { toast, ToastContainer } from "react-toastify";
 import CustomDataTable from "../../../components/datatable/CustomDataTable";
 import { FaSearch } from "react-icons/fa";

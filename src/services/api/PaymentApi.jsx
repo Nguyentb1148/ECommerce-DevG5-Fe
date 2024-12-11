@@ -59,11 +59,10 @@ const paymentApi = {
   verifyVnPayPayment: async (queryParams) => {
     try {
       // Pass all query parameters received from VNPay to the backend for verification
-      const response = await authApi.post(
-        `/payment/vnpay_success`,
-        queryParams
-      );
-
+      const response = await authApi.get(`/payment/vnpay_success`, {
+        params: queryParams,
+      });
+      console.log("vnpay on success", response);
       return response.data;
     } catch (err) {
       if (err.response) {

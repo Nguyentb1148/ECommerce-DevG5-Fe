@@ -68,6 +68,17 @@ const resetPassword = async (token, password) => {
   }
 };
 
+export const confirmEmailApi = async (token) => {
+  try {
+    console.log("test");
+    const response = await authApi.post(`/auth/confirm?token=${token}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error confirming email:", error);
+    throw error;
+  }
+};
+
 const googleSignIn = async (email, name, picture) => {
   try {
     const response = await authApi.post("/auth/signin-with-google", {

@@ -95,6 +95,7 @@ const ShoppingCart = () => {
 
   const handleRemoveItem = async (productId, variantId) => {
     try {
+      console.log("remove item: ", productId, variantId);
       await RemoveFromCart(productId, variantId);
       setItems((prevItems) =>
         prevItems.filter(
@@ -159,10 +160,19 @@ const ShoppingCart = () => {
 
     try {
       let response;
+      console.log("Preparing to create a payment session...");
       if (selectedPayment === "stripe") {
-        response = await paymentApi.createStripeSession({ deliveryAddress });
+        console.log("stripe checkout");
+        response = await paymentApi.createStripeSession({
+          deliveryAddress,
+          paymentMethod: selectedPayment,
+        });
       } else if (selectedPayment === "vnpay") {
-        response = await paymentApi.createVnPaySession({ deliveryAddress });
+        console.log("vnpay checkout");
+        response = await paymentApi.createVnPaySession({
+          deliveryAddress,
+          paymentMethod: selectedPayment,
+        });
       }
 
       // Redirect to the correct URL
@@ -188,6 +198,7 @@ const ShoppingCart = () => {
         <BackToTop />
         {currentStep === 2 && (
           <>
+            <Stepper currentStep={currentStep} />
             <div className="h-83v grid place-items-center bg-gray-900 text-gray-300 ">
               <div className="grid place-items-center">
                 <FaCheckCircle className="text-[120px] text-emerald-500 " />
@@ -225,7 +236,7 @@ const ShoppingCart = () => {
                       />
                     ))}
                     {items.length === 0 && (
-                      <div className="flex flex-col justify-center items-center h-83v text-center py-8 text-gray-400 ">
+                      <div className="flex flex-col justify-center items-center h-70v text-center py-8 text-gray-400 ">
                         <BsCartXFill size={100} />
                         <h2 className="text-2xl py-2">Your cart is empty</h2>
                       </div>
