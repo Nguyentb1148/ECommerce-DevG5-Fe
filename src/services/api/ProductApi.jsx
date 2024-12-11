@@ -37,26 +37,29 @@ export const getProducts = async () => {
 // Get all products by chunk
 export const getProductsByChunk = async (filters = {}, skip, limit) => {
   try {
-    const { category, brand, price } = filters;
     const queryParams = new URLSearchParams({
       skip,
       limit,
-      ...(category?.length ? { category: category.join(",") } : {}),
-      ...(brand?.length ? { brand: brand.join(",") } : {}),
-      ...(price?.length === 2 ? { price: price.join(",") } : {}),
+      ...(filters.category?.length
+        ? { category: filters.category.join(",") }
+        : {}),
+      ...(filters.brand?.length ? { brand: filters.brand.join(",") } : {}),
+      ...(filters.price?.length === 2
+        ? { price: filters.price.join(",") }
+        : {}),
+      ...(filters.keyword ? { keyword: filters.keyword.trim() } : {}),
     });
 
     const response = await authApi.get(
       `/productsbychunks?${queryParams.toString()}`
     );
+
     return response.data;
   } catch (err) {
-    if (err.response) {
-      const errorMessage = err.response.data.error || "Something went wrong!";
-      toast.error(errorMessage);
-    } else {
-      toast.error("Network error, please try again later.");
-    }
+    const errorMessage =
+      err.response?.data?.error ||
+      "Something went wrong while fetching products!";
+    toast.error(errorMessage);
     throw err;
   }
 };
@@ -144,7 +147,9 @@ export const fetchVariantDetails = async (variantId) => {
 export const ApproveProduct = async (productId) => {
   try {
     console.log(`Approving product with ID: ${productId}`);
-    const response = await authApi.patch(`/products/verify/${productId}`, { status: "approved" });
+    const response = await authApi.patch(`/products/verify/${productId}`, {
+      status: "approved",
+    });
     console.log("Approve response:", response.data);
     return response.data;
   } catch (err) {
@@ -164,8 +169,14 @@ export const ApproveProduct = async (productId) => {
 export const RejectProduct = async (productId, feedback) => {
   try {
     const payload = { status: "rejected", feedback };
-    console.log(`Rejecting product with ID: ${productId} and payload:`, payload);
-    const response = await authApi.patch(`/products/verify/${productId}`, payload);
+    console.log(
+      `Rejecting product with ID: ${productId} and payload:`,
+      payload
+    );
+    const response = await authApi.patch(
+      `/products/verify/${productId}`,
+      payload
+    );
     console.log("Reject response:", response.data);
     return response.data;
   } catch (err) {
@@ -183,18 +194,23 @@ export const RejectProduct = async (productId, feedback) => {
 
 export const getAllRequest = async () => {
   try {
-    const response = await authApi.get('/requests', { params: { type: 'product' } })
-    return response.data
+    const response = await authApi.get("/requests", {
+      params: { type: "product" },
+    });
+    return response.data;
   } catch (error) {
-    toast.error(error.message)
+    toast.error(error.message);
   }
-}
+};
 
 // Approve request
 export const approveRequest = async (requestId) => {
   try {
     console.log(`Approving request with ID: ${requestId}`);
-    const response = await authApi.put(`/requests/${requestId}`, { result: "approved", feedback: "Request approved successfully" });
+    const response = await authApi.put(`/requests/${requestId}`, {
+      result: "approved",
+      feedback: "Request approved successfully",
+    });
     console.log("Approve request response:", response.data);
     return response.data;
   } catch (err) {
@@ -213,8 +229,13 @@ export const approveRequest = async (requestId) => {
 // Reject request
 export const rejectRequest = async (requestId, feedback) => {
   try {
-    console.log(`Rejecting request with ID: ${requestId} and feedback: ${feedback}`);
-    const response = await authApi.put(`/requests/${requestId}`, { result: "rejected", feedback });
+    console.log(
+      `Rejecting request with ID: ${requestId} and feedback: ${feedback}`
+    );
+    const response = await authApi.put(`/requests/${requestId}`, {
+      result: "rejected",
+      feedback,
+    });
     console.log("Reject request response:", response.data);
     return response.data;
   } catch (err) {

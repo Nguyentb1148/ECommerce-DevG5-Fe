@@ -8,6 +8,8 @@ import CategoryFilter from "./CategoryFilter";
 import BrandFilter from "./BrandFilter";
 const ListFilter = ({ onApplyFilters }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  console.log("|search|", search);
   const [openSection, setOpenSection] = useState({
     category: true,
     brand: true,
@@ -31,8 +33,18 @@ const ListFilter = ({ onApplyFilters }) => {
       category: selectedCategories,
       brand: selectedBrands,
       price: priceRange,
+      keyword: search.trim(),
     };
     onApplyFilters(filters);
+    setIsModalOpen(false); // Close modal after applying filters
+  };
+
+  const handleResetFilters = () => {
+    setSearch("");
+    setSelectedCategories([]);
+    setSelectedBrands([]);
+    setPriceRange([3000000, 100000000]);
+    onApplyFilters({}); // Clear filters
   };
   return (
     <>
@@ -41,8 +53,11 @@ const ListFilter = ({ onApplyFilters }) => {
         <FaSearch className="flex items-center justify-center w-10 text-white" />
         <input
           type="text"
+          name="search"
           placeholder="Search..."
           className="bg-transparent  border-none outline-none text-white focus:ring-0"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
       <div className="md:hidden fixed bottom-10 left-2 z-50">
@@ -223,7 +238,10 @@ const ListFilter = ({ onApplyFilters }) => {
         </div>
         {/* Button */}
         <div className="flex justify-between mt-6">
-          <button className="px-4 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300">
+          <button
+            className="px-4 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300"
+            onClick={handleResetFilters}
+          >
             Clear Filter
           </button>
           <button
