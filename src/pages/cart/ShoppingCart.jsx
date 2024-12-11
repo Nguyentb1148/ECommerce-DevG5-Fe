@@ -95,6 +95,7 @@ const ShoppingCart = () => {
 
   const handleRemoveItem = async (productId, variantId) => {
     try {
+      console.log("remove item: ", productId, variantId);
       await RemoveFromCart(productId, variantId);
       setItems((prevItems) =>
         prevItems.filter(

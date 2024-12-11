@@ -6,7 +6,7 @@ const CartSummary = ({
   variants = {},
   discount = 0,
   taxRate = 0.1, // Default 10% tax
-  shippingCost = 50000, // Default shipping cost
+  shippingCost = 0, // Default shipping cost
 }) => {
   if (items.length === 0) {
     return (
