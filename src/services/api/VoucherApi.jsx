@@ -1,5 +1,6 @@
 import authApi from "../AxiosConfig.jsx";
 
+// Fetch the list of all coupons (vouchers)
 export const getListVoucher = async () => {
   try {
     const response = await authApi.get('/coupons');
@@ -10,11 +11,12 @@ export const getListVoucher = async () => {
   }
 };
 
+// Create a new coupon (voucher)
 export const addVoucher = async (voucherData, token) => {
   try {
     const response = await authApi.post('/coupons', voucherData, {
       headers: {
-        Authorization: `Bearer ${token}`, // Gửi token để xác thực
+        Authorization: `Bearer ${token}`, // Send token for authentication
       },
     });
     return response.data;
@@ -24,11 +26,23 @@ export const addVoucher = async (voucherData, token) => {
   }
 };
 
-export const editVoucher = async (id, updatedData, token) => {
+// Get a specific coupon by ID
+export const getVoucherById = async (id) => {
   try {
-    const response = await authApi.patch(`/coupons/${id}`, updatedData, {
+    const response = await authApi.get(`/coupons/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching voucher with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+// Edit an existing voucher
+export const editVoucher = async (id, voucherData, token) => {
+  try {
+    const response = await authApi.patch(`/coupons/${id}`, voucherData, {
       headers: {
-        Authorization: `Bearer ${token}`, // Gửi token để xác thực
+        Authorization: `Bearer ${token}`, // Send token for authentication
       },
     });
     return response.data;
@@ -37,11 +51,13 @@ export const editVoucher = async (id, updatedData, token) => {
     throw error;
   }
 };
+
+// Delete a coupon (voucher)
 export const deleteVoucher = async (id, token) => {
   try {
     const response = await authApi.delete(`/coupons/${id}`, {
       headers: {
-        Authorization: `Bearer ${token}`, // Gửi token để xác thực
+        Authorization: `Bearer ${token}`, // Send token for authentication
       },
     });
     return response.data;
@@ -50,4 +66,3 @@ export const deleteVoucher = async (id, token) => {
     throw error;
   }
 };
-

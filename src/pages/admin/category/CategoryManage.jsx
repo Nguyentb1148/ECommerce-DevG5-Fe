@@ -8,6 +8,7 @@ import {
 import { deleteImage } from "../../../configs/Cloudinary.jsx";
 import { toast, ToastContainer } from "react-toastify";
 import CustomDataTable from "../../../components/datatable/CustomDataTable.jsx";
+import { format } from 'date-fns';
 
 const CategoryManage = () => {
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
@@ -80,32 +81,9 @@ const CategoryManage = () => {
     {
       name: "Created At",
       selector: (row) => row.createdAt,
-      cell: (row) =>
-        new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        }).format(new Date(row.createdAt)),
+      cell: (row) => format(new Date(row.createdAt), 'dd/MM/yyyy HH:mm'),
       sortable: true,
-      center: "true",
-    },
-    {
-      name: "Updated At",
-      selector: (row) => row.updatedAt,
-      cell: (row) =>
-        new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        }).format(new Date(row.updatedAt)),
-      sortable: true,
-      center: "true",
+      center: true,
     },
     {
       name: "Action",

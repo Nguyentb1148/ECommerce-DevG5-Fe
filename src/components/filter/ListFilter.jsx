@@ -37,7 +37,7 @@ const ListFilter = ({ onApplyFilters }) => {
   return (
     <>
       {/* Search Box */}
-      <div className="md:hidden flex items-center rounded-md px-2 mb-4 bg-gray-800">
+      <div className="md:hidden min-h-screen flex items-center rounded-md px-2 mb-4 bg-gray-800">
         <FaSearch className="flex items-center justify-center w-10 text-white" />
         <input
           type="text"

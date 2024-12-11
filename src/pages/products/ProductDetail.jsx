@@ -9,6 +9,7 @@ import mammoth from "mammoth";
 import { toast, ToastContainer } from "react-toastify";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
+import ProductReviews from "../../components/products/ProductReviews";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -22,6 +23,7 @@ const ProductDetail = () => {
   const [cartCount, setCartCount] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [descriptionContent, setDescriptionContent] = useState(""); // State for description content
+  
   useEffect(() => {
     if (!id) return;
     const fetchProduct = async () => {
@@ -238,14 +240,14 @@ const ProductDetail = () => {
                           y: -window.innerHeight + 100,
                         }}
                         exit={{ scale: 0 }}
-                        transition={{ duration: 2 }}
+                        transition={{ duration: 1 }}
                         className="fixed z-50"
                         style={{ left: "20%", top: "50%" }}
                       >
                         <img
                           src={product.imageUrls[0]}
                           alt="Flying product"
-                          className="w-40 h-40 z-50 object-cover rounded-lg"
+                          className="w-32 h-32 z-50 object-cover rounded-lg"
                         />
                       </motion.div>
                     )}
@@ -269,6 +271,13 @@ const ProductDetail = () => {
               className="text-gray-300 description"
               dangerouslySetInnerHTML={{ __html: descriptionContent }}
             />
+          </div>
+          {/* Product Reviews Section */}
+          <div className="mt-6 bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-white text-center">
+              Đánh Giá Sản Phẩm
+            </h2>
+            <ProductReviews productId={id} /> 
           </div>
         </div>
       </div>
