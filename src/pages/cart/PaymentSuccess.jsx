@@ -67,7 +67,7 @@ const PaymentSuccess = () => {
       <p className="mt-2">
         Thank you for your purchase. Your order has been confirmed.
       </p>
-      <div className="mt-6 bg-gray-800 p-4 rounded-lg w-3/4 max-w-2xl">
+      {/* <div className="mt-6 bg-gray-800 p-4 rounded-lg w-3/4 max-w-2xl">
         <h2 className="text-lg font-bold">Order Summary</h2>
         <ul className="mt-4 space-y-2">
           {order.orderItems.map((item) => (
@@ -94,7 +94,7 @@ const PaymentSuccess = () => {
         <p className="mt-4 text-sm text-gray-400">
           Delivery Address: {order.deliveryAddress}
         </p>
-      </div>
+      </div> */}
       <button
         className="mt-6 px-6 py-2 bg-blue-600 text-white rounded"
         onClick={() => navigate("/")}

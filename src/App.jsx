@@ -26,6 +26,7 @@ import ProductRequestManage from "./pages/admin/product/ProductRequestManage.jsx
 import ListProductManage from "./pages/admin/product/ListProductManage.jsx";
 import UserRequestManage from "./pages/admin/user/UserRequestManage.jsx";
 import VerifyEmail from "./pages/admin/user/VerifyEmail.jsx";
+import Contact from "./pages/contact/Contact.jsx";
 
 function App() {
   React.useEffect(() => {
@@ -42,6 +43,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="*" element={<PageNotFound />} />
+        <Route path="contact" element={<Contact />} />
         <Route path="/email/confirm" element={<VerifyEmail />} />
         <Route path="/user/profile" element={<Profile />} />
         <Route path="/productFilter" element={<FilterProduct />} />
