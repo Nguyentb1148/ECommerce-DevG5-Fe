@@ -126,7 +126,7 @@ const Navbar = () => {
                         {isLogin ? (
                             <User />
                         ) : (
-                            <Link to="/login" className="btn-add">
+                            <Link to="/authentication" className="btn-add">
                                 Login
                             </Link>
                         )}
