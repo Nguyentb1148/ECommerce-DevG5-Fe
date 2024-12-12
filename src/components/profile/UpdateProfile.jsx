@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaUpload } from "react-icons/fa";
-import {handleImageUpload} from "../../configs/Cloudinary";
+import { handleImageUpload } from "../../configs/Cloudinary";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { updateUserProfile, userData } from "../../services/api/UserApi.jsx";
@@ -217,9 +217,8 @@ const UpdateProfile = () => {
               name="fullName"
               value={profileData.fullName}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md border ${
-                errors.fullName ? "border-red-500" : "border-gray-300"
-              } border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
+              className={`mt-1 block w-full rounded-md border ${errors.fullName ? "border-red-500" : "border-gray-300"
+                } border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
               placeholder="John Doe"
             />
             {errors.fullName && (
@@ -236,9 +235,8 @@ const UpdateProfile = () => {
               name="email"
               value={profileData.email}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md border ${
-                errors.email ? "border-red-500" : "border-gray-300"
-              } border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
+              className={`mt-1 block w-full rounded-md border ${errors.email ? "border-red-500" : "border-gray-300"
+                } border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
               placeholder="john@example.com"
               readOnly
             />
@@ -256,9 +254,8 @@ const UpdateProfile = () => {
               name="phone"
               value={profileData.phone}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md border ${
-                errors.phone ? "border-red-500" : "border-gray-300"
-              } border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
+              className={`mt-1 block w-full rounded-md border ${errors.phone ? "border-red-500" : "border-gray-300"
+                } border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
               placeholder="0XXXXXXXXX"
             />
             {errors.phone && (
@@ -266,7 +263,7 @@ const UpdateProfile = () => {
             )}
           </div>
 
-          <div className="md:flex justify-between">
+          <div className="md:flex md:justify-between">
             <div className="max-md:mb-4">
               <label className="block text-sm font-medium text-gray-300">
                 Birth Date
@@ -276,9 +273,8 @@ const UpdateProfile = () => {
                 name="dateOfBirth"
                 value={profileData.dateOfBirth || ""}
                 onChange={handleChange}
-                className={`mt-1 block max-md:w-full w-60 rounded-md ${
-                  errors.dateOfBirth ? "border-red-500" : "border-gray-300"
-                } border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
+                className={`mt-1 block w-full md:w-40 lg:w-56 xl:w-60 rounded-md ${errors.dateOfBirth ? "border-red-500" : "border-gray-300"
+                  } border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
               />
               {errors.dateOfBirth && (
                 <p className="text-red-500 text-sm mt-1">
@@ -286,7 +282,6 @@ const UpdateProfile = () => {
                 </p>
               )}
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-300">
                 Gender
@@ -296,11 +291,10 @@ const UpdateProfile = () => {
                 name="gender"
                 value={profileData.gender}
                 onChange={handleChange}
-                className={`block max-md:w-full w-60 ${
-                  errors.gender ? "border-red-500" : "border-gray-300"
-                } mt-1 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-gray-300 border-gray-600`}
+                className={`block w-full md:w-40 lg:w-56 xl:w-60 ${errors.gender ? "border-red-500" : "border-gray-300"
+                  } mt-1 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-gray-300 border-gray-600`}
               >
-                <option value="">-- Select Gender --</option>
+                <option value="">Select Gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
@@ -310,8 +304,8 @@ const UpdateProfile = () => {
               )}
             </div>
           </div>
-
-          <div className="col-span-2">
+          
+          <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-300">
               Address
             </label>
@@ -320,9 +314,8 @@ const UpdateProfile = () => {
               name="address"
               value={profileData.address}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md border ${
-                errors.address ? "border-red-500" : "border-gray-300"
-              } border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
+              className={`mt-1 block w-full rounded-md border ${errors.address ? "border-red-500" : "border-gray-300"
+                } border-gray-600 bg-gray-700 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500`}
               placeholder="123 Main St, City"
             />
             {errors.address && (
@@ -330,12 +323,12 @@ const UpdateProfile = () => {
             )}
           </div>
         </div>
+
         <div className="flex justify-end">
           <button
             type="submit"
-            className={`bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors ${
-              loading ? "cursor-not-allowed opacity-50" : ""
-            }`}
+            className={`bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors ${loading ? "cursor-not-allowed opacity-50" : ""
+              }`}
             disabled={loading} // Disable the button when loading is true
           >
             {loading ? "Updating..." : "Update Profile"}

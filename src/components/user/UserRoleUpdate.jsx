@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaCheckCircle, FaSpinner, FaTimesCircle } from "react-icons/fa";
 import { requestStatus, requestUserToSeller } from "../../services/api/RequestApi.jsx";
-
+import LoadingDots from "../loading/LoadingDots.jsx"
 const UserRoleUpdate = () => {
   const [formData, setFormData] = useState({
     identifier: "",
@@ -85,10 +85,9 @@ const UserRoleUpdate = () => {
 
   if (isLoading) {
     return (
-        <div className="flex items-center justify-center p-8">
-          <FaSpinner className="h-16 w-16 text-indigo-500 animate-spin" />
-          <p className="ml-4 text-indigo-400 font-medium">Loading...</p>
-        </div>
+       <div>
+        <LoadingDots/>
+       </div>
     );
   }
 

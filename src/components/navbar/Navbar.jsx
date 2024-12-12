@@ -3,21 +3,33 @@ import { Link } from 'react-router-dom';
 import { MdOutlineShoppingCart } from "react-icons/md";
 import User from '../../pages/profile/User';
 
-const Navbar = ({ cartCount }) => {
+const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
+    const [cartCount, setCartCount] = useState(0);
 
-    // Check if the user is logged in when the component mounts
     useEffect(() => {
-        // Check localStorage for user data (or token, etc.)
-        const userData = localStorage.getItem('user'); // Replace with the actual key you're using for the user data
+        const userData = localStorage.getItem('user');
         if (userData) {
-            setIsLogin(true);  // User is logged in
+            setIsLogin(true);
         } else {
-            setIsLogin(false); // User is not logged in
+            setIsLogin(false);
         }
-    }, []); // Empty dependency array means this runs only once after the first render
+    }, []);
+    useEffect(() => {
+        const storedCartCount = parseInt(localStorage.getItem("cartCount") || "0", 10);
+        setCartCount(storedCartCount);
 
+        const handleStorageChange = () => {
+            const updatedCount = parseInt(localStorage.getItem("cartCount") || "0", 10);
+            setCartCount(updatedCount);
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+        };
+    }, []);
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
@@ -28,19 +40,31 @@ const Navbar = ({ cartCount }) => {
                 <a href="/" className=" text-primary font-semibold tracking-widest text-2xl uppercase sm:text-3xl">
                     DevSHOP
                 </a>
-                <button
-                    className="text-white md:hidden focus:outline-none"
-                    onClick={toggleMenu}
-                >
-                    <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 6h16M4 12h16m-7 6h7"
-                        />
-                    </svg>
-                </button>
+                <div className="flex">
+                    <div className="relative mr-4 md:hidden">
+                        <Link className="item-navbar" to="/shoppingCart">
+                            <MdOutlineShoppingCart size={25} />
+                        </Link>
+                        {cartCount > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                                {cartCount}
+                            </span>
+                        )}
+                    </div>
+                    <button
+                        className="text-white md:hidden focus:outline-none"
+                        onClick={toggleMenu}
+                    >
+                        <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 6h16M4 12h16m-7 6h7"
+                            />
+                        </svg>
+                    </button>
+                </div>
 
                 <div className="hidden md:block">
                     <ul className="flex items-center gap-5">
@@ -59,7 +83,7 @@ const Navbar = ({ cartCount }) => {
                                 Contact
                             </Link>
                         </li>
-                        <li className="relative">
+                        <li className="max-md:hidden relative">
                             <Link className="item-navbar" to="/shoppingCart">
                                 <MdOutlineShoppingCart size={25} />
                             </Link>
@@ -99,11 +123,6 @@ const Navbar = ({ cartCount }) => {
                                 Contact
                             </Link>
                         </li>
-                        <li>
-                            <Link className="item-navbar" to="/shoppingCart">
-                                <MdOutlineShoppingCart size={25} />
-                            </Link>
-                        </li>
                         {isLogin ? (
                             <User />
                         ) : (
@@ -116,6 +135,7 @@ const Navbar = ({ cartCount }) => {
             )}
         </div>
     );
+
 };
 
 export default Navbar;

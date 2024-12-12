@@ -8,7 +8,6 @@ import ReviewModal from "../modal/ReviewModal";
 import { getProductReviews } from "../../services/api/ReviewApi";
 
 const OrderDetails = ({ order, onClose }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const toggleModal = () => setIsModalOpen(!isModalOpen);
@@ -40,7 +39,7 @@ const OrderDetails = ({ order, onClose }) => {
   };
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-auto">
-      <div className="max-w-6xl mx-auto p-6 mt-28 bg-gray-900 rounded-lg shadow-lg text-gray-100">
+      <div className="w-full md:w-[90%] lg:w-[80%] mx-auto p-6 mt-60 md:mt-28 bg-gray-900 rounded-lg shadow-lg text-gray-100">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-100">Order Details</h1>
           <button

@@ -17,7 +17,7 @@ const ShippingStatus = ({ order }) => {
     return (
         <div className="relative">
             {/* Progress Bar */}
-            <div className="absolute top-1/2 left-4 right-4 h-1 bg-gray-600 -translate-y-1/2">
+            <div className="absolute top-[60%] left-4 right-4 h-1 bg-gray-600 -translate-y-1/2">
                 <div
                     className="h-full bg-blue-500 transition-all  duration-500"
                     style={{ width: `${progress}%` }}
@@ -31,7 +31,7 @@ const ShippingStatus = ({ order }) => {
                     const isCompleted = index <= statusIndex;
 
                     return (
-                        <div key={index} className="flex flex-col items-center">
+                        <div key={index} className="flex flex-col items-center ">
                             <div
                                 className={`w-8 h-8 rounded-full flex items-center justify-center z-10 ${
                                     isCompleted ? 'bg-blue-500' : 'bg-gray-600'
@@ -43,15 +43,15 @@ const ShippingStatus = ({ order }) => {
                                     }`}
                                 />
                             </div>
-                            <div className="mt-2 text-center">
+                            <div className="text-center">
                                 <p
-                                    className={`text-sm font-medium ${
+                                    className={`mt-3 text-xs md:text-sm font-medium ${
                                         isCompleted ? 'text-blue-500' : 'text-gray-400'
                                     }`}
                                 >
                                     {item.status}
                                 </p>
-                                <p className="text-xs text-gray-400">
+                                <p className="hidden text-xs text-gray-400">
                                     {index <= statusIndex ? order.orderDate : 'Pending'}
                                 </p>
                             </div>
