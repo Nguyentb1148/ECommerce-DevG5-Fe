@@ -18,7 +18,6 @@ const SidebarAdmin = () => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { name: "Dashboard", icon: <MdOutlineHome size={25} />, path: "" },
     { name: "Category", icon: <BiCategory size={25} />, path: "category" },
     { name: "Brand", icon: <SiBrandfolder size={25} />, path: "brand" },
     { name: "User", icon: <PiUserListBold size={25} />, path: "user" },

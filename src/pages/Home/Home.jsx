@@ -2,7 +2,6 @@ import React from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Carousel from "../../components/carousel/Carousel";
 import Services from "../../components/support/Services";
-import Products from "../../components/products/Products";
 import Blog from "../../components/blog/Blog";
 import Footer from "../../components/footer/Footer";
 import BackToTop from "../../components/backToTop/BackToTop";
@@ -16,7 +15,7 @@ const Home = () => {
       </div>
       <Carousel />
       <Services />
-      <Products itemsPerPage={4} />
+      {/*<Products itemsPerPage={4} />*/}
       <Blog />
       <Footer />
       <BackToTop />

@@ -15,7 +15,7 @@ const SidebarSeller = () => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { name: "Dashboard", icon: <MdOutlineHome size={25} />, path: "" },
+    // { name: "Dashboard", icon: <MdOutlineHome size={25} />, path: "" },
     { name: "Product", icon: <FaBoxArchive size={25} />, path: "product" },
     { name: "Orders", icon: <FiShoppingBag size={25} />, path: "orders" },
     { name: "Logout", icon: <MdLogout size={25} />, path: "logout" },
